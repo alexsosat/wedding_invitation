@@ -81,7 +81,6 @@ linter:
     null_closures: true
     one_member_abstracts: true
     only_throw_errors: true
-    package_api_docs: true
     parameter_assignments: true
     prefer_adjacent_string_concatenation: true
     prefer_collection_literals: true

@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import "package:flutter_common_classes/localization/l10n.dart";
 import "package:flutter_flavor/flutter_flavor.dart";
 import "package:get/get.dart";
 
@@ -19,17 +20,21 @@ class BodaMaApp extends StatelessWidget {
           title: "BodaMa",
           debugShowCheckedModeBanner: false,
 
+          localizationsDelegates: const [
+            FlutterCommonLocalizations.delegate,
+          ],
+
           //Theming
           themeMode: ThemeMode.system,
           theme: MaterialTheme(
-            createTextTheme(context, "Poppins", "Poppins"),
+            TextTheme(bodyLarge: TextStyle(fontFamily: "Poppins")),
           ).light(),
           darkTheme: MaterialTheme(
-            createTextTheme(context, "Poppins", "Poppins"),
+            TextTheme(bodyLarge: TextStyle(fontFamily: "Poppins")),
           ).dark(),
 
           // Routing
-          initialRoute: RoutesNames.initial("123"),
+          initialRoute: RoutesNames.initial("familia-ramirez"),
           unknownRoute: GetPage(
             name: RoutesNames.unknown,
             page: () => const UnknownPage(),

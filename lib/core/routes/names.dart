@@ -10,4 +10,7 @@ class RoutesNames {
   static String initial(String? tag) => tag == null ? "/:tag" : "/$tag";
   static String invitation(String? tag) =>
       tag == null ? "/invitation/:tag" : "/invitation/$tag";
+
+  static String schedule(String? tag) =>
+      tag == null ? "/schedule/:tag" : "/schedule/$tag";
 }

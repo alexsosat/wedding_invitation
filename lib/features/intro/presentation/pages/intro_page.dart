@@ -1,7 +1,9 @@
 import "package:flutter/material.dart";
+import "package:get/get.dart";
 import "package:get/route_manager.dart";
 
 import "../../../../core/routes/names.dart";
+import "../../../invitation/presentation/getX/invitation_controller.dart";
 
 /// Page to display the intro.
 ///
@@ -18,6 +20,15 @@ class IntroPage extends StatefulWidget {
 }
 
 class _IntroPageState extends State<IntroPage> {
+  late final InvitationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = Get.find<InvitationController>();
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
         body: Center(
@@ -25,12 +36,9 @@ class _IntroPageState extends State<IntroPage> {
             onPressed: () {
               final invitationTag = Get.parameters["tag"];
 
-              print(invitationTag);
-
               if (invitationTag == null ||
                   invitationTag.isEmpty ||
                   invitationTag == ":invitation") {
-                print("invitationTag is null");
                 return;
               }
 

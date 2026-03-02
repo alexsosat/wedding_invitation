@@ -1,9 +1,8 @@
+import "package:get/get.dart";
 
-  import "package:get/get.dart"; 
-  import "invitation_controller.dart";
-
-  class InvitationBinding implements Bindings {
-    @override
-    void dependencies() => Get.lazyPut(() => InvitationController());
-  }
-  
+/// Binding for the InvitationController.
+class InvitationBinding implements Bindings {
+  /// Binding for the InvitationController.
+  @override
+  void dependencies() {}
+}
