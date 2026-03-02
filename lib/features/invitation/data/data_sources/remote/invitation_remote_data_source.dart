@@ -25,6 +25,13 @@ class InvitationRemoteDataSourceImpl extends GetConnect
   final _logger = getLogger("InvitationRemoteDataSource");
 
   @override
+  void onInit() {
+    super.onInit();
+
+    httpClient.timeout = const Duration(seconds: 10);
+  }
+
+  @override
   Future<InvitationModel> getInvitation(InvitationParams params) async {
     _logger.i("Getting invitation with params: ${params.slug}");
 

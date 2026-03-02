@@ -1,6 +1,5 @@
 import "package:flutter/material.dart";
 import "package:get/get.dart";
-import "package:get/route_manager.dart";
 
 import "../../../../core/routes/names.dart";
 import "../../../invitation/presentation/getX/invitation_controller.dart";
@@ -21,32 +20,77 @@ class IntroPage extends StatefulWidget {
 
 class _IntroPageState extends State<IntroPage> {
   late final InvitationController _controller;
+  final RxBool _isWaitingForData = false.obs;
+  bool _hasNavigated = false;
 
   @override
   void initState() {
     super.initState();
-
     _controller = Get.find<InvitationController>();
+  }
+
+  String? get _invitationTag {
+    final tag = Get.parameters["tag"];
+    if (tag == null || tag.isEmpty || tag == ":invitation") {
+      return null;
+    }
+    return tag;
+  }
+
+  void _onNextPressed() {
+    final tag = _invitationTag;
+    if (tag == null) return;
+
+    if (_controller.status.isSuccess) {
+      _navigateToInvitation(tag);
+    } else if (_controller.status.isLoading) {
+      _isWaitingForData.value = true;
+    }
+  }
+
+  void _navigateToInvitation(String tag) {
+    if (_hasNavigated) return;
+    _hasNavigated = true;
+    Get.toNamed(RoutesNames.invitation(tag));
   }
 
   @override
   Widget build(BuildContext context) => Scaffold(
         body: Center(
-          child: ElevatedButton(
-            onPressed: () {
-              final invitationTag = Get.parameters["tag"];
-
-              if (invitationTag == null ||
-                  invitationTag.isEmpty ||
-                  invitationTag == ":invitation") {
-                return;
+          child: _controller.obx(
+            (_) {
+              if (_isWaitingForData.value && !_hasNavigated) {
+                final tag = _invitationTag;
+                if (tag != null) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    _navigateToInvitation(tag);
+                  });
+                }
               }
-
-              Get.toNamed(
-                RoutesNames.invitation(invitationTag),
+              return ElevatedButton(
+                onPressed: _onNextPressed,
+                child: const Text("Next"),
               );
             },
-            child: const Text("Next"),
+            onLoading: Obx(
+              () => _isWaitingForData.value
+                  ? const CircularProgressIndicator()
+                  : ElevatedButton(
+                      onPressed: _onNextPressed,
+                      child: const Text("Next"),
+                    ),
+            ),
+            onError: (_) => Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text("Failed to load invitation"),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () => _isWaitingForData.value = false,
+                  child: const Text("Dismiss"),
+                ),
+              ],
+            ),
           ),
         ),
       );
