@@ -45,7 +45,7 @@ class EnvironmentConfig {
   static const Map<String, dynamic> _prodVariables = {
     apiUrlKey: "https://leading-frog-d85e022261.strapiapp.com/api",
     apiKeyKey:
-        "b47cbb982c98d33c3ff18016933169709fbeacedb9706a4c0fd1f99a4843fdf57deab4b769a440b3f3feaf2803db78a8169d9e636aaef51c83fa88d687fe1e68acda5f29b36ac4775f9e7c05dcb2c6a4c303e3b7f4840afa2a7f6820c4bb19ee1c76ea98d6274c509ed43c43a3b033626a624cab897100c1dc8e8bc548ad031c",
+        "c58dc08bd42dfb2cf64a1561fdd3b445be0d1f5d14b79658c970d419fc7f702c5a4d6877426b3e0898ebbea77b20a5af913727433ea5c33dd27a8a98ad94a7f421b9d9d2fa2786481f04a662f052618ec5fc7e942d210b03a4286946ece87d5aec3cce8b319375ba4e17986d439bbb4f65206c92b476e118e21ce4745a28dcf3"
   };
 }
 

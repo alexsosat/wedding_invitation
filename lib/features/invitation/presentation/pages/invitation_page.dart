@@ -20,7 +20,7 @@ class InvitationPage extends GetView<InvitationController> {
 
   @override
   Widget build(BuildContext context) => PageTemplate(
-        nextRoute: RoutesNames.schedule(Get.parameters["tag"] ?? ""),
+        nextRoute: RoutesNames.rsvp(Get.parameters["tag"] ?? ""),
         child: controller.obx(
           (invitation) => Center(
             child: Column(

@@ -1,4 +1,5 @@
 import "package:get/get.dart";
+import "../../../../core/adapters/dio_adapter.dart";
 import "../../../shared/business/entities/invitation_entity.dart";
 import "../../business/use_cases/get_invitation.dart";
 import "../../data/data_sources/remote/invitation_remote_data_source.dart";
@@ -26,7 +27,9 @@ class InvitationController extends GetxController
 
     final result = await GetInvitation(
       invitationRepository: InvitationRepositoryImpl(
-        remoteDataSource: InvitationRemoteDataSourceImpl(),
+        remoteDataSource: InvitationRemoteDataSourceImpl(
+          dio: Get.find<DioAdapter>(),
+        ),
       ),
     ).call(
       params: InvitationParams(slug: Get.parameters["tag"] ?? ""),

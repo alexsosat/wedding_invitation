@@ -13,4 +13,6 @@ class RoutesNames {
 
   static String schedule(String? tag) =>
       tag == null ? "/schedule/:tag" : "/schedule/$tag";
+
+  static String rsvp(String? tag) => tag == null ? "/rsvp/:tag" : "/rsvp/$tag";
 }

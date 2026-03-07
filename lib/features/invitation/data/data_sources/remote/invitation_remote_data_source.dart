@@ -1,11 +1,12 @@
 // ignore_for_file: one_member_abstracts
 
 import "package:flutter_common_classes/flutter_common_classes.dart"
-    show HttpCallException;
+    show ClientErrorException, HttpCallException;
 import "package:flutter_common_classes/services/logger/logger_service.dart";
 import "package:flutter_flavor/flutter_flavor.dart";
 import "package:get/get.dart";
 
+import "../../../../../core/adapters/dio_adapter.dart";
 import "../../../../../core/config/environment_config.dart";
 import "../../../../shared/data/models/invitation_model.dart";
 import "../../models/params/invitation_params.dart";
@@ -17,54 +18,36 @@ abstract class InvitationRemoteDataSource {
 }
 
 /// Remote data source for the Invitation collection
-class InvitationRemoteDataSourceImpl extends GetConnect
-    implements InvitationRemoteDataSource {
+class InvitationRemoteDataSourceImpl implements InvitationRemoteDataSource {
   /// Remote data source for the Invitation collection
-  InvitationRemoteDataSourceImpl();
+  InvitationRemoteDataSourceImpl({
+    required this.dio,
+  });
+
+  /// Dio instance
+  final DioAdapter dio;
 
   final _logger = getLogger("InvitationRemoteDataSource");
-
-  @override
-  void onInit() {
-    super.onInit();
-
-    httpClient.timeout = const Duration(seconds: 10);
-  }
 
   @override
   Future<InvitationModel> getInvitation(InvitationParams params) async {
     _logger.i("Getting invitation with params: ${params.slug}");
 
-    final environment = FlavorConfig.instance.variables;
-
-    final response = await get(
-      "${environment[EnvironmentConfig.apiUrlKey]}/invitations",
-      headers: {
-        "Authorization": "Bearer ${environment[EnvironmentConfig.apiKeyKey]}",
-      },
-      query: {
+    final response = await dio.get(
+      "/invitations",
+      queryParameters: {
         "populate": "*",
         r"filters[slug][$eq]": params.slug,
       },
     );
 
-    _logger.i("Request headers: ${response.request?.headers}");
+    _logger.i("Response: ${response.data}");
 
-    _logger.i("Response: ${response.body}");
-
-    if (response.hasError) {
-      _logger.e("Error getting invitation: ${response.bodyString}");
-      throw HttpCallException(
-        title: "Error al obtener la invitación",
-        message: response.bodyString ?? "",
-      );
-    }
-
-    final data = response.body?["data"];
+    final data = response.data?["data"];
 
     if (data == null) {
       _logger.e("No data found for invitation");
-      throw HttpCallException(
+      throw ClientErrorException.badRequest(
         title: "Error al obtener la invitación",
         message: "No se encontró la invitación",
       );
