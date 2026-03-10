@@ -18,6 +18,6 @@ class GuestModel extends GuestEntity {
       GuestModel(
         id: map["id"],
         documentId: map["documentId"],
-        name: map["name"],
+        name: map["nombre"],
       );
 }

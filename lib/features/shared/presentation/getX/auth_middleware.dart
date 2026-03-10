@@ -15,12 +15,14 @@ class AuthMiddleware extends GetMiddleware {
     try {
       final invitation = Get.find<InvitationController>();
 
+      final tag = Get.parameters["tag"];
+
       if (invitation.state == null) {
         _logger.e("Invitation is not populated");
-        return const RouteSettings(name: RoutesNames.unknown);
+        return RouteSettings(
+          name: RoutesNames.initial(tag),
+        );
       }
-
-      final tag = Get.parameters["tag"];
 
       if (tag == null || tag.isEmpty || tag == ":invitation") {
         _logger.e("Tag is not valid");

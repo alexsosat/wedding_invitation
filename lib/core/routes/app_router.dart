@@ -43,12 +43,18 @@ class AppRouter {
           name: RoutesNames.schedule(null),
           binding: ScheduleBinding(),
           transition: Transition.fade,
+          middlewares: [
+            AuthMiddleware(),
+          ],
           page: () => const SchedulePage(),
         ),
         GetPage(
           name: RoutesNames.rsvp(null),
           binding: RsvpBinding(),
           transition: Transition.fade,
+          middlewares: [
+            AuthMiddleware(),
+          ],
           page: () => const RsvpPage(),
         ),
       ];
