@@ -1,3 +1,5 @@
+// ignore_for_file: one_member_abstracts
+
 import "package:flutter_common_classes/services/logger/logger_service.dart";
 
 import "../../../../../core/adapters/dio_adapter.dart";

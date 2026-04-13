@@ -2,7 +2,6 @@ import "package:flutter/material.dart";
 import "package:flutter_common_classes/services/connection/network_info.dart";
 import "package:flutter_flavor/flutter_flavor.dart";
 import "package:get/get.dart";
-import "package:get/get_core/get_core.dart";
 
 import "../adapters/dio_adapter.dart";
 import "environment_config.dart";

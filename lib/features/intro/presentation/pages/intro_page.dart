@@ -39,7 +39,9 @@ class _IntroPageState extends State<IntroPage> {
 
   void _onNextPressed() {
     final tag = _invitationTag;
-    if (tag == null) return;
+    if (tag == null) {
+      return;
+    }
 
     if (_controller.status.isSuccess) {
       _navigateToInvitation(tag);
@@ -49,7 +51,9 @@ class _IntroPageState extends State<IntroPage> {
   }
 
   void _navigateToInvitation(String tag) {
-    if (_hasNavigated) return;
+    if (_hasNavigated) {
+      return;
+    }
     _hasNavigated = true;
     Get.toNamed(RoutesNames.invitation(tag));
   }
@@ -86,7 +90,7 @@ class _IntroPageState extends State<IntroPage> {
                 const Text("Failed to load invitation"),
                 const SizedBox(height: 16),
                 ElevatedButton(
-                  onPressed: () => _isWaitingForData.value = false,
+                  onPressed: () => _controller.onInit(),
                   child: const Text("Dismiss"),
                 ),
               ],

@@ -1,13 +1,10 @@
 // ignore_for_file: one_member_abstracts
 
 import "package:flutter_common_classes/flutter_common_classes.dart"
-    show ClientErrorException, HttpCallException;
+    show ClientErrorException;
 import "package:flutter_common_classes/services/logger/logger_service.dart";
-import "package:flutter_flavor/flutter_flavor.dart";
-import "package:get/get.dart";
 
 import "../../../../../core/adapters/dio_adapter.dart";
-import "../../../../../core/config/environment_config.dart";
 import "../../../../shared/data/models/invitation_model.dart";
 import "../../models/params/invitation_params.dart";
 

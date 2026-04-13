@@ -1,12 +1,13 @@
 // ignore_for_file: use_colored_box
 
 import "package:flutter/material.dart";
-
 import "package:get/get.dart";
+import "package:google_fonts/google_fonts.dart";
 
-import "../../../../core/routes/names.dart";
+import "../../../book/presentation/getX/book_controller.dart";
 import "../../../shared/presentation/widgets/page_template.dart";
 import "../getX/invitation_controller.dart";
+import "../widgets/invitation_props.dart";
 
 /// Page to display the invitation.
 ///
@@ -20,66 +21,101 @@ class InvitationPage extends GetView<InvitationController> {
 
   @override
   Widget build(BuildContext context) => PageTemplate(
-        nextRoute: RoutesNames.rsvp(Get.parameters["tag"] ?? ""),
         child: controller.obx(
-          (invitation) => Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Hero(
-                  tag: "title",
-                  child: Material(
-                    color: Colors.transparent,
-                    child: Text(
-                      "Boda de Mayte y Alex",
-                      style: context.textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Text(
-                  invitation!.guests.length > 1
-                      ? "Nos gustaría que nos acompañaran en este día tan especial"
-                      : "Nos gustaría que nos acompañaras en este día tan especial",
-                ),
-                Text(
-                  invitation.name,
-                  style: context.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 40),
-                const IntrinsicHeight(
-                  child: Row(
+          (invitation) => Stack(
+            children: [
+              const InvitationProps(),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
                     crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text("Domingo"),
-                      VerticalDivider(
-                        color: Colors.red,
-                        thickness: 3.5,
+                      Text(
+                        "BODA",
+                        style: context.textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.w900,
+                        ),
                       ),
-                      Column(
-                        children: [
-                          Text("Nov"),
-                          Text("22"),
-                          Text("2026"),
-                        ],
+                      const SizedBox(height: 5),
+                      Text(
+                        "Mayte y Alex",
+                        textAlign: TextAlign.center,
+                        style: context.textTheme.headlineLarge?.copyWith(
+                          fontSize: 68,
+                          fontFamily: GoogleFonts.parisienne().fontFamily,
+                        ),
                       ),
-                      VerticalDivider(
-                        color: Colors.red,
-                        thickness: 3.5,
+                      const SizedBox(height: 20),
+                      Text(
+                        invitation!.guests.length > 1
+                            ? "Nos gustaría que nos acompañaran en este día tan especial"
+                            : "Nos gustaría que nos acompañaras en este día tan especial",
+                        textAlign: TextAlign.center,
                       ),
-                      Text("5:30 PM"),
+                      Text(
+                        invitation.name,
+                        textAlign: TextAlign.center,
+                        style: context.textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 40),
+                      IntrinsicHeight(
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "Domingo",
+                              style: context.textTheme.titleLarge?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            VerticalDivider(
+                              color: Color.fromARGB(255, 248, 180, 92),
+                              thickness: 3.5,
+                            ),
+                            Column(
+                              children: [
+                                Text(
+                                  "Nov",
+                                  style:
+                                      context.textTheme.bodyLarge?.copyWith(),
+                                ),
+                                Text(
+                                  "8",
+                                  style: context.textTheme.titleLarge?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  "2026",
+                                  style:
+                                      context.textTheme.bodyLarge?.copyWith(),
+                                ),
+                              ],
+                            ),
+                            VerticalDivider(
+                              color: Color.fromARGB(255, 248, 180, 92),
+                              thickness: 3.5,
+                            ),
+                            Text(
+                              "5:30 PM",
+                              style: context.textTheme.titleLarge?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 40),
                     ],
                   ),
                 ),
-                const SizedBox(height: 40),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       );

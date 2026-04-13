@@ -1,15 +1,10 @@
 import "package:get/get_navigation/src/routes/get_route.dart";
 import "package:get/get_navigation/src/routes/transitions_type.dart";
 
+import "../../features/book/presentation/bindings/book_bindings.dart";
+import "../../features/book/presentation/pages/book_page.dart";
 import "../../features/intro/presentation/getX/intro_binding.dart";
 import "../../features/intro/presentation/pages/intro_page.dart";
-import "../../features/invitation/presentation/getX/invitation_binding.dart";
-import "../../features/invitation/presentation/pages/invitation_page.dart";
-import "../../features/rsvp/presentation/getX/rsvp_binding.dart";
-import "../../features/rsvp/presentation/pages/rsvp_page.dart";
-import "../../features/schedule/presentation/getX/schedule_binding.dart";
-import "../../features/schedule/presentation/pages/schedule_page.dart";
-import "../../features/shared/presentation/getX/auth_middleware.dart";
 import "../../features/unknown/presentation/pages/unknown_page.dart";
 import "names.dart";
 
@@ -32,30 +27,9 @@ class AppRouter {
         ),
         GetPage(
           name: RoutesNames.invitation(null),
-          binding: InvitationBinding(),
+          binding: BookBinding(),
           transition: Transition.fade,
-          middlewares: [
-            AuthMiddleware(),
-          ],
-          page: () => const InvitationPage(),
-        ),
-        GetPage(
-          name: RoutesNames.schedule(null),
-          binding: ScheduleBinding(),
-          transition: Transition.fade,
-          middlewares: [
-            AuthMiddleware(),
-          ],
-          page: () => const SchedulePage(),
-        ),
-        GetPage(
-          name: RoutesNames.rsvp(null),
-          binding: RsvpBinding(),
-          transition: Transition.fade,
-          middlewares: [
-            AuthMiddleware(),
-          ],
-          page: () => const RsvpPage(),
+          page: () => const BookPage(),
         ),
       ];
 }

@@ -2,7 +2,6 @@ import "package:get/get.dart";
 
 import "../../../../core/adapters/dio_adapter.dart";
 import "../../../shared/business/entities/invitation_entity.dart";
-import "../../business/entities/guest_rsvp_form_entity.dart";
 import "../../business/use_cases/get_invitation.dart";
 import "../../data/data_sources/remote/invitation_remote_data_source.dart";
 import "../../data/models/params/invitation_params.dart";

@@ -14,6 +14,7 @@ class RsvpPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Scaffold(
         body: GetX<RsvpController>(
+          init: RsvpController(),
           builder: (controller) {
             final forms = controller.guestRsvpForms;
 
@@ -49,7 +50,7 @@ class RsvpPage extends StatelessWidget {
       );
 }
 
-class _GuestRsvpForm extends StatelessWidget {
+class _GuestRsvpForm extends StatefulWidget {
   const _GuestRsvpForm({
     required this.form,
   });
@@ -57,42 +58,74 @@ class _GuestRsvpForm extends StatelessWidget {
   final GuestRsvpFormEntity form;
 
   @override
-  Widget build(BuildContext context) => Card(
-        key: ValueKey(
-          "${form.guest.documentId}-${form.attendance}-${form.food}",
-        ),
-        margin: const EdgeInsets.only(bottom: 16),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: FormBuilder(
-            key: form.formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  form.guest.name,
-                  style: context.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+  State<_GuestRsvpForm> createState() => _GuestRsvpFormState();
+}
+
+class _GuestRsvpFormState extends State<_GuestRsvpForm> {
+  late AttendanceOption? _selectedAttendance;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedAttendance = widget.form.attendance;
+  }
+
+  @override
+  void didUpdateWidget(_GuestRsvpForm oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.form.attendance != widget.form.attendance) {
+      _selectedAttendance = widget.form.attendance;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final form = widget.form;
+    final showFoodOption = _selectedAttendance == AttendanceOption.willGo;
+
+    return Card(
+      key: ValueKey(
+        "${form.guest.documentId}-${form.attendance}-${form.food}",
+      ),
+      margin: const EdgeInsets.only(bottom: 16),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: FormBuilder(
+          key: form.formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                form.guest.name,
+                style: context.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
                 ),
-                const SizedBox(height: 16),
-                FormBuilderDropdown<AttendanceOption>(
-                  name: "attendance",
-                  initialValue: form.attendance,
-                  decoration: const InputDecoration(
-                    labelText: "Asistencia",
-                    border: OutlineInputBorder(),
-                  ),
-                  items: AttendanceOption.values
-                      .map(
-                        (o) => DropdownMenuItem(
-                          value: o,
-                          child: Text(o.label),
-                        ),
-                      )
-                      .toList(),
-                  validator: FormBuilderValidators.required(),
+              ),
+              const SizedBox(height: 16),
+              FormBuilderDropdown<AttendanceOption>(
+                name: "attendance",
+                initialValue: form.attendance,
+                decoration: const InputDecoration(
+                  labelText: "Asistencia",
+                  border: OutlineInputBorder(),
                 ),
+                items: AttendanceOption.values
+                    .map(
+                      (o) => DropdownMenuItem(
+                        value: o,
+                        child: Text(o.label),
+                      ),
+                    )
+                    .toList(),
+                validator: FormBuilderValidators.required(),
+                onChanged: (value) {
+                  setState(() => _selectedAttendance = value);
+                  if (value == AttendanceOption.wontGo) {
+                    form.formKey.currentState?.patchValue({"food": null});
+                  }
+                },
+              ),
+              if (showFoodOption) ...[
                 const SizedBox(height: 12),
                 FormBuilderDropdown<FoodOption>(
                   name: "food",
@@ -112,8 +145,10 @@ class _GuestRsvpForm extends StatelessWidget {
                   validator: FormBuilderValidators.required(),
                 ),
               ],
-            ),
+            ],
           ),
         ),
-      );
+      ),
+    );
+  }
 }

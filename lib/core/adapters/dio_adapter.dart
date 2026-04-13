@@ -1,9 +1,7 @@
 import "dart:async";
-import "dart:io";
 
 import "package:dio/browser.dart";
 import "package:dio/dio.dart";
-import "package:dio/io.dart";
 import "package:flutter/foundation.dart";
 import "package:flutter_common_classes/flutter_common_classes.dart"
     hide EnvironmentConfig;
@@ -79,6 +77,7 @@ class DioAdapter extends DioForBrowser {
           canShowLog: kDebugMode,
         ),
       )
+      ..add(RetryInterceptor(dio: this))
       ..add(
         InterceptorsWrapper(
           onRequest: onRequestMethod,
@@ -182,4 +181,66 @@ class DioAdapter extends DioForBrowser {
 
     return;
   }
+}
+
+/// Interceptor to retry the request if it fails
+class RetryInterceptor extends Interceptor {
+  /// The constructor for the RetryInterceptor
+  ///
+  /// It receives the [dio] instance and the [maxRetries] and [retryDelay]
+  /// parameters.
+  RetryInterceptor({
+    required this.dio,
+    this.maxRetries = 3,
+    this.retryDelay = const Duration(seconds: 1),
+  });
+
+  /// The Dio instance
+  final Dio dio;
+
+  /// The maximum number of retries
+  final int maxRetries;
+
+  /// The delay between each retry
+  final Duration retryDelay;
+
+  @override
+  Future onError(DioException err, ErrorInterceptorHandler handler) async {
+    int retryCount = 0;
+
+    if (_shouldRetry(err)) {
+      while (retryCount < maxRetries) {
+        try {
+          retryCount++;
+
+          await Future.delayed(retryDelay * retryCount);
+
+          final response = await dio.request(
+            err.requestOptions.path,
+            options: Options(
+              method: err.requestOptions.method,
+              headers: err.requestOptions.headers,
+            ),
+            data: err.requestOptions.data,
+            queryParameters: err.requestOptions.queryParameters,
+          );
+
+          return handler.resolve(response);
+        } on DioException catch (e) {
+          if (retryCount >= maxRetries) {
+            return handler.next(e);
+          }
+        }
+      }
+    }
+
+    return handler.next(err);
+  }
+
+  bool _shouldRetry(DioException error) =>
+      error.type == DioExceptionType.connectionTimeout ||
+      error.type == DioExceptionType.sendTimeout ||
+      error.type == DioExceptionType.receiveTimeout ||
+      error.type == DioExceptionType.connectionError ||
+      error.type == DioExceptionType.unknown;
 }

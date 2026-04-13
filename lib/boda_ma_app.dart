@@ -6,7 +6,7 @@ import "package:form_builder_validators/localization/l10n.dart";
 import "package:get/get.dart";
 import "package:toastification/toastification.dart";
 
-import "core/constants/theme/material_theme.dart";
+import "core/constants/theme/flex_color_scheme.dart";
 import "core/routes/app_router.dart";
 import "core/routes/names.dart";
 import "features/unknown/presentation/pages/unknown_page.dart";
@@ -39,13 +39,9 @@ class BodaMaApp extends StatelessWidget {
             fallbackLocale: const Locale("es"),
 
             //Theming
-            themeMode: ThemeMode.system,
-            theme: MaterialTheme(
-              TextTheme(bodyLarge: TextStyle(fontFamily: "Poppins")),
-            ).light(),
-            darkTheme: MaterialTheme(
-              TextTheme(bodyLarge: TextStyle(fontFamily: "Poppins")),
-            ).dark(),
+            themeMode: ThemeMode.light,
+            theme: AppTheme.light(context),
+            darkTheme: AppTheme.dark(context),
 
             // Routing
             initialRoute: RoutesNames.initial("familia-ramirez"),
