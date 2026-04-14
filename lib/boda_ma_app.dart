@@ -17,40 +17,38 @@ class BodaMaApp extends StatelessWidget {
   const BodaMaApp({super.key});
 
   @override
-  Widget build(BuildContext context) => FlavorBanner(
-        child: ToastificationWrapper(
-          child: GetMaterialApp(
-            title: "BodaMa",
-            debugShowCheckedModeBanner: false,
+  Widget build(BuildContext context) => ToastificationWrapper(
+        child: GetMaterialApp(
+          title: "BodaMa",
+          debugShowCheckedModeBanner: false,
 
-            localizationsDelegates: const [
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-              FlutterCommonLocalizations.delegate,
-              FormBuilderLocalizations.delegate,
-            ],
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+            FlutterCommonLocalizations.delegate,
+            FormBuilderLocalizations.delegate,
+          ],
 
-            supportedLocales: const [
-              Locale("en"),
-              Locale("es"),
-            ],
-            locale: const Locale("es"),
-            fallbackLocale: const Locale("es"),
+          supportedLocales: const [
+            Locale("en"),
+            Locale("es"),
+          ],
+          locale: const Locale("es"),
+          fallbackLocale: const Locale("es"),
 
-            //Theming
-            themeMode: ThemeMode.light,
-            theme: AppTheme.light(context),
-            darkTheme: AppTheme.dark(context),
+          //Theming
+          themeMode: ThemeMode.light,
+          theme: AppTheme.light(context),
+          darkTheme: AppTheme.dark(context),
 
-            // Routing
-            initialRoute: RoutesNames.initial("familia-ramirez"),
-            unknownRoute: GetPage(
-              name: RoutesNames.unknown,
-              page: () => const UnknownPage(),
-            ),
-            getPages: AppRouter.routes,
+          // Routing
+          initialRoute: RoutesNames.initial("familia-ramirez"),
+          unknownRoute: GetPage(
+            name: RoutesNames.unknown,
+            page: () => const UnknownPage(),
           ),
+          getPages: AppRouter.routes,
         ),
       );
 }

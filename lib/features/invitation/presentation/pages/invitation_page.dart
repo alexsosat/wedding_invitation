@@ -4,7 +4,6 @@ import "package:flutter/material.dart";
 import "package:get/get.dart";
 import "package:google_fonts/google_fonts.dart";
 
-import "../../../book/presentation/getX/book_controller.dart";
 import "../../../shared/presentation/widgets/page_template.dart";
 import "../getX/invitation_controller.dart";
 import "../widgets/invitation_props.dart";
@@ -73,9 +72,9 @@ class InvitationPage extends GetView<InvitationController> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            VerticalDivider(
-                              color: Color.fromARGB(255, 248, 180, 92),
-                              thickness: 3.5,
+                            const VerticalDivider(
+                              color: Colors.black,
+                              thickness: 0.5,
                             ),
                             Column(
                               children: [
@@ -97,9 +96,9 @@ class InvitationPage extends GetView<InvitationController> {
                                 ),
                               ],
                             ),
-                            VerticalDivider(
-                              color: Color.fromARGB(255, 248, 180, 92),
-                              thickness: 3.5,
+                            const VerticalDivider(
+                              color: Colors.black,
+                              thickness: 0.5,
                             ),
                             Text(
                               "5:30 PM",

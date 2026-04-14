@@ -1,8 +1,11 @@
 import "package:flutter/material.dart";
+import "package:flutter_animate/flutter_animate.dart";
 import "package:get/get.dart";
+import "package:video_player/video_player.dart";
 
 import "../../../../core/routes/names.dart";
 import "../../../invitation/presentation/getX/invitation_controller.dart";
+import "../getX/intro_controller.dart";
 
 /// Page to display the intro.
 ///
@@ -20,6 +23,7 @@ class IntroPage extends StatefulWidget {
 
 class _IntroPageState extends State<IntroPage> {
   late final InvitationController _controller;
+  late final IntroController _introController;
   final RxBool _isWaitingForData = false.obs;
   bool _hasNavigated = false;
 
@@ -27,6 +31,7 @@ class _IntroPageState extends State<IntroPage> {
   void initState() {
     super.initState();
     _controller = Get.find<InvitationController>();
+    _introController = Get.find<IntroController>();
   }
 
   String? get _invitationTag {
@@ -60,42 +65,90 @@ class _IntroPageState extends State<IntroPage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        body: Center(
-          child: _controller.obx(
-            (_) {
-              if (_isWaitingForData.value && !_hasNavigated) {
-                final tag = _invitationTag;
-                if (tag != null) {
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    _navigateToInvitation(tag);
-                  });
-                }
-              }
-              return ElevatedButton(
-                onPressed: _onNextPressed,
-                child: const Text("Next"),
-              );
-            },
-            onLoading: Obx(
-              () => _isWaitingForData.value
-                  ? const CircularProgressIndicator()
-                  : ElevatedButton(
-                      onPressed: _onNextPressed,
-                      child: const Text("Next"),
-                    ),
-            ),
-            onError: (_) => Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text("Failed to load invitation"),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () => _controller.onInit(),
-                  child: const Text("Dismiss"),
-                ),
-              ],
-            ),
+        backgroundColor: Colors.black,
+        body: _introController.obx(
+          (_) => _introController.activeVideoController!.value.isInitialized
+              ? Center(
+                  child: _introController.phase != IntroPhase.idle
+                      ? VideoPlayer(_introController.activeVideoController!)
+                      : Stack(
+                          children: [
+                            VideoPlayer(
+                              _introController.activeVideoController!,
+                            ),
+                            Align(
+                              alignment: const Alignment(0, 0.75),
+                              child: Text(
+                                "Presiona para abrir",
+                                style:
+                                    context.textTheme.displayMedium?.copyWith(
+                                  fontWeight: FontWeight.w300,
+                                  color: Colors.white,
+                                ),
+                              )
+                                  .animate(
+                                    onPlay: (controller) =>
+                                        controller.repeat(reverse: true),
+                                  )
+                                  .fadeOut(
+                                    duration: const Duration(seconds: 1),
+                                    curve: Curves.easeInOut,
+                                    delay: const Duration(milliseconds: 300),
+                                  ),
+                            ),
+                            InkWell(
+                              onTap: () {
+                                _introController.onScreenPressed();
+                              },
+                              child: SizedBox(
+                                width: context.width,
+                                height: context.height,
+                              ),
+                            ),
+                          ],
+                        ),
+                )
+              : const Text("Error loading video..."),
+          onLoading: const Center(
+            child: CircularProgressIndicator(),
           ),
         ),
+        // Center(
+        //   child: _controller.obx(
+        //     (_) {
+        //       if (_isWaitingForData.value && !_hasNavigated) {
+        //         final tag = _invitationTag;
+        //         if (tag != null) {
+        //           WidgetsBinding.instance.addPostFrameCallback((_) {
+        //             _navigateToInvitation(tag);
+        //           });
+        //         }
+        //       }
+        //       return ElevatedButton(
+        //         onPressed: _onNextPressed,
+        //         child: const Text("Next"),
+        //       );
+        //     },
+        //     onLoading: Obx(
+        //       () => _isWaitingForData.value
+        //           ? const CircularProgressIndicator()
+        //           : ElevatedButton(
+        //               onPressed: _onNextPressed,
+        //               child: const Text("Next"),
+        //             ),
+        //     ),
+        //     onError: (_) => Column(
+        //       mainAxisSize: MainAxisSize.min,
+        //       children: [
+        //         const Text("Failed to load invitation"),
+        //         const SizedBox(height: 16),
+        //         ElevatedButton(
+        //           onPressed: () => _controller.onInit(),
+        //           child: const Text("Dismiss"),
+        //         ),
+        //       ],
+        //     ),
+        //   ),
+        // ),
       );
 }
