@@ -1,7 +1,10 @@
+import "dart:async";
+
 import "package:get/get.dart";
 import "package:video_player/video_player.dart";
 
 import "../../../../core/routes/names.dart";
+import "../../../invitation/presentation/getX/invitation_controller.dart";
 
 /// Phases of the intro video flow.
 enum IntroPhase {
@@ -28,16 +31,22 @@ class IntroController extends GetxController with StateMixin<IntroPhase> {
 
   final Rx<IntroPhase> _phase = IntroPhase.intro.obs;
 
+  final textToShow = "Presiona para abrir".obs;
+
   bool _pendingEndEvent = false;
 
   /// Current phase of the intro sequence.
   IntroPhase get phase => _phase.value;
+
+  /// Controller for the invitation.
+  late InvitationController invitationController;
 
   @override
   void onInit() {
     super.onInit();
     change(null, status: RxStatus.loading());
     _startControllers();
+    invitationController = Get.find<InvitationController>();
   }
 
   @override
@@ -184,20 +193,36 @@ class IntroController extends GetxController with StateMixin<IntroPhase> {
 
   /// From [IntroPhase.idle], starts the ending video.
   Future<void> onScreenPressed() async {
-    print("Phase: $_phase");
-    if (_phase != IntroPhase.idle) {
-      print("Not idle");
+    if (phase != IntroPhase.idle) {
       return;
     }
 
-    print("Idle");
+    if (invitationController.status.isSuccess) {
+      _phase.value = IntroPhase.ending;
+      _pendingEndEvent = false;
 
-    _phase.value = IntroPhase.ending;
-    _pendingEndEvent = false;
+      await endVideoController?.play();
+      change(IntroPhase.ending, status: RxStatus.success());
+    } else {
+      textToShow.value = "Cargando...";
+      await _listenToInvitation();
+    }
+  }
 
-    await endVideoController?.play();
+  Future<void> _listenToInvitation() async {
+    Timer.periodic(const Duration(seconds: 1), (timer) async {
+      if (!invitationController.status.isSuccess) {
+        return;
+      }
 
-    change(IntroPhase.ending, status: RxStatus.success());
+      _phase.value = IntroPhase.ending;
+      _pendingEndEvent = false;
+
+      await endVideoController?.play();
+      timer.cancel();
+
+      change(IntroPhase.ending, status: RxStatus.success());
+    });
   }
 
   String? get _invitationTag {
