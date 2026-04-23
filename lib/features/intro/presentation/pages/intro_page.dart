@@ -67,48 +67,15 @@ class _IntroPageState extends State<IntroPage> {
   Widget build(BuildContext context) => Scaffold(
         backgroundColor: Colors.black,
         body: _introController.obx(
-          (_) => _introController.activeVideoController!.value.isInitialized
-              ? Center(
-                  child: _introController.phase != IntroPhase.idle
-                      ? VideoPlayer(_introController.activeVideoController!)
-                      : Stack(
-                          children: [
-                            VideoPlayer(
-                              _introController.activeVideoController!,
-                            ),
-                            Align(
-                              alignment: const Alignment(0, 0.75),
-                              child: Text(
-                                "Presiona para abrir",
-                                style:
-                                    context.textTheme.displayMedium?.copyWith(
-                                  fontWeight: FontWeight.w300,
-                                  color: Colors.white,
-                                ),
-                              )
-                                  .animate(
-                                    onPlay: (controller) =>
-                                        controller.repeat(reverse: true),
-                                  )
-                                  .fadeOut(
-                                    duration: const Duration(seconds: 1),
-                                    curve: Curves.easeInOut,
-                                    delay: const Duration(milliseconds: 300),
-                                  ),
-                            ),
-                            InkWell(
-                              onTap: () {
-                                _introController.onScreenPressed();
-                              },
-                              child: SizedBox(
-                                width: context.width,
-                                height: context.height,
-                              ),
-                            ),
-                          ],
-                        ),
-                )
-              : const Text("Error loading video..."),
+          (_) => const Center(
+            child: Stack(
+              children: [
+                _EndVideo(),
+                _IdleVideo(),
+                _IntroVideo(),
+              ],
+            ),
+          ),
           onLoading: const Center(
             child: CircularProgressIndicator(),
           ),
@@ -150,5 +117,78 @@ class _IntroPageState extends State<IntroPage> {
         //     ),
         //   ),
         // ),
+      );
+}
+
+class _IntroVideo extends StatelessWidget {
+  const _IntroVideo();
+
+  @override
+  Widget build(BuildContext context) => GetX<IntroController>(
+        builder: (controller) => controller.phase == IntroPhase.intro
+            ? VideoPlayer(
+                controller.introVideoController!,
+              )
+            : const SizedBox.shrink(),
+      );
+}
+
+class _IdleVideo extends StatelessWidget {
+  const _IdleVideo();
+
+  @override
+  Widget build(BuildContext context) => GetX<IntroController>(
+        builder: (controller) => controller.phase == IntroPhase.idle ||
+                controller.phase == IntroPhase.intro
+            ? Stack(
+                children: [
+                  VideoPlayer(
+                    controller.idleVideoController!,
+                  ),
+                  Align(
+                    alignment: const Alignment(0, 0.75),
+                    child: Text(
+                      "Presiona para abrir",
+                      style: context.textTheme.displayMedium?.copyWith(
+                        fontWeight: FontWeight.w300,
+                        color: Colors.white,
+                      ),
+                    )
+                        .animate(
+                          onPlay: (controller) =>
+                              controller.repeat(reverse: true),
+                        )
+                        .fadeOut(
+                          duration: const Duration(seconds: 1),
+                          curve: Curves.easeInOut,
+                          delay: const Duration(milliseconds: 300),
+                        ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      controller.onScreenPressed();
+                    },
+                    child: SizedBox(
+                      width: context.width,
+                      height: context.height,
+                    ),
+                  ),
+                ],
+              )
+            : const SizedBox.shrink(),
+      );
+}
+
+class _EndVideo extends GetWidget<IntroController> {
+  const _EndVideo();
+
+  @override
+  Widget build(BuildContext context) => GetX<IntroController>(
+        builder: (controller) => controller.phase == IntroPhase.ending ||
+                controller.phase == IntroPhase.idle
+            ? VideoPlayer(
+                controller.endVideoController!,
+              )
+            : const SizedBox.shrink(),
       );
 }

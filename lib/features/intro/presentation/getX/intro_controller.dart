@@ -1,4 +1,3 @@
-import "package:flutter/material.dart";
 import "package:get/get.dart";
 import "package:video_player/video_player.dart";
 
@@ -17,7 +16,7 @@ enum IntroPhase {
 }
 
 /// Controller for the Intro page.
-class IntroController extends GetxController with StateMixin {
+class IntroController extends GetxController with StateMixin<IntroPhase> {
   /// Plays [book_intro.mp4] once.
   VideoPlayerController? introVideoController;
 
@@ -27,29 +26,18 @@ class IntroController extends GetxController with StateMixin {
   /// Plays [book_end.mp4] once.
   VideoPlayerController? endVideoController;
 
-  IntroPhase _phase = IntroPhase.intro;
+  final Rx<IntroPhase> _phase = IntroPhase.intro.obs;
+
   bool _pendingEndEvent = false;
 
   /// Current phase of the intro sequence.
-  IntroPhase get phase => _phase;
-
-  /// Controller to display for the current phase (`null` while that phase loads).
-  VideoPlayerController? get activeVideoController {
-    switch (_phase) {
-      case IntroPhase.intro:
-        return introVideoController;
-      case IntroPhase.idle:
-        return idleVideoController;
-      case IntroPhase.ending:
-        return endVideoController;
-    }
-  }
+  IntroPhase get phase => _phase.value;
 
   @override
   void onInit() {
     super.onInit();
     change(null, status: RxStatus.loading());
-    _startIntro();
+    _startControllers();
   }
 
   @override
@@ -58,6 +46,12 @@ class IntroController extends GetxController with StateMixin {
     _disposeIdle();
     _disposeEnd();
     super.onClose();
+  }
+
+  Future<void> _startControllers() async {
+    await _startEnd();
+    await _startIdle();
+    await _startIntro();
   }
 
   Future<void> _disposeIntro() async {
@@ -81,7 +75,7 @@ class IntroController extends GetxController with StateMixin {
   Future<void> _startIntro() async {
     await _disposeIntro();
     _pendingEndEvent = false;
-    _phase = IntroPhase.intro;
+    _phase.value = IntroPhase.intro;
 
     final controller = VideoPlayerController.asset(_assetIntro);
     introVideoController = controller;
@@ -89,10 +83,41 @@ class IntroController extends GetxController with StateMixin {
       await controller.initialize();
       await controller.setLooping(false);
       controller.addListener(_onIntroVideoTick);
+      await controller.setVolume(0);
       await controller.play();
-      change(null, status: RxStatus.success());
+      change(IntroPhase.intro, status: RxStatus.success());
     } catch (e) {
       await _disposeIntro();
+      change(null, status: RxStatus.error(e.toString()));
+    }
+  }
+
+  Future<void> _startIdle() async {
+    await _disposeIdle();
+
+    idleVideoController = VideoPlayerController.asset(_assetIdle);
+    try {
+      await idleVideoController?.initialize();
+      await idleVideoController?.setLooping(true);
+      idleVideoController?.addListener(_onIdleVideoTick);
+      await idleVideoController?.setVolume(0);
+    } catch (e) {
+      await _disposeIdle();
+      change(null, status: RxStatus.error(e.toString()));
+    }
+  }
+
+  Future<void> _startEnd() async {
+    await _disposeEnd();
+
+    endVideoController = VideoPlayerController.asset(_assetEnd);
+    try {
+      await endVideoController?.initialize();
+      await endVideoController?.setLooping(false);
+      endVideoController?.addListener(_onEndVideoTick);
+      await endVideoController?.setVolume(0);
+    } catch (e) {
+      await _disposeEnd();
       change(null, status: RxStatus.error(e.toString()));
     }
   }
@@ -141,23 +166,11 @@ class IntroController extends GetxController with StateMixin {
   }
 
   Future<void> _goToIdle() async {
-    await _disposeIntro();
-
-    _phase = IntroPhase.idle;
+    _phase.value = IntroPhase.idle;
     _pendingEndEvent = false;
 
-    final controller = VideoPlayerController.asset(_assetIdle);
-    idleVideoController = controller;
-    try {
-      await controller.initialize();
-      await controller.setLooping(true);
-      controller.addListener(_onIdleVideoTick);
-      await controller.play();
-      change(null, status: RxStatus.success());
-    } catch (e) {
-      await _disposeIdle();
-      change(null, status: RxStatus.error(e.toString()));
-    }
+    await idleVideoController?.play();
+    change(IntroPhase.idle, status: RxStatus.success());
   }
 
   void _goToBook() {
@@ -171,27 +184,20 @@ class IntroController extends GetxController with StateMixin {
 
   /// From [IntroPhase.idle], starts the ending video.
   Future<void> onScreenPressed() async {
-    if (_phase != IntroPhase.idle || idleVideoController == null) {
+    print("Phase: $_phase");
+    if (_phase != IntroPhase.idle) {
+      print("Not idle");
       return;
     }
 
-    await _disposeIdle();
+    print("Idle");
 
-    _phase = IntroPhase.ending;
+    _phase.value = IntroPhase.ending;
     _pendingEndEvent = false;
 
-    final controller = VideoPlayerController.asset(_assetEnd);
-    endVideoController = controller;
-    try {
-      await controller.initialize();
-      await controller.setLooping(false);
-      controller.addListener(_onEndVideoTick);
-      await controller.play();
-      change(IntroPhase.ending, status: RxStatus.success());
-    } catch (e) {
-      await _disposeEnd();
-      change(null, status: RxStatus.error(e.toString()));
-    }
+    await endVideoController?.play();
+
+    change(IntroPhase.ending, status: RxStatus.success());
   }
 
   String? get _invitationTag {
