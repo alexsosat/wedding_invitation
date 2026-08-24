@@ -3,7 +3,7 @@ import "dart:ui" as ui;
 
 import "package:flutter/material.dart";
 
-import "../../../../core/gen/fonts.gen.dart";
+import "../../../../core/gen/adobe_fonts.dart";
 
 /// A widget that renders recipient text curved along a path matching the rose ribbon.
 class RibbonRecipientText extends StatelessWidget {
@@ -32,7 +32,7 @@ class RibbonRecipientText extends StatelessWidget {
   Widget build(BuildContext context) {
     final effectivePrefixStyle = prefixStyle ??
         TextStyle(
-          fontFamily: FontFamily.altesseStd24pts,
+          fontFamily: AdobeFonts.altesse,
           fontSize: 28,
           fontWeight: FontWeight.w700,
           color: const Color(0xFF2E2638),
@@ -47,7 +47,7 @@ class RibbonRecipientText extends StatelessWidget {
 
     final effectiveNameStyle = nameStyle ??
         TextStyle(
-          fontFamily: FontFamily.altesseStd24pts,
+          fontFamily: AdobeFonts.altesse,
           fontSize: 28,
           fontWeight: FontWeight.w600,
           color: const Color(0xFF2E2638),

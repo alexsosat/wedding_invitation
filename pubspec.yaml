@@ -42,6 +42,8 @@ flutter:
     - assets/images/seals/
     - assets/images/textures/
     - assets/images/texts/
+    - assets/images/logos/
+    - assets/images/couple/
 
   fonts:
     - family: GourmetLeFrench

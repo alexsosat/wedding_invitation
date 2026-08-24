@@ -5,7 +5,7 @@ import "package:flutter/material.dart";
 import "package:flutter_common_classes/flutter_common_classes.dart";
 
 import "../../../../core/gen/assets.gen.dart";
-import "../../../../core/gen/fonts.gen.dart";
+import "../../../../core/routes/app_router.gr.dart";
 import "../widgets/envelope_card.dart";
 import "../widgets/envelope_cta_button.dart";
 
@@ -71,20 +71,7 @@ class _EnvelopePageState extends State<EnvelopePage>
     if (widget.onOpen != null) {
       widget.onOpen!();
     } else {
-      // Default interactive feedback when tapped
-      ScaffoldMessenger.of(context).removeCurrentSnackBar();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            "¡Invitación abierta para ${widget.recipientName}!",
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontFamily: FontFamily.untoldHistory),
-          ),
-          duration: const Duration(seconds: 2),
-          behavior: SnackBarBehavior.floating,
-          backgroundColor: const Color(0xFF30405F),
-        ),
-      );
+      context.router.navigate(const InvitationRoute());
     }
   }
 

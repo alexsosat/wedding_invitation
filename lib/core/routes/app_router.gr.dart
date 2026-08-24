@@ -9,21 +9,23 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:auto_route/auto_route.dart' as _i3;
+import 'package:auto_route/auto_route.dart' as _i4;
 import 'package:boda_ma/features/invitation/presentation/pages/envelope_page.dart'
     as _i1;
-import 'package:boda_ma/features/splash/presentation/pages/splash_page.dart'
+import 'package:boda_ma/features/invitation/presentation/pages/invitation_page.dart'
     as _i2;
-import 'package:flutter/material.dart' as _i4;
+import 'package:boda_ma/features/splash/presentation/pages/splash_page.dart'
+    as _i3;
+import 'package:flutter/material.dart' as _i5;
 
 /// generated route for
 /// [_i1.EnvelopePage]
-class EnvelopeRoute extends _i3.PageRouteInfo<EnvelopeRouteArgs> {
+class EnvelopeRoute extends _i4.PageRouteInfo<EnvelopeRouteArgs> {
   EnvelopeRoute({
-    _i4.Key? key,
+    _i5.Key? key,
     String recipientName = "Abigail Lazcano",
-    _i4.VoidCallback? onOpen,
-    List<_i3.PageRouteInfo>? children,
+    _i5.VoidCallback? onOpen,
+    List<_i4.PageRouteInfo>? children,
   }) : super(
           EnvelopeRoute.name,
           args: EnvelopeRouteArgs(
@@ -36,7 +38,7 @@ class EnvelopeRoute extends _i3.PageRouteInfo<EnvelopeRouteArgs> {
 
   static const String name = 'EnvelopeRoute';
 
-  static _i3.PageInfo page = _i3.PageInfo(
+  static _i4.PageInfo page = _i4.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<EnvelopeRouteArgs>(
@@ -58,11 +60,11 @@ class EnvelopeRouteArgs {
     this.onOpen,
   });
 
-  final _i4.Key? key;
+  final _i5.Key? key;
 
   final String recipientName;
 
-  final _i4.VoidCallback? onOpen;
+  final _i5.VoidCallback? onOpen;
 
   @override
   String toString() {
@@ -83,17 +85,33 @@ class EnvelopeRouteArgs {
 }
 
 /// generated route for
-/// [_i2.SplashPage]
-class SplashRoute extends _i3.PageRouteInfo<void> {
-  const SplashRoute({List<_i3.PageRouteInfo>? children})
+/// [_i2.InvitationPage]
+class InvitationRoute extends _i4.PageRouteInfo<void> {
+  const InvitationRoute({List<_i4.PageRouteInfo>? children})
+      : super(InvitationRoute.name, initialChildren: children);
+
+  static const String name = 'InvitationRoute';
+
+  static _i4.PageInfo page = _i4.PageInfo(
+    name,
+    builder: (data) {
+      return const _i2.InvitationPage();
+    },
+  );
+}
+
+/// generated route for
+/// [_i3.SplashPage]
+class SplashRoute extends _i4.PageRouteInfo<void> {
+  const SplashRoute({List<_i4.PageRouteInfo>? children})
       : super(SplashRoute.name, initialChildren: children);
 
   static const String name = 'SplashRoute';
 
-  static _i3.PageInfo page = _i3.PageInfo(
+  static _i4.PageInfo page = _i4.PageInfo(
     name,
     builder: (data) {
-      return const _i2.SplashPage();
+      return const _i3.SplashPage();
     },
   );
 }

@@ -17,11 +17,17 @@ import 'package:vector_graphics/vector_graphics.dart' as _vg;
 class $AssetsImagesGen {
   const $AssetsImagesGen();
 
+  /// Directory path: assets/images/couple
+  $AssetsImagesCoupleGen get couple => const $AssetsImagesCoupleGen();
+
   /// Directory path: assets/images/envelopes
   $AssetsImagesEnvelopesGen get envelopes => const $AssetsImagesEnvelopesGen();
 
   /// Directory path: assets/images/frames
   $AssetsImagesFramesGen get frames => const $AssetsImagesFramesGen();
+
+  /// Directory path: assets/images/logos
+  $AssetsImagesLogosGen get logos => const $AssetsImagesLogosGen();
 
   /// Directory path: assets/images/ribbons
   $AssetsImagesRibbonsGen get ribbons => const $AssetsImagesRibbonsGen();
@@ -34,6 +40,17 @@ class $AssetsImagesGen {
 
   /// Directory path: assets/images/textures
   $AssetsImagesTexturesGen get textures => const $AssetsImagesTexturesGen();
+}
+
+class $AssetsImagesCoupleGen {
+  const $AssetsImagesCoupleGen();
+
+  /// File path: assets/images/couple/hands.JPG
+  AssetGenImage get hands =>
+      const AssetGenImage('assets/images/couple/hands.JPG');
+
+  /// List of all assets
+  List<AssetGenImage> get values => [hands];
 }
 
 class $AssetsImagesEnvelopesGen {
@@ -64,6 +81,16 @@ class $AssetsImagesFramesGen {
 
   /// List of all assets
   List<AssetGenImage> get values => [white];
+}
+
+class $AssetsImagesLogosGen {
+  const $AssetsImagesLogosGen();
+
+  /// File path: assets/images/logos/logo.svg
+  SvgGenImage get logo => const SvgGenImage('assets/images/logos/logo.svg');
+
+  /// List of all assets
+  List<SvgGenImage> get values => [logo];
 }
 
 class $AssetsImagesRibbonsGen {
@@ -103,8 +130,11 @@ class $AssetsImagesTextsGen {
   SvgGenImage get envelopeTitle =>
       const SvgGenImage('assets/images/texts/envelope_title.svg');
 
+  /// File path: assets/images/texts/slug.svg
+  SvgGenImage get slug => const SvgGenImage('assets/images/texts/slug.svg');
+
   /// List of all assets
-  List<SvgGenImage> get values => [envelopeTitle];
+  List<SvgGenImage> get values => [envelopeTitle, slug];
 }
 
 class $AssetsImagesTexturesGen {

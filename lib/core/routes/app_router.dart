@@ -14,5 +14,8 @@ class AppRouter extends RootStackRouter {
         AutoRoute(
           page: EnvelopeRoute.page,
         ),
+        AutoRoute(
+          page: InvitationRoute.page,
+        ),
       ];
 }
