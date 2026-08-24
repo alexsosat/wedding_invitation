@@ -1,5 +1,4 @@
 import "package:flutter/material.dart";
-import "package:google_fonts/google_fonts.dart";
 
 /// Creates a [TextTheme] based on the given [bodyFontString] and [displayFontString].
 TextTheme createTextTheme(
@@ -8,10 +7,9 @@ TextTheme createTextTheme(
   String displayFontString,
 ) {
   final TextTheme baseTextTheme = Theme.of(context).textTheme;
-  final TextTheme bodyTextTheme =
-      GoogleFonts.getTextTheme(bodyFontString, baseTextTheme);
+  final TextTheme bodyTextTheme = baseTextTheme.apply(fontFamily: bodyFontString);
   final TextTheme displayTextTheme =
-      GoogleFonts.getTextTheme(displayFontString, baseTextTheme);
+      baseTextTheme.apply(fontFamily: displayFontString);
   final TextTheme textTheme = displayTextTheme.copyWith(
     bodyLarge: bodyTextTheme.bodyLarge,
     bodyMedium: bodyTextTheme.bodyMedium,

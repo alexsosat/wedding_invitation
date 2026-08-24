@@ -1,15 +1,12 @@
 import "package:flutter/material.dart";
 import "package:flutter_common_classes/localization/l10n.dart";
 import "package:flutter_flavor/flutter_flavor.dart";
-import "package:flutter_localizations/flutter_localizations.dart";
-import "package:form_builder_validators/localization/l10n.dart";
-import "package:get/get.dart";
-import "package:toastification/toastification.dart";
 
-import "core/constants/theme/flex_color_scheme.dart";
+import "core/constants/theme/material_theme.dart";
+import "core/constants/theme/util.dart";
 import "core/routes/app_router.dart";
-import "core/routes/names.dart";
-import "features/unknown/presentation/pages/unknown_page.dart";
+
+final _appRouter = AppRouter();
 
 /// [BodaMaApp] is the entry point of the application.
 class BodaMaApp extends StatelessWidget {
@@ -17,38 +14,25 @@ class BodaMaApp extends StatelessWidget {
   const BodaMaApp({super.key});
 
   @override
-  Widget build(BuildContext context) => ToastificationWrapper(
-        child: GetMaterialApp(
+  Widget build(BuildContext context) => FlavorBanner(
+        child: MaterialApp.router(
           title: "BodaMa",
           debugShowCheckedModeBanner: false,
 
-          localizationsDelegates: const [
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-            FlutterCommonLocalizations.delegate,
-            FormBuilderLocalizations.delegate,
-          ],
-
-          supportedLocales: const [
-            Locale("en"),
-            Locale("es"),
-          ],
-          locale: const Locale("es"),
-          fallbackLocale: const Locale("es"),
-
           //Theming
           themeMode: ThemeMode.light,
-          theme: AppTheme.light(context),
-          darkTheme: AppTheme.dark(context),
+          theme: MaterialTheme(
+            createTextTheme(context, "UntoldHistory", "altesse-std-24pt"),
+          ).light(),
+          darkTheme: MaterialTheme(
+            createTextTheme(context, "UntoldHistory", "altesse-std-24pt"),
+          ).dark(),
 
-          // Routing
-          initialRoute: RoutesNames.initial("familia-ramirez"),
-          unknownRoute: GetPage(
-            name: RoutesNames.unknown,
-            page: () => const UnknownPage(),
-          ),
-          getPages: AppRouter.routes,
+          routerConfig: _appRouter.config(),
+
+          localizationsDelegates: const [
+            FlutterCommonLocalizations.delegate,
+          ],
         ),
       );
 }

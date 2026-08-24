@@ -5,9 +5,6 @@ class RoutesNames {
   /// Contains all the routes of the application.
   RoutesNames._();
 
-  static const unknown = "/unknown";
-
-  static String initial(String? tag) => tag == null ? "/:tag" : "/$tag";
-  static String invitation(String? tag) =>
-      tag == null ? "/invitation/:tag" : "/invitation/$tag";
+  static const initial = "/";
+  static const home = "/home";
 }

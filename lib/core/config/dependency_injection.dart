@@ -1,27 +1,30 @@
 import "package:flutter/material.dart";
-import "package:flutter_common_classes/services/connection/network_info.dart";
-import "package:flutter_flavor/flutter_flavor.dart";
-import "package:get/get.dart";
-
-import "../adapters/dio_adapter.dart";
-import "environment_config.dart";
 
 /// Class to inject the dependencies in the application
 class DependencyInjection {
   /// Inject the services in the application
-  static Future<void> init() async {
+  static Future<void> injectCriticalServices() async {
     WidgetsFlutterBinding.ensureInitialized();
-
-    Get.put(
-      DioAdapter(
-        internetInfo: NetworkInfoImpl(
-          InternetConnection(),
-        ),
-        connectTimeout: const Duration(minutes: 1),
-        receiveTimeout: const Duration(minutes: 1),
-        baseUrl: FlavorConfig.instance.variables[EnvironmentConfig.apiUrlKey],
-      ),
-      permanent: true,
-    );
+    // await Supabase.initialize(
+    //   url: FlavorConfig.instance.variables[EnvironmentConfig.supabaseUrlKey],
+    //   anonKey:
+    //       FlavorConfig.instance.variables[EnvironmentConfig.supabaseAnonKey],
+    //   httpClient: SupabaseQueryLogger(),
+    // );
   }
+
+  /// Initialize the services in the application
+  static Future<void> injectServices() async {
+    // if (Platform.isAndroid) {
+    //   await NotificationListenerService.init();
+    // }
+
+    //await LocalNotificationsService().initLocalNotificationsService();
+  }
+
+  /// Inject the repositories in the application
+  ///
+  /// This injects the repositories when the application is running
+  /// These repositories are loaded during the splash screen
+  static Future<void> injectRepositories() async {}
 }
