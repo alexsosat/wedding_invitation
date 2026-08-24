@@ -49,8 +49,11 @@ class $AssetsImagesCoupleGen {
   AssetGenImage get hands =>
       const AssetGenImage('assets/images/couple/hands.JPG');
 
+  /// File path: assets/images/couple/hug.JPG
+  AssetGenImage get hug => const AssetGenImage('assets/images/couple/hug.JPG');
+
   /// List of all assets
-  List<AssetGenImage> get values => [hands];
+  List<AssetGenImage> get values => [hands, hug];
 }
 
 class $AssetsImagesEnvelopesGen {
