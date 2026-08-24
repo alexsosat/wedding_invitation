@@ -3,7 +3,7 @@ import "dart:math" as math;
 import "package:flutter/material.dart";
 
 import "../../../../core/gen/assets.gen.dart";
-import "../../../../core/gen/fonts.gen.dart";
+import "ribbon_recipient_text.dart";
 
 /// Widget that displays the envelope composition including:
 /// - The white lace background frame
@@ -109,11 +109,11 @@ class EnvelopeCard extends StatelessWidget {
 
               // 4. Rose Ribbon with Guest Name
               Positioned(
-                left: -55,
-                bottom: -10,
+                left: -70,
+                bottom: -40,
                 child: SizedBox(
-                  width: 300,
-                  height: 125,
+                  width: 350,
+                  height: 175,
                   child: Transform.rotate(
                     angle: 8 * math.pi / 180,
                     child: Stack(
@@ -123,56 +123,9 @@ class EnvelopeCard extends StatelessWidget {
                           fit: BoxFit.contain,
                           filterQuality: FilterQuality.high,
                         ),
-                        Positioned(
-                          top: 26,
-                          left: 36,
-                          right: 28,
-                          child: Transform.rotate(
-                            angle: -4.5 * math.pi / 180,
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  "para: ",
-                                  style: TextStyle(
-                                    fontFamily: FontFamily.untoldHistory,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w700,
-                                    color: const Color(0xFF2E2638),
-                                    shadows: [
-                                      Shadow(
-                                        color:
-                                            Colors.white.withValues(alpha: 0.5),
-                                        blurRadius: 1,
-                                        offset: const Offset(0, 1),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Flexible(
-                                  child: Text(
-                                    recipientName,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      fontFamily:
-                                          FontFamily.gourmetLeFrenchScript,
-                                      fontSize: 21,
-                                      fontWeight: FontWeight.w600,
-                                      color: const Color(0xFF2E2638),
-                                      shadows: [
-                                        Shadow(
-                                          color: Colors.white
-                                              .withValues(alpha: 0.5),
-                                          blurRadius: 1,
-                                          offset: const Offset(0, 1),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
+                        Positioned.fill(
+                          child: RibbonRecipientText(
+                            recipientName: recipientName,
                           ),
                         ),
                       ],

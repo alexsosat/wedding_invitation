@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "473845136222",
+    "project_id": "boda-m-a-46b11",
+    "storage_bucket": "boda-m-a-46b11.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:473845136222:android:66b124c917329af56a2dcf",
+        "android_client_info": {
+          "package_name": "com.example.wedding_invitation"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDGoBY4Ks1N2MP5ebOW41mpyIcAdmZ6HXM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

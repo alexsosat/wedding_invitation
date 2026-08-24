@@ -32,6 +32,13 @@
 
   <title>wedding_invitation</title>
   <link rel="manifest" href="manifest.json">
+
+  <script>
+    // Force browser to load the Adobe font before Flutter initializes
+    document.fonts.load('1em altesse-std-24pt').then(function() {
+      console.log('Adobe font loaded successfully');
+    });
+  </script>
 </head>
 <body>
   <script src="flutter_bootstrap.js" async></script>

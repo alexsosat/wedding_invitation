@@ -17,4 +17,7 @@ abstract final class FontFamily {
 
   /// Font family: UntoldHistory
   static const String untoldHistory = 'UntoldHistory';
+
+  /// Font Family: Altesse Std 24pts
+  static const String altesseStd24pts = 'altesse-std-24pt';
 }
