@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import "package:flutter_common_classes/extensions/theme_extension.dart";
+import "package:responsive_builder/responsive_builder.dart";
 
 import "../../../../../core/gen/assets.gen.dart";
 import "../../../../../core/gen/fonts.gen.dart";
@@ -11,7 +12,13 @@ class InvitationHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        height: MediaQuery.of(context).size.height + 50,
+        height: MediaQuery.of(context).size.height +
+            getValueForScreenType<double>(
+              context: context,
+              mobile: 30,
+              tablet: 30,
+              desktop: 60,
+            ),
         decoration: BoxDecoration(
           image: DecorationImage(
             image: Assets.images.couple.hands.provider(),
@@ -24,8 +31,10 @@ class InvitationHeader extends StatelessWidget {
             SizedBox(
               height: MediaQuery.of(context).size.height,
               child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 40,
+                padding: const EdgeInsets.only(
+                  left: 40,
+                  right: 40,
+                  bottom: 40,
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
@@ -39,10 +48,12 @@ class InvitationHeader extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 60),
-                    Assets.images.logos.logo.svg(
-                      colorFilter: ColorFilter.mode(
-                        context.theme.scaffoldBackgroundColor,
-                        BlendMode.srcIn,
+                    Flexible(
+                      child: Assets.images.logos.logo.svg(
+                        colorFilter: ColorFilter.mode(
+                          context.theme.scaffoldBackgroundColor,
+                          BlendMode.srcIn,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 40),

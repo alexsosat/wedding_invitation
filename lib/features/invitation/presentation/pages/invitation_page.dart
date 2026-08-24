@@ -1,6 +1,7 @@
 import "package:auto_route/annotations.dart";
 import "package:flutter/material.dart";
 
+import "../widgets/sections/countdown_section.dart";
 import "../widgets/sections/invitation_header.dart";
 
 /// Page that displays the invitation.
@@ -12,8 +13,10 @@ class InvitationPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Scaffold(
         body: ListView(
-          children: [
+          padding: EdgeInsets.zero,
+          children: const [
             InvitationHeader(),
+            CountdownSection(),
           ],
         ),
       );

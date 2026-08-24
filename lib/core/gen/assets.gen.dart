@@ -89,8 +89,12 @@ class $AssetsImagesLogosGen {
   /// File path: assets/images/logos/logo.svg
   SvgGenImage get logo => const SvgGenImage('assets/images/logos/logo.svg');
 
+  /// File path: assets/images/logos/mayte_alex.svg
+  SvgGenImage get mayteAlex =>
+      const SvgGenImage('assets/images/logos/mayte_alex.svg');
+
   /// List of all assets
-  List<SvgGenImage> get values => [logo];
+  List<SvgGenImage> get values => [logo, mayteAlex];
 }
 
 class $AssetsImagesRibbonsGen {
@@ -126,6 +130,10 @@ class $AssetsImagesSealsGen {
 class $AssetsImagesTextsGen {
   const $AssetsImagesTextsGen();
 
+  /// File path: assets/images/texts/count_down.vec
+  SvgGenImage get countDown =>
+      const SvgGenImage.vec('assets/images/texts/count_down.vec');
+
   /// File path: assets/images/texts/envelope_title.svg
   SvgGenImage get envelopeTitle =>
       const SvgGenImage('assets/images/texts/envelope_title.svg');
@@ -134,7 +142,7 @@ class $AssetsImagesTextsGen {
   SvgGenImage get slug => const SvgGenImage('assets/images/texts/slug.svg');
 
   /// List of all assets
-  List<SvgGenImage> get values => [envelopeTitle, slug];
+  List<SvgGenImage> get values => [countDown, envelopeTitle, slug];
 }
 
 class $AssetsImagesTexturesGen {

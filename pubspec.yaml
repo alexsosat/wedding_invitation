@@ -23,6 +23,7 @@ dependencies:
   fpdart: ^1.1.0
   get_it: ^9.2.1
   http: ^1.6.0
+  responsive_builder: ^0.7.1
 
 dev_dependencies:
   auto_route_generator: ^10.5.0
@@ -44,6 +45,7 @@ flutter:
     - assets/images/texts/
     - assets/images/logos/
     - assets/images/couple/
+    - assets/images/backgrounds/
 
   fonts:
     - family: GourmetLeFrench
