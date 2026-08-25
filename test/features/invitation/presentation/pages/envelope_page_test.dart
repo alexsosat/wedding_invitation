@@ -7,7 +7,7 @@ import "package:flutter_test/flutter_test.dart";
 
 void main() {
   testWidgets("EnvelopePage renders all elements and handles tap", (
-    WidgetTester tester,
+    tester,
   ) async {
     bool wasOpened = false;
 

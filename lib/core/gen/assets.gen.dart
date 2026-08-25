@@ -35,6 +35,9 @@ class $AssetsImagesGen {
   /// Directory path: assets/images/seals
   $AssetsImagesSealsGen get seals => const $AssetsImagesSealsGen();
 
+  /// Directory path: assets/images/symbols
+  $AssetsImagesSymbolsGen get symbols => const $AssetsImagesSymbolsGen();
+
   /// Directory path: assets/images/texts
   $AssetsImagesTextsGen get texts => const $AssetsImagesTextsGen();
 
@@ -136,6 +139,41 @@ class $AssetsImagesSealsGen {
 
   /// List of all assets
   List<AssetGenImage> get values => [waxSeal];
+}
+
+class $AssetsImagesSymbolsGen {
+  const $AssetsImagesSymbolsGen();
+
+  /// File path: assets/images/symbols/bird.svg
+  SvgGenImage get bird => const SvgGenImage('assets/images/symbols/bird.svg');
+
+  /// File path: assets/images/symbols/cake.svg
+  SvgGenImage get cake => const SvgGenImage('assets/images/symbols/cake.svg');
+
+  /// File path: assets/images/symbols/camera.svg
+  SvgGenImage get camera =>
+      const SvgGenImage('assets/images/symbols/camera.svg');
+
+  /// File path: assets/images/symbols/car.svg
+  SvgGenImage get car => const SvgGenImage('assets/images/symbols/car.svg');
+
+  /// File path: assets/images/symbols/couple.svg
+  SvgGenImage get couple =>
+      const SvgGenImage('assets/images/symbols/couple.svg');
+
+  /// File path: assets/images/symbols/cups.svg
+  SvgGenImage get cups => const SvgGenImage('assets/images/symbols/cups.svg');
+
+  /// File path: assets/images/symbols/heart.svg
+  SvgGenImage get heart => const SvgGenImage('assets/images/symbols/heart.svg');
+
+  /// File path: assets/images/symbols/heart_birds.svg
+  SvgGenImage get heartBirds =>
+      const SvgGenImage('assets/images/symbols/heart_birds.svg');
+
+  /// List of all assets
+  List<SvgGenImage> get values =>
+      [bird, cake, camera, car, couple, cups, heart, heartBirds];
 }
 
 class $AssetsImagesTextsGen {

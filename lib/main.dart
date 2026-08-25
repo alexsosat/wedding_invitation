@@ -24,11 +24,13 @@ void main() async {
   );
 }
 
+/// Helper function to dynamically load Adobe web font for CanvasKit rendering
 Future<void> loadAdobeFont() async {
   try {
     // Direct font binary URL extracted from your Typekit CSS @font-face block
     final Uri fontUri = Uri.parse(
-        "https://use.typekit.net/af/5f2949/00000000000000007735ec1a/31/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3");
+      "https://use.typekit.net/af/5f2949/00000000000000007735ec1a/31/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3",
+    );
 
     final response = await http.get(fontUri);
 
@@ -36,8 +38,8 @@ Future<void> loadAdobeFont() async {
       final Uint8List fontBytes = response.bodyBytes;
       final ByteData byteData = ByteData.sublistView(fontBytes);
 
-      final FontLoader fontLoader = FontLoader("altesse-std-24pt");
-      fontLoader.addFont(Future.value(byteData));
+      final FontLoader fontLoader = FontLoader("altesse-std-24pt")
+        ..addFont(Future.value(byteData));
       await fontLoader.load();
       debugPrint("Font successfully injected into CanvasKit");
     } else {

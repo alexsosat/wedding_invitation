@@ -17,5 +17,16 @@ class AppRouter extends RootStackRouter {
         AutoRoute(
           page: InvitationRoute.page,
         ),
+        AutoRoute(
+          page: DetailsRoute.page,
+        ),
+        AutoRoute(
+          page: LoginRoute.page,
+          path: "/admin/login",
+        ),
+        AutoRoute(
+          page: AdminDashboardRoute.page,
+          path: "/admin",
+        ),
       ];
 }

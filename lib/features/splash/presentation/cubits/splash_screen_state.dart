@@ -2,6 +2,12 @@ part of "splash_screen_cubit.dart";
 
 /// State for the splash screen cubit.
 class SplashScreenState extends Equatable {
+  /// Constructor for the state.
+  const SplashScreenState({
+    required this.status,
+    this.failure,
+  });
+
   /// The failure that occurred.
   final Failure? failure;
 
@@ -13,12 +19,6 @@ class SplashScreenState extends Equatable {
         failure,
         status,
       ];
-
-  /// Constructor for the state.
-  const SplashScreenState({
-    required this.status,
-    this.failure,
-  });
 }
 
 /// State for when the splash screen is loading.

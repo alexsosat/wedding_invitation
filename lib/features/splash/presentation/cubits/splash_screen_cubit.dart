@@ -9,14 +9,14 @@ part "splash_screen_state.dart";
 
 /// Cubit in charge of managing the splash screen state.
 class SplashScreenCubit extends Cubit<SplashScreenState> {
-  bool _isAnimationFinished = false;
-  bool _areServicesReady = false;
-  bool _anErrorOccurred = false;
-
   /// Constructor for the cubit.
   SplashScreenCubit() : super(const SplashScreenLoading()) {
     _startApp();
   }
+
+  bool _isAnimationFinished = false;
+  bool _areServicesReady = false;
+  bool _anErrorOccurred = false;
 
   /// Method to be called when the animation has finished.
   ///

@@ -158,11 +158,12 @@ linter:
     use_to_and_as_if_applicable: true
 
 analyzer:
-  #   exclude:
-  #     - '**.freezed.dart'
-  #     - '**.g.dart'
-  #     - '**.gen.dart'
-  #     - '**/generated_plugin_registrant.dart'
+  exclude:
+    - "build/**"
+    - "**.freezed.dart"
+    - "**.g.dart"
+    - "**.gen.dart"
+    - "**/generated_plugin_registrant.dart"
   plugins:
     - dart_code_linter
 

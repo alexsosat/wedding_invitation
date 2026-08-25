@@ -1,0 +1,79 @@
+{
+  "entities": {
+    "Invitation": {
+      "title": "Invitation",
+      "description": "Stores the wedding invitation group and link slug.",
+      "type": "object",
+      "properties": {
+        "groupName": {
+          "type": "string",
+          "description": "The name of the invitation group"
+        },
+        "slug": {
+          "type": "string",
+          "description": "Unique URL-friendly slug to identify the invitation link"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Creation timestamp"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Last update timestamp"
+        }
+      },
+      "required": ["groupName", "slug"]
+    },
+    "Guest": {
+      "title": "Guest",
+      "description": "A guest linked to an invitation group.",
+      "type": "object",
+      "properties": {
+        "firstName": {
+          "type": "string",
+          "description": "First name of the guest"
+        },
+        "lastName": {
+          "type": "string",
+          "description": "Last name of the guest"
+        },
+        "attendance": {
+          "type": "string",
+          "enum": ["Pending", "Attending", "Not Attending"],
+          "description": "Attendance confirmation status"
+        },
+        "dietary": {
+          "type": "string",
+          "enum": ["none", "meat", "vegetarian", "custom"],
+          "description": "Dietary requirements or restrictions"
+        },
+        "dietaryDetails": {
+          "type": "string",
+          "description": "Additional details if custom dietary requirements are specified"
+        },
+        "invitationId": {
+          "type": "string",
+          "description": "ID of the associated invitation"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Last update timestamp"
+        }
+      },
+      "required": ["firstName", "lastName", "attendance", "dietary", "invitationId"]
+    }
+  },
+  "firestore": {
+    "/invitations/{invitationId}": {
+      "schema": "Invitation",
+      "description": "Unique invitations for guests"
+    },
+    "/invitations/{invitationId}/guests/{guestId}": {
+      "schema": "Guest",
+      "description": "Guests belonging to a specific invitation"
+    }
+  }
+}

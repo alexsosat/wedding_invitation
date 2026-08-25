@@ -1,0 +1,109 @@
+import "package:cloud_firestore/cloud_firestore.dart";
+
+import "../../../business/entities/guest_entity.dart";
+
+/// Data model representing a Guest DTO for Firestore
+class GuestModel extends GuestEntity {
+  /// Creates a [GuestModel]
+  const GuestModel({
+    required super.id,
+    required super.firstName,
+    required super.lastName,
+    required super.attendance,
+    required super.dietary,
+    required super.invitationId,
+    super.dietaryDetails,
+    super.updatedAt,
+  });
+
+  /// Creates a [GuestModel] from a Firestore Document Snapshot
+  factory GuestModel.fromFirestoreDoc(
+    DocumentSnapshot<Map<String, dynamic>> doc,
+  ) {
+    final data = doc.data() ?? {};
+    return GuestModel.fromMap(map: data, id: doc.id);
+  }
+
+  /// Creates a [GuestModel] from a Map and document ID
+  factory GuestModel.fromMap({
+    required Map<String, dynamic> map,
+    required String id,
+  }) =>
+      GuestModel(
+        id: id,
+        firstName: map["firstName"] as String? ?? "",
+        lastName: map["lastName"] as String? ?? "",
+        attendance: AttendanceStatus.fromString(map["attendance"] as String?),
+        dietary: DietaryRequirement.fromString(map["dietary"] as String?),
+        dietaryDetails: map["dietaryDetails"] as String?,
+        invitationId: map["invitationId"] as String? ?? "",
+        updatedAt: _parseDateTime(map["updatedAt"]),
+      );
+
+  /// Creates a [GuestModel] from a domain [GuestEntity]
+  factory GuestModel.fromEntity({required GuestEntity entity}) => GuestModel(
+        id: entity.id,
+        firstName: entity.firstName,
+        lastName: entity.lastName,
+        attendance: entity.attendance,
+        dietary: entity.dietary,
+        dietaryDetails: entity.dietaryDetails,
+        invitationId: entity.invitationId,
+        updatedAt: entity.updatedAt,
+      );
+
+  /// Converts model to Map for Firestore writes
+  Map<String, dynamic> toMap() {
+    final map = <String, dynamic>{
+      "firstName": firstName,
+      "lastName": lastName,
+      "attendance": attendance.value,
+      "dietary": dietary.value,
+      "invitationId": invitationId,
+    };
+    if (dietaryDetails != null) {
+      map["dietaryDetails"] = dietaryDetails;
+    }
+    if (updatedAt != null) {
+      map["updatedAt"] = Timestamp.fromDate(updatedAt!);
+    }
+    return map;
+  }
+
+  /// Converts to Map for RSVP update matching Firestore security rules keys
+  Map<String, dynamic> toRsvpUpdateMap() {
+    final map = <String, dynamic>{
+      "attendance": attendance.value,
+      "dietary": dietary.value,
+      "updatedAt": FieldValue.serverTimestamp(),
+    };
+    if (dietaryDetails != null && dietaryDetails!.trim().isNotEmpty) {
+      map["dietaryDetails"] = dietaryDetails!.trim();
+    } else {
+      map["dietaryDetails"] = FieldValue.delete();
+    }
+    return map;
+  }
+
+  /// Converts this model to a domain [GuestEntity]
+  GuestEntity toEntity() => GuestEntity(
+        id: id,
+        firstName: firstName,
+        lastName: lastName,
+        attendance: attendance,
+        dietary: dietary,
+        dietaryDetails: dietaryDetails,
+        invitationId: invitationId,
+        updatedAt: updatedAt,
+      );
+
+  static DateTime? _parseDateTime(Object? value) {
+    if (value is Timestamp) {
+      return value.toDate();
+    }
+    if (value is String) {
+      return DateTime.tryParse(value);
+    }
+    return null;
+  }
+}

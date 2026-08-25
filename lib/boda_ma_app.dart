@@ -1,3 +1,4 @@
+import "package:firebase_ui_localizations/firebase_ui_localizations.dart";
 import "package:flutter/material.dart";
 import "package:flutter_common_classes/localization/l10n.dart";
 import "package:flutter_flavor/flutter_flavor.dart";
@@ -32,6 +33,7 @@ class BodaMaApp extends StatelessWidget {
 
           localizationsDelegates: const [
             FlutterCommonLocalizations.delegate,
+            FirebaseUILocalizations.delegate,
           ],
         ),
       );

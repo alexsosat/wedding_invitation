@@ -1,0 +1,79 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Global Safety Net: Default Deny All
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper Functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && 
+             request.auth.token.email == 'alexsosat@gmail.com' && 
+             request.auth.token.email_verified == true;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // Validation helpers
+    function isValidInvitation(data) {
+      return data.keys().hasAll(['groupName', 'slug', 'createdAt']) &&
+             data.groupName is string && data.groupName.size() <= 100 &&
+             data.slug is string && data.slug.size() <= 100 && data.slug.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isValidGuest(data) {
+      return data.keys().hasAll(['firstName', 'lastName', 'attendance', 'dietary', 'invitationId']) &&
+             data.firstName is string && data.firstName.size() <= 100 &&
+             data.lastName is string && data.lastName.size() <= 100 &&
+             data.attendance is string && (data.attendance == 'Pending' || data.attendance == 'Attending' || data.attendance == 'Not Attending') &&
+             data.dietary is string && (data.dietary == 'none' || data.dietary == 'meat' || data.dietary == 'vegetarian' || data.dietary == 'custom') &&
+             (!('dietaryDetails' in data) || (data.dietaryDetails is string && data.dietaryDetails.size() <= 200)) &&
+             data.invitationId is string && isValidId(data.invitationId);
+    }
+
+    // Collection Security Rules
+    match /invitations/{invitationId} {
+      allow get: if isValidId(invitationId); 
+      allow list: if isAdmin(); 
+      allow create: if isAdmin() && isValidInvitation(incoming()) && incoming().createdAt == request.time;
+      allow update: if isAdmin() && isValidInvitation(incoming());
+      allow delete: if isAdmin();
+      
+      match /guests/{guestId} {
+        allow get: if isValidId(invitationId) && isValidId(guestId);
+        allow list: if isValidId(invitationId); // Allows fetching all guests for this specific invitation
+        allow create: if isAdmin() && isValidGuest(incoming());
+        allow delete: if isAdmin();
+        allow update: if (
+          // Admin can update anything about the guest
+          (isAdmin() && isValidGuest(incoming())) ||
+          // Public guest can update their RSVP details without logging in
+          (
+            isValidGuest(incoming()) &&
+            incoming().firstName == existing().firstName &&
+            incoming().lastName == existing().lastName &&
+            incoming().invitationId == existing().invitationId &&
+            // Restrict exactly what keys can change (attendance, dietary, dietaryDetails if present, and updatedAt if present)
+            incoming().diff(existing()).affectedKeys().hasOnly(['attendance', 'dietary', 'dietaryDetails', 'updatedAt'])
+          )
+        );
+      }
+    }
+  }
+}
