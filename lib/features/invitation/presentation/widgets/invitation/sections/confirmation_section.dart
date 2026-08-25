@@ -1,4 +1,4 @@
-import "dart:math" as Math;
+import "dart:math" as math;
 import "dart:ui" as ui;
 
 import "package:flutter/material.dart";
@@ -15,6 +15,7 @@ class ConfirmationSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Stack(
+        clipBehavior: Clip.none,
         children: [
           /// Background
           Container(
@@ -37,7 +38,10 @@ class ConfirmationSection extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             height: MediaQuery.sizeOf(context).height,
-            child: const _ConfirmationProps(),
+            child: const ClipRect(
+              clipper: _TopOnlyClipper(),
+              child: _ConfirmationProps(),
+            ),
           ),
 
           /// Envelope
@@ -66,6 +70,21 @@ class ConfirmationSection extends StatelessWidget {
       );
 }
 
+class _TopOnlyClipper extends CustomClipper<Rect> {
+  const _TopOnlyClipper();
+
+  @override
+  Rect getClip(Size size) => Rect.fromLTRB(
+        -2000,
+        0,
+        size.width + 2000,
+        size.height + 2000,
+      );
+
+  @override
+  bool shouldReclip(covariant CustomClipper<Rect> oldClipper) => false;
+}
+
 class _ConfirmationProps extends StatelessWidget {
   const _ConfirmationProps();
 
@@ -78,6 +97,7 @@ class _ConfirmationProps extends StatelessWidget {
       desktop: 550,
     );
     return Stack(
+      clipBehavior: Clip.none,
       children: [
         Positioned(
           top: getValueForScreenType(
@@ -93,7 +113,7 @@ class _ConfirmationProps extends StatelessWidget {
             desktop: -50,
           ),
           child: Transform.rotate(
-            angle: -54 * Math.pi / 180,
+            angle: -54 * math.pi / 180,
             child: Assets.images.frames.white.image(
               width: cardsSize,
             ),
@@ -113,7 +133,7 @@ class _ConfirmationProps extends StatelessWidget {
             desktop: -300,
           ),
           child: Transform.rotate(
-            angle: -54 * Math.pi / 180,
+            angle: -54 * math.pi / 180,
             child: Assets.images.frames.white.image(
               width: cardsSize,
             ),
@@ -133,7 +153,7 @@ class _ConfirmationProps extends StatelessWidget {
             desktop: -450,
           ),
           child: Transform.rotate(
-            angle: -20 * Math.pi / 180,
+            angle: -20 * math.pi / 180,
             child: _ShadowProp(cardsSize),
           ),
         ),

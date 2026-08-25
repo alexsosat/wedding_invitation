@@ -4,6 +4,8 @@ import "package:flutter/material.dart";
 import "../widgets/invitation/sections/confirmation_section.dart";
 import "../widgets/invitation/sections/countdown_section.dart";
 import "../widgets/invitation/sections/details_section.dart";
+import "../widgets/invitation/sections/footer_section.dart";
+import "../widgets/invitation/sections/history_section.dart";
 import "../widgets/invitation/sections/invitation_header.dart";
 
 /// Page that displays the invitation.
@@ -21,6 +23,8 @@ class InvitationPage extends StatelessWidget {
             CountdownSection(),
             DetailsSection(),
             ConfirmationSection(),
+            HistorySection(),
+            FooterSection(),
           ],
         ),
       );
