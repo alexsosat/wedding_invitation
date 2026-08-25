@@ -63,6 +63,10 @@ class $AssetsImagesEnvelopesGen {
   AssetGenImage get blue =>
       const AssetGenImage('assets/images/envelopes/blue.png');
 
+  /// File path: assets/images/envelopes/confirmation.png
+  AssetGenImage get confirmation =>
+      const AssetGenImage('assets/images/envelopes/confirmation.png');
+
   /// File path: assets/images/envelopes/main.png
   AssetGenImage get main =>
       const AssetGenImage('assets/images/envelopes/main.png');
@@ -72,7 +76,7 @@ class $AssetsImagesEnvelopesGen {
       const AssetGenImage('assets/images/envelopes/pink.png');
 
   /// List of all assets
-  List<AssetGenImage> get values => [blue, main, pink];
+  List<AssetGenImage> get values => [blue, confirmation, main, pink];
 }
 
 class $AssetsImagesFramesGen {

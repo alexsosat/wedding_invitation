@@ -2,8 +2,8 @@ import "package:flutter/material.dart";
 import "package:flutter_common_classes/extensions/theme_extension.dart";
 import "package:responsive_builder/responsive_builder.dart";
 
-import "../../../../../core/gen/assets.gen.dart";
-import "../../../../../core/gen/fonts.gen.dart";
+import "../../../../../../core/gen/assets.gen.dart";
+import "../../../../../../core/gen/fonts.gen.dart";
 
 /// Header of the invitation
 class InvitationHeader extends StatelessWidget {

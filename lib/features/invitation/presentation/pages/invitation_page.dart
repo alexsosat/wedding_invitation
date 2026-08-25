@@ -1,9 +1,10 @@
 import "package:auto_route/annotations.dart";
 import "package:flutter/material.dart";
 
-import "../widgets/sections/countdown_section.dart";
-import "../widgets/sections/details_section.dart";
-import "../widgets/sections/invitation_header.dart";
+import "../widgets/invitation/sections/confirmation_section.dart";
+import "../widgets/invitation/sections/countdown_section.dart";
+import "../widgets/invitation/sections/details_section.dart";
+import "../widgets/invitation/sections/invitation_header.dart";
 
 /// Page that displays the invitation.
 @RoutePage()
@@ -19,6 +20,7 @@ class InvitationPage extends StatelessWidget {
             InvitationHeader(),
             CountdownSection(),
             DetailsSection(),
+            ConfirmationSection(),
           ],
         ),
       );

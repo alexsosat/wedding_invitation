@@ -2,7 +2,7 @@ import "dart:math" as math;
 
 import "package:flutter/material.dart";
 
-import "../../../../core/gen/assets.gen.dart";
+import "../../../../../core/gen/assets.gen.dart";
 import "ribbon_recipient_text.dart";
 
 /// Widget that displays the envelope composition including:

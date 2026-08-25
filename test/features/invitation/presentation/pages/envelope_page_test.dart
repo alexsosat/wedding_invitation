@@ -1,7 +1,7 @@
 import "package:boda_ma/features/invitation/presentation/pages/envelope_page.dart";
-import "package:boda_ma/features/invitation/presentation/widgets/envelope_card.dart";
-import "package:boda_ma/features/invitation/presentation/widgets/envelope_cta_button.dart";
-import "package:boda_ma/features/invitation/presentation/widgets/ribbon_recipient_text.dart";
+import "package:boda_ma/features/invitation/presentation/widgets/envelope/envelope_card.dart";
+import "package:boda_ma/features/invitation/presentation/widgets/envelope/envelope_cta_button.dart";
+import "package:boda_ma/features/invitation/presentation/widgets/envelope/ribbon_recipient_text.dart";
 import "package:flutter/material.dart";
 import "package:flutter_test/flutter_test.dart";
 

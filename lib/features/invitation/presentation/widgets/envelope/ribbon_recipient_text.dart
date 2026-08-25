@@ -3,7 +3,7 @@ import "dart:ui" as ui;
 
 import "package:flutter/material.dart";
 
-import "../../../../core/gen/adobe_fonts.dart";
+import "../../../../../core/gen/adobe_fonts.dart";
 
 /// A widget that renders recipient text curved along a path matching the rose ribbon.
 class RibbonRecipientText extends StatelessWidget {

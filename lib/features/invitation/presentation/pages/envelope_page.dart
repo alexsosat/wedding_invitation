@@ -6,8 +6,8 @@ import "package:flutter_common_classes/flutter_common_classes.dart";
 
 import "../../../../core/gen/assets.gen.dart";
 import "../../../../core/routes/app_router.gr.dart";
-import "../widgets/envelope_card.dart";
-import "../widgets/envelope_cta_button.dart";
+import "../widgets/envelope/envelope_card.dart";
+import "../widgets/envelope/envelope_cta_button.dart";
 
 /// Page to display the envelope of the wedding invitation.
 ///

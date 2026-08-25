@@ -3,9 +3,9 @@ import "package:flutter/material.dart";
 import "package:flutter_common_classes/flutter_common_classes.dart";
 import "package:responsive_builder/responsive_builder.dart";
 
-import "../../../../../core/gen/adobe_fonts.dart";
-import "../../../../../core/gen/assets.gen.dart";
-import "../../../../../core/gen/fonts.gen.dart";
+import "../../../../../../core/gen/adobe_fonts.dart";
+import "../../../../../../core/gen/assets.gen.dart";
+import "../../../../../../core/gen/fonts.gen.dart";
 
 /// A section widget that displays the wedding countdown timer and welcome message.
 class CountdownSection extends StatelessWidget {
