@@ -171,9 +171,12 @@ class $AssetsImagesSymbolsGen {
   SvgGenImage get heartBirds =>
       const SvgGenImage('assets/images/symbols/heart_birds.svg');
 
+  /// File path: assets/images/symbols/phone.svg
+  SvgGenImage get phone => const SvgGenImage('assets/images/symbols/phone.svg');
+
   /// List of all assets
   List<SvgGenImage> get values =>
-      [bird, cake, camera, car, couple, cups, heart, heartBirds];
+      [bird, cake, camera, car, couple, cups, heart, heartBirds, phone];
 }
 
 class $AssetsImagesTextsGen {

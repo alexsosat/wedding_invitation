@@ -7,6 +7,8 @@ import "../../../../../core/gen/adobe_fonts.dart";
 import "../../../../../core/gen/assets.gen.dart";
 import "../../../../../core/gen/fonts.gen.dart";
 
+import "dress_code_section.dart";
+import "lodging_section.dart";
 import "schedule_section.dart";
 
 /// Details Content Widget
@@ -78,6 +80,30 @@ class DetailsContent extends StatelessWidget {
 
               /// Cronograma / Schedule timeline section
               const ScheduleSection(),
+              SizedBox(
+                height: getValueForScreenType<double>(
+                  context: context,
+                  mobile: 50,
+                  tablet: 60,
+                  desktop: 80,
+                ),
+              ),
+
+              /// Dress Code section
+              const DressCodeSection(),
+              SizedBox(
+                height: getValueForScreenType<double>(
+                  context: context,
+                  mobile: 50,
+                  tablet: 60,
+                  desktop: 80,
+                ),
+              ),
+
+              /// Lodging / Hospedaje section
+              const LodgingSection(),
+
+              const _FooterSection(),
             ],
           ),
         ),
@@ -227,4 +253,28 @@ class _MainInfo extends StatelessWidget {
       );
     }
   }
+}
+
+class _FooterSection extends StatelessWidget {
+  const _FooterSection();
+
+  @override
+  Widget build(BuildContext context) => Padding(
+        padding: EdgeInsets.symmetric(
+          vertical: getValueForScreenType(
+            context: context,
+            mobile: 70,
+            tablet: 120,
+            desktop: 220,
+          ),
+        ),
+        child: Assets.images.symbols.heartBirds.svg(
+          width: getValueForScreenType(
+            context: context,
+            mobile: 250,
+            tablet: 500,
+            desktop: 550,
+          ),
+        ),
+      );
 }
