@@ -12,9 +12,11 @@ import "../../features/auth/business/use_cases/sign_in_with_email.dart";
 import "../../features/auth/business/use_cases/sign_out.dart";
 import "../../features/auth/data/data_sources/remote/auth_remote_data_source.dart";
 import "../../features/auth/data/repositories/auth_repository_impl.dart";
+import "../../features/auth/presentation/cubits/auth_cubit.dart";
 import "../../features/invitation/business/repositories/invitation_repository.dart";
 import "../../features/invitation/business/use_cases/create_invitation.dart";
 import "../../features/invitation/business/use_cases/delete_invitation.dart";
+import "../../features/invitation/business/use_cases/export_guests_to_excel.dart";
 import "../../features/invitation/business/use_cases/get_all_invitations.dart";
 import "../../features/invitation/business/use_cases/get_guests.dart";
 import "../../features/invitation/business/use_cases/get_invitation.dart";
@@ -190,7 +192,25 @@ class DependencyInjection {
       );
     }
 
-    // Invitation Blocs / Cubits
+    if (!getIt.isRegistered<ExportGuestsToExcel>()) {
+      getIt.registerLazySingleton<ExportGuestsToExcel>(
+        ExportGuestsToExcel.new,
+      );
+    }
+
+    // Blocs / Cubits
+    if (!getIt.isRegistered<AuthCubit>()) {
+      getIt.registerLazySingleton<AuthCubit>(
+        () => AuthCubit(
+          getCurrentUser: getIt<GetCurrentUser>(),
+          signInWithEmail: getIt<SignInWithEmail>(),
+          signOut: getIt<SignOut>(),
+          sendPasswordReset: getIt<SendPasswordReset>(),
+          authRepository: getIt<AuthRepository>(),
+        ),
+      );
+    }
+
     if (!getIt.isRegistered<InvitationCubit>()) {
       getIt.registerLazySingleton<InvitationCubit>(
         () => InvitationCubit(

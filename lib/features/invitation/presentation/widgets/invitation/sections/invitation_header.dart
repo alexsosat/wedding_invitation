@@ -8,10 +8,13 @@ import "../../../../../../core/gen/fonts.gen.dart";
 /// Header of the invitation
 class InvitationHeader extends StatelessWidget {
   /// Header of the invitation
-  const InvitationHeader({super.key});
+  const InvitationHeader({super.key, this.alternativeImage = false});
+
+  final bool alternativeImage;
 
   @override
   Widget build(BuildContext context) => Container(
+        width: double.infinity,
         height: MediaQuery.of(context).size.height +
             getValueForScreenType<double>(
               context: context,
@@ -21,7 +24,9 @@ class InvitationHeader extends StatelessWidget {
             ),
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: Assets.images.couple.hands.provider(),
+            image: !alternativeImage
+                ? Assets.images.couple.hands.provider()
+                : Assets.images.couple.hug.provider(),
             fit: BoxFit.cover,
             filterQuality: FilterQuality.high,
           ),

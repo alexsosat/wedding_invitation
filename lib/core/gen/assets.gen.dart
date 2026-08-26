@@ -55,6 +55,10 @@ class $AssetsImagesCoupleGen {
   /// File path: assets/images/couple/hug.JPG
   AssetGenImage get hug => const AssetGenImage('assets/images/couple/hug.JPG');
 
+  /// Directory path: assets/images/couple/masonry
+  $AssetsImagesCoupleMasonryGen get masonry =>
+      const $AssetsImagesCoupleMasonryGen();
+
   /// File path: assets/images/couple/view.JPG
   AssetGenImage get view =>
       const AssetGenImage('assets/images/couple/view.JPG');
@@ -105,6 +109,10 @@ class $AssetsImagesFramesGen {
 class $AssetsImagesLogosGen {
   const $AssetsImagesLogosGen();
 
+  /// File path: assets/images/logos/launcher.png
+  AssetGenImage get launcher =>
+      const AssetGenImage('assets/images/logos/launcher.png');
+
   /// File path: assets/images/logos/logo.svg
   SvgGenImage get logo => const SvgGenImage('assets/images/logos/logo.svg');
 
@@ -113,7 +121,7 @@ class $AssetsImagesLogosGen {
       const SvgGenImage('assets/images/logos/mayte_alex.svg');
 
   /// List of all assets
-  List<SvgGenImage> get values => [logo, mayteAlex];
+  List<dynamic> get values => [launcher, logo, mayteAlex];
 }
 
 class $AssetsImagesRibbonsGen {
@@ -169,6 +177,9 @@ class $AssetsImagesSymbolsGen {
   /// File path: assets/images/symbols/cups.svg
   SvgGenImage get cups => const SvgGenImage('assets/images/symbols/cups.svg');
 
+  /// File path: assets/images/symbols/fox.svg
+  SvgGenImage get fox => const SvgGenImage('assets/images/symbols/fox.svg');
+
   /// File path: assets/images/symbols/gifts.svg
   SvgGenImage get gifts => const SvgGenImage('assets/images/symbols/gifts.svg');
 
@@ -182,9 +193,33 @@ class $AssetsImagesSymbolsGen {
   /// File path: assets/images/symbols/phone.svg
   SvgGenImage get phone => const SvgGenImage('assets/images/symbols/phone.svg');
 
+  /// File path: assets/images/symbols/rose.svg
+  SvgGenImage get rose => const SvgGenImage('assets/images/symbols/rose.svg');
+
+  /// File path: assets/images/symbols/stars.svg
+  SvgGenImage get stars => const SvgGenImage('assets/images/symbols/stars.svg');
+
+  /// File path: assets/images/symbols/stars_birds.svg
+  SvgGenImage get starsBirds =>
+      const SvgGenImage('assets/images/symbols/stars_birds.svg');
+
   /// List of all assets
-  List<SvgGenImage> get values =>
-      [bird, cake, camera, car, couple, cups, gifts, heart, heartBirds, phone];
+  List<SvgGenImage> get values => [
+        bird,
+        cake,
+        camera,
+        car,
+        couple,
+        cups,
+        fox,
+        gifts,
+        heart,
+        heartBirds,
+        phone,
+        rose,
+        stars,
+        starsBirds
+      ];
 }
 
 class $AssetsImagesTextsGen {
@@ -218,6 +253,38 @@ class $AssetsImagesTexturesGen {
 
   /// List of all assets
   List<AssetGenImage> get values => [flowers, flowersTransparent];
+}
+
+class $AssetsImagesCoupleMasonryGen {
+  const $AssetsImagesCoupleMasonryGen();
+
+  /// File path: assets/images/couple/masonry/masonry_1.JPG
+  AssetGenImage get masonry1 =>
+      const AssetGenImage('assets/images/couple/masonry/masonry_1.JPG');
+
+  /// File path: assets/images/couple/masonry/masonry_2.JPG
+  AssetGenImage get masonry2 =>
+      const AssetGenImage('assets/images/couple/masonry/masonry_2.JPG');
+
+  /// File path: assets/images/couple/masonry/masonry_3.JPG
+  AssetGenImage get masonry3 =>
+      const AssetGenImage('assets/images/couple/masonry/masonry_3.JPG');
+
+  /// File path: assets/images/couple/masonry/masonry_4.JPG
+  AssetGenImage get masonry4 =>
+      const AssetGenImage('assets/images/couple/masonry/masonry_4.JPG');
+
+  /// File path: assets/images/couple/masonry/masonry_5.JPG
+  AssetGenImage get masonry5 =>
+      const AssetGenImage('assets/images/couple/masonry/masonry_5.JPG');
+
+  /// File path: assets/images/couple/masonry/masonry_6.JPG
+  AssetGenImage get masonry6 =>
+      const AssetGenImage('assets/images/couple/masonry/masonry_6.JPG');
+
+  /// List of all assets
+  List<AssetGenImage> get values =>
+      [masonry1, masonry2, masonry3, masonry4, masonry5, masonry6];
 }
 
 abstract final class Assets {

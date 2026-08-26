@@ -55,34 +55,74 @@ class InvitationCubit extends Cubit<InvitationState> {
       return;
     }
 
-    safeEmit(currentState.copyWith(isUpdatingRsvp: true));
+    // Optimistically update the guest in the local state so the UI responds immediately
+    final optimisticGuests = currentState.invitation.guests.map((g) {
+      if (g.id == guest.id) {
+        return guest;
+      }
+      return g;
+    }).toList();
+
+    final optimisticInvitation = currentState.invitation.copyWith(
+      guests: optimisticGuests,
+    );
+
+    safeEmit(
+      currentState.copyWith(
+        invitation: optimisticInvitation,
+        isUpdatingRsvp: true,
+        updatingGuestId: guest.id,
+        clearMessages: true,
+      ),
+    );
 
     final result = await _updateGuestRsvp(
       params: UpdateGuestRsvpParams(guest: guest),
     );
 
     result.fold(
-      (failure) => safeEmit(InvitationError(failure: failure)),
+      (failure) {
+        final latestState =
+            state is InvitationLoaded ? (state as InvitationLoaded) : currentState;
+        safeEmit(
+          latestState.copyWith(
+            isUpdatingRsvp: false,
+            clearUpdatingGuest: true,
+            rsvpErrorMessage: failure.message,
+          ),
+        );
+      },
       (_) {
-        final updatedGuests = currentState.invitation.guests.map((g) {
+        final latestState =
+            state is InvitationLoaded ? (state as InvitationLoaded) : currentState;
+        final updatedGuests = latestState.invitation.guests.map((g) {
           if (g.id == guest.id) {
             return guest;
           }
           return g;
         }).toList();
 
-        final updatedInvitation = currentState.invitation.copyWith(
+        final updatedInvitation = latestState.invitation.copyWith(
           guests: updatedGuests,
         );
 
         safeEmit(
-          currentState.copyWith(
+          latestState.copyWith(
             invitation: updatedInvitation,
             isUpdatingRsvp: false,
-            rsvpUpdateMessage: "rsvpUpdatedSuccess",
+            clearUpdatingGuest: true,
+            rsvpUpdateMessage: "Respuesta actualizada con éxito",
           ),
         );
       },
     );
+  }
+
+  /// Clears any transient RSVP success or error messages
+  void clearRsvpMessages() {
+    final currentState = state;
+    if (currentState is InvitationLoaded) {
+      safeEmit(currentState.copyWith(clearMessages: true));
+    }
   }
 }

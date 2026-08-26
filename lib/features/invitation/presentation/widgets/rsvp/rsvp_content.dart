@@ -1,10 +1,13 @@
 import "package:flutter/material.dart";
+import "package:flutter_bloc/flutter_bloc.dart";
 import "package:responsive_builder/responsive_builder.dart";
 
 import "../../../../../core/gen/adobe_fonts.dart";
 import "../../../../../core/gen/assets.gen.dart";
 import "../../../../../core/gen/fonts.gen.dart";
 import "../../../../shared/presentation/widgets/scaling_animated_widget.dart";
+import "../../cubits/invitation_cubit.dart";
+import "rsvp_confirmation_dialog.dart";
 
 /// Content section for the RSVP page, including the lace invitation card,
 /// confirmation CTA button, and gift registry note.
@@ -18,11 +21,21 @@ class RsvpContent extends StatelessWidget {
   /// Callback when the confirm attendance button is tapped.
   final VoidCallback? onConfirmTap;
 
+  void _openConfirmationDialog(BuildContext context) {
+    showDialog<void>(
+      context: context,
+      builder: (dialogContext) => BlocProvider.value(
+        value: context.read<InvitationCubit>(),
+        child: const RsvpConfirmationDialog(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final frameHeight = getValueForScreenType<double>(
       context: context,
-      mobile: 390,
+      mobile: 600,
       tablet: 480,
       desktop: 540,
     );
@@ -33,7 +46,7 @@ class RsvpContent extends StatelessWidget {
       padding: EdgeInsets.symmetric(
         horizontal: getValueForScreenType<double>(
           context: context,
-          mobile: 16,
+          mobile: 10,
           tablet: 32,
           desktop: 40,
         ),
@@ -65,7 +78,9 @@ class RsvpContent extends StatelessWidget {
               ),
 
               /// Confirm Attendance CTA Button
-              _ConfirmButton(onTap: onConfirmTap),
+              _ConfirmButton(
+                onTap: onConfirmTap ?? () => _openConfirmationDialog(context),
+              ),
               SizedBox(
                 height: getValueForScreenType<double>(
                   context: context,
@@ -112,14 +127,25 @@ class _LaceInvitationCard extends StatelessWidget {
             ),
             Positioned.fill(
               child: Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: getValueForScreenType<double>(
+                padding: EdgeInsets.only(
+                  left: getValueForScreenType<double>(
                     context: context,
                     mobile: 80,
                     tablet: 130,
                     desktop: 130,
                   ),
-                  vertical: height * 0.13,
+                  right: getValueForScreenType<double>(
+                    context: context,
+                    mobile: 80,
+                    tablet: 130,
+                    desktop: 130,
+                  ),
+                  top: getValueForScreenType<double>(
+                    context: context,
+                    mobile: 0,
+                    tablet: 5,
+                    desktop: 0,
+                  ),
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,

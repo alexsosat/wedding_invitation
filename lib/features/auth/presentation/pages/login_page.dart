@@ -107,6 +107,7 @@ class LoginPage extends StatelessWidget {
                 context.router.replace(const AdminDashboardRoute());
               }),
             ],
+            headerMaxExtent: 220,
             headerBuilder: (context, constraints, shrinkOffset) =>
                 const AdminLoginHeader(),
             sideBuilder: (context, constraints) => const AdminLoginSidePanel(),

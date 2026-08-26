@@ -1,10 +1,13 @@
 import "package:auto_route/auto_route.dart";
 import "package:flutter/material.dart";
 import "package:flutter_common_classes/flutter_common_classes.dart";
+import "package:responsive_builder/responsive_builder.dart";
 
+import "../../../../core/gen/assets.gen.dart";
 import "../../../../core/routes/app_router.gr.dart";
 import "../../../invitation/presentation/cubits/invitation_cubit.dart";
 import "../../../invitation/presentation/cubits/invitation_state.dart";
+import "../../../shared/presentation/widgets/scaling_animated_widget.dart";
 import "../cubits/splash_screen_cubit.dart";
 
 /// The splash screen page.
@@ -182,23 +185,51 @@ class _SplashScreenContentState extends State<_SplashScreenContent>
             _onPageExit();
           }
         },
-        builder: (context, state) => switch (state.status) {
-          SplashScreenStatus.loading => const FlutterLogo(),
-          SplashScreenStatus.animationFinished => const Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                FlutterLogo(),
-                SizedBox(height: 20),
-                CircularProgressIndicator.adaptive(),
-              ],
-            ),
-          SplashScreenStatus.success => const FlutterLogo(),
-          SplashScreenStatus.failure => Text(
-              state.failure!.message,
-              style: context.textTheme.headlineLarge?.copyWith(
-                color: context.colorScheme.onSecondary,
+        builder: (context, state) {
+          final svgSize = getValueForScreenType<double>(
+            context: context,
+            mobile: 350,
+            tablet: 500,
+            desktop: 700,
+          );
+          return switch (state.status) {
+            SplashScreenStatus.loading => ScalingAnimatedWidget(
+                child: Assets.images.logos.logo.svg(
+                  width: svgSize,
+                  colorFilter: ColorFilter.mode(
+                    context.colorScheme.primary,
+                    BlendMode.srcIn,
+                  ),
+                ),
               ),
-            ),
+            SplashScreenStatus.animationFinished => Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Assets.images.logos.logo.svg(
+                    width: svgSize,
+                    colorFilter: ColorFilter.mode(
+                      context.colorScheme.primary,
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  const CircularProgressIndicator.adaptive(),
+                ],
+              ),
+            SplashScreenStatus.success => Assets.images.logos.logo.svg(
+                width: svgSize,
+                colorFilter: ColorFilter.mode(
+                  context.colorScheme.primary,
+                  BlendMode.srcIn,
+                ),
+              ),
+            SplashScreenStatus.failure => Text(
+                state.failure!.message,
+                style: context.textTheme.headlineLarge?.copyWith(
+                  color: context.colorScheme.onSecondary,
+                ),
+              ),
+          };
         },
       );
 }

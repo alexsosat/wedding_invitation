@@ -1,4 +1,7 @@
+import "dart:typed_data";
+
 import "package:auto_route/auto_route.dart";
+import "package:file_saver/file_saver.dart";
 import "package:flutter/material.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
 import "package:flutter_common_classes/extensions/theme_extension.dart";
@@ -9,6 +12,7 @@ import "../../../../core/gen/assets.gen.dart";
 import "../../../../core/routes/app_router.gr.dart";
 import "../../../auth/presentation/cubits/auth_cubit.dart";
 import "../../business/entities/invitation_entity.dart";
+import "../../business/use_cases/export_guests_to_excel.dart";
 import "../cubits/admin_dashboard_cubit.dart";
 import "../cubits/admin_dashboard_state.dart";
 import "../widgets/admin/dashboard_stats_card.dart";
@@ -83,6 +87,83 @@ class _AdminDashboardViewState extends State<_AdminDashboardView> {
     );
   }
 
+  Future<void> _exportGuestsToExcel(
+    BuildContext context,
+    List<InvitationEntity> invitations,
+  ) async {
+    final messenger = ScaffoldMessenger.of(context);
+    final theme = Theme.of(context);
+
+    if (invitations.isEmpty) {
+      messenger.showSnackBar(
+        SnackBar(
+          content: const Text("No hay invitados registrados para exportar."),
+          backgroundColor: theme.colorScheme.error,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
+
+    try {
+      final exportUseCase = GetIt.I<ExportGuestsToExcel>();
+      final result = exportUseCase(
+        params: ExportGuestsToExcelParams(invitations: invitations),
+      );
+
+      await result.fold(
+        (failure) async {
+          messenger.showSnackBar(
+            SnackBar(
+              content: Text(failure.message),
+              backgroundColor: theme.colorScheme.error,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        },
+        (bytes) async {
+          final now = DateTime.now();
+          final formattedDate =
+              "${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}_${now.hour.toString().padLeft(2, '0')}${now.minute.toString().padLeft(2, '0')}";
+          final fileName = "lista_invitados_$formattedDate";
+
+          final filePath = await FileSaver.instance.saveFile(
+            name: fileName,
+            bytes: Uint8List.fromList(bytes),
+            ext: "xlsx",
+            mimeType: MimeType.microsoftExcel,
+          );
+
+          if (filePath.isNotEmpty) {
+            messenger.showSnackBar(
+              const SnackBar(
+                content: Row(
+                  children: [
+                    Icon(Icons.check_circle_outline, color: Colors.white),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: Text("Lista de invitados exportada con éxito."),
+                    ),
+                  ],
+                ),
+                backgroundColor: Color(0xff2E7D32),
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+          }
+        },
+      );
+    } catch (e) {
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text("Error al exportar archivo: $e"),
+          backgroundColor: theme.colorScheme.error,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
         backgroundColor: context.colorScheme.surface,
@@ -131,6 +212,16 @@ class _AdminDashboardViewState extends State<_AdminDashboardView> {
           ),
           actions: [
             IconButton(
+              icon: const Icon(Icons.file_download_outlined),
+              tooltip: "Descargar Excel",
+              onPressed: () {
+                final state = context.read<AdminDashboardCubit>().state;
+                if (state is AdminDashboardLoaded) {
+                  _exportGuestsToExcel(context, state.invitations);
+                }
+              },
+            ),
+            IconButton(
               icon: const Icon(Icons.refresh),
               tooltip: "Actualizar",
               onPressed: () =>
@@ -139,11 +230,13 @@ class _AdminDashboardViewState extends State<_AdminDashboardView> {
             IconButton(
               icon: const Icon(Icons.logout),
               tooltip: "Cerrar Sesión",
-              onPressed: () {
+              onPressed: () async {
                 if (GetIt.I.isRegistered<AuthCubit>()) {
-                  GetIt.I<AuthCubit>().logOut();
+                  await GetIt.I<AuthCubit>().logOut();
                 }
-                context.router.replace(const LoginRoute());
+                if (context.mounted) {
+                  await context.router.replace(const LoginRoute());
+                }
               },
             ),
           ],
@@ -243,12 +336,46 @@ class _AdminDashboardViewState extends State<_AdminDashboardView> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              "Resumen General",
-                              style: context.textTheme.titleLarge?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: context.colorScheme.primary,
-                              ),
+                            Wrap(
+                              alignment: WrapAlignment.spaceBetween,
+                              crossAxisAlignment: WrapCrossAlignment.center,
+                              spacing: 12,
+                              runSpacing: 8,
+                              children: [
+                                Text(
+                                  "Resumen General",
+                                  style: context.textTheme.titleLarge?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: context.colorScheme.primary,
+                                  ),
+                                ),
+                                FilledButton.tonalIcon(
+                                  onPressed: () => _exportGuestsToExcel(
+                                    context,
+                                    state.invitations,
+                                  ),
+                                  icon: const Icon(
+                                    Icons.file_download_outlined,
+                                    size: 18,
+                                  ),
+                                  label: const Text("Descargar Excel"),
+                                  style: FilledButton.styleFrom(
+                                    backgroundColor: context
+                                        .colorScheme.primaryContainer
+                                        .withValues(alpha: 0.5),
+                                    foregroundColor:
+                                        context.colorScheme.primary,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 14,
+                                      vertical: 10,
+                                    ),
+                                    textStyle: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                             const SizedBox(height: 12),
                             LayoutBuilder(

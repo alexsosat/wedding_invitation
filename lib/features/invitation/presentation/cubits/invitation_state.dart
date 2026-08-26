@@ -30,7 +30,9 @@ class InvitationLoaded extends InvitationState {
   const InvitationLoaded({
     required this.invitation,
     this.isUpdatingRsvp = false,
+    this.updatingGuestId,
     this.rsvpUpdateMessage,
+    this.rsvpErrorMessage,
   });
 
   /// The loaded invitation entity
@@ -39,26 +41,46 @@ class InvitationLoaded extends InvitationState {
   /// Whether an RSVP update is currently in progress
   final bool isUpdatingRsvp;
 
+  /// ID of the specific guest being updated
+  final String? updatingGuestId;
+
   /// Optional message if RSVP was updated successfully
   final String? rsvpUpdateMessage;
+
+  /// Optional error message if RSVP update failed
+  final String? rsvpErrorMessage;
 
   /// Creates a copy of [InvitationLoaded] with modified properties
   InvitationLoaded copyWith({
     InvitationEntity? invitation,
     bool? isUpdatingRsvp,
+    String? updatingGuestId,
     String? rsvpUpdateMessage,
+    String? rsvpErrorMessage,
+    bool clearUpdatingGuest = false,
+    bool clearMessages = false,
   }) =>
       InvitationLoaded(
         invitation: invitation ?? this.invitation,
         isUpdatingRsvp: isUpdatingRsvp ?? this.isUpdatingRsvp,
-        rsvpUpdateMessage: rsvpUpdateMessage,
+        updatingGuestId: clearUpdatingGuest
+            ? null
+            : (updatingGuestId ?? this.updatingGuestId),
+        rsvpUpdateMessage: clearMessages
+            ? null
+            : (rsvpUpdateMessage ?? this.rsvpUpdateMessage),
+        rsvpErrorMessage: clearMessages
+            ? null
+            : (rsvpErrorMessage ?? this.rsvpErrorMessage),
       );
 
   @override
   List<Object?> get props => [
         invitation,
         isUpdatingRsvp,
+        updatingGuestId,
         rsvpUpdateMessage,
+        rsvpErrorMessage,
       ];
 }
 

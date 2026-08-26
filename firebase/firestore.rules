@@ -41,7 +41,7 @@ service cloud.firestore {
              data.firstName is string && data.firstName.size() <= 100 &&
              data.lastName is string && data.lastName.size() <= 100 &&
              data.attendance is string && (data.attendance == 'Pending' || data.attendance == 'Attending' || data.attendance == 'Not Attending') &&
-             data.dietary is string && (data.dietary == 'none' || data.dietary == 'meat' || data.dietary == 'vegetarian' || data.dietary == 'custom') &&
+             data.dietary is string && (data.dietary == 'none' || data.dietary == 'meat' || data.dietary == 'vegetarian' || data.dietary == 'vegan' || data.dietary == 'custom') &&
              (!('dietaryDetails' in data) || (data.dietaryDetails is string && data.dietaryDetails.size() <= 200)) &&
              (!('phone' in data) || (data.phone is string && data.phone.size() <= 30)) &&
              data.invitationId is string && isValidId(data.invitationId);

@@ -22,7 +22,7 @@ class BodaMaApp extends StatelessWidget {
         child: BlocProvider<InvitationCubit>(
           create: (_) => getIt<InvitationCubit>(),
           child: MaterialApp.router(
-            title: "BodaMa",
+            title: "Boda Mayte & Alex",
             debugShowCheckedModeBanner: false,
 
             //Theming

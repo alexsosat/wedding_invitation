@@ -33,7 +33,7 @@ enum AttendanceStatus {
 /// Enum representing guest dietary preferences
 enum DietaryRequirement {
   /// No special dietary restrictions
-  none("none", "Sin restricciones"),
+  none("none", "No especificado"),
 
   /// Meat preference
   meat("meat", "Carne"),

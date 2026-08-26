@@ -45,7 +45,7 @@ enum DietaryFilterStatus {
   vegan("Vegano"),
 
   /// Show invitations with at least one guest with no dietary restrictions
-  none("Sin restricciones");
+  none("No especificado");
 
   const DietaryFilterStatus(this.label);
 
@@ -123,8 +123,7 @@ class AdminDashboardLoaded extends AdminDashboardState {
       invitations.fold(0, (sum, inv) => sum + inv.pendingGuestsCount);
 
   /// Total invitations marked as sent
-  int get sentInvitationsCount =>
-      invitations.where((inv) => inv.isSent).length;
+  int get sentInvitationsCount => invitations.where((inv) => inv.isSent).length;
 
   /// Total invitations not yet sent
   int get unsentInvitationsCount =>
@@ -202,8 +201,7 @@ class AdminDashboardLoaded extends AdminDashboardState {
               return false;
             }
           case InvitationFilterStatus.declined:
-            if (inv.declinedGuestsCount == 0 ||
-                inv.attendingGuestsCount > 0) {
+            if (inv.declinedGuestsCount == 0 || inv.attendingGuestsCount > 0) {
               return false;
             }
         }

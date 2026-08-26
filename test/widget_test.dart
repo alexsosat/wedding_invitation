@@ -1,16 +1,34 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import "package:boda_ma/boda_ma_app.dart";
+import "package:boda_ma/features/invitation/business/repositories/invitation_repository.dart";
+import "package:boda_ma/features/invitation/business/use_cases/get_invitation.dart";
+import "package:boda_ma/features/invitation/business/use_cases/update_guest_rsvp.dart";
+import "package:boda_ma/features/invitation/presentation/cubits/invitation_cubit.dart";
 import "package:flutter_test/flutter_test.dart";
+import "package:get_it/get_it.dart";
+
+class FakeInvitationRepository implements InvitationRepository {
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
 
 void main() {
+  setUp(() {
+    final repository = FakeInvitationRepository();
+    if (!GetIt.I.isRegistered<InvitationCubit>()) {
+      GetIt.I.registerLazySingleton<InvitationCubit>(
+        () => InvitationCubit(
+          getInvitation: GetInvitation(invitationRepository: repository),
+          updateGuestRsvp: UpdateGuestRsvp(invitationRepository: repository),
+        ),
+      );
+    }
+  });
+
+  tearDown(() {
+    GetIt.I.reset();
+  });
+
   testWidgets("App smoke test", (tester) async {
-    // Build our app and trigger a frame.
     await tester.pumpWidget(const BodaMaApp());
     expect(find.byType(BodaMaApp), findsOneWidget);
   });

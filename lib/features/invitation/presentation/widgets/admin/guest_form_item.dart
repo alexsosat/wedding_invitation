@@ -205,7 +205,7 @@ class GuestFormItem extends StatelessWidget {
                     items: const [
                       DropdownMenuItem(
                         value: DietaryRequirement.none,
-                        child: Text("Sin restricciones"),
+                        child: Text("No especificado"),
                       ),
                       DropdownMenuItem(
                         value: DietaryRequirement.meat,
@@ -270,7 +270,7 @@ class GuestFormItem extends StatelessWidget {
                           items: const [
                             DropdownMenuItem(
                               value: DietaryRequirement.none,
-                              child: Text("Sin restricciones"),
+                              child: Text("No especificado"),
                             ),
                             DropdownMenuItem(
                               value: DietaryRequirement.meat,

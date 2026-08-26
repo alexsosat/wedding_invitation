@@ -46,7 +46,7 @@
         },
         "dietary": {
           "type": "string",
-          "enum": ["none", "meat", "vegetarian", "custom"],
+          "enum": ["none", "meat", "vegetarian", "vegan", "custom"],
           "description": "Dietary requirements or restrictions"
         },
         "dietaryDetails": {

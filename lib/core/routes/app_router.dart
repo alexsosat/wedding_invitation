@@ -1,6 +1,7 @@
 import "package:auto_route/auto_route.dart";
 
 import "app_router.gr.dart";
+import "guards/auth_guard.dart";
 
 /// App router.
 @AutoRouterConfig(replaceInRouteName: "Page,Route")
@@ -14,6 +15,9 @@ class AppRouter extends RootStackRouter {
         AutoRoute(
           page: AdminDashboardRoute.page,
           path: "/admin",
+          guards: [
+            AuthGuard(),
+          ],
         ),
         AutoRoute(
           page: InvitationRoute.page,
@@ -30,6 +34,10 @@ class AppRouter extends RootStackRouter {
         AutoRoute(
           page: EnvelopeRoute.page,
           path: "/envelope",
+        ),
+        AutoRoute(
+          page: HistoryRoute.page,
+          path: "/history",
         ),
         AutoRoute(
           page: NotFoundRoute.page,
