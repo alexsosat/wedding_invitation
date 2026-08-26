@@ -82,8 +82,13 @@ class $AssetsImagesEnvelopesGen {
   AssetGenImage get pink =>
       const AssetGenImage('assets/images/envelopes/pink.png');
 
+  /// File path: assets/images/envelopes/rsvp_envelope.png
+  AssetGenImage get rsvpEnvelope =>
+      const AssetGenImage('assets/images/envelopes/rsvp_envelope.png');
+
   /// List of all assets
-  List<AssetGenImage> get values => [blue, confirmation, main, pink];
+  List<AssetGenImage> get values =>
+      [blue, confirmation, main, pink, rsvpEnvelope];
 }
 
 class $AssetsImagesFramesGen {
@@ -164,6 +169,9 @@ class $AssetsImagesSymbolsGen {
   /// File path: assets/images/symbols/cups.svg
   SvgGenImage get cups => const SvgGenImage('assets/images/symbols/cups.svg');
 
+  /// File path: assets/images/symbols/gifts.svg
+  SvgGenImage get gifts => const SvgGenImage('assets/images/symbols/gifts.svg');
+
   /// File path: assets/images/symbols/heart.svg
   SvgGenImage get heart => const SvgGenImage('assets/images/symbols/heart.svg');
 
@@ -176,7 +184,7 @@ class $AssetsImagesSymbolsGen {
 
   /// List of all assets
   List<SvgGenImage> get values =>
-      [bird, cake, camera, car, couple, cups, heart, heartBirds, phone];
+      [bird, cake, camera, car, couple, cups, gifts, heart, heartBirds, phone];
 }
 
 class $AssetsImagesTextsGen {

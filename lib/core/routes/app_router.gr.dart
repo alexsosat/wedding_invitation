@@ -9,7 +9,7 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:auto_route/auto_route.dart' as _i7;
+import 'package:auto_route/auto_route.dart' as _i8;
 import 'package:boda_ma/features/auth/presentation/pages/login_page.dart'
     as _i5;
 import 'package:boda_ma/features/invitation/presentation/pages/admin_dashboard_page.dart'
@@ -20,19 +20,21 @@ import 'package:boda_ma/features/invitation/presentation/pages/envelope_page.dar
     as _i3;
 import 'package:boda_ma/features/invitation/presentation/pages/invitation_page.dart'
     as _i4;
-import 'package:boda_ma/features/splash/presentation/pages/splash_page.dart'
+import 'package:boda_ma/features/invitation/presentation/pages/rsvp_page.dart'
     as _i6;
-import 'package:flutter/material.dart' as _i8;
+import 'package:boda_ma/features/splash/presentation/pages/splash_page.dart'
+    as _i7;
+import 'package:flutter/material.dart' as _i9;
 
 /// generated route for
 /// [_i1.AdminDashboardPage]
-class AdminDashboardRoute extends _i7.PageRouteInfo<void> {
-  const AdminDashboardRoute({List<_i7.PageRouteInfo>? children})
+class AdminDashboardRoute extends _i8.PageRouteInfo<void> {
+  const AdminDashboardRoute({List<_i8.PageRouteInfo>? children})
       : super(AdminDashboardRoute.name, initialChildren: children);
 
   static const String name = 'AdminDashboardRoute';
 
-  static _i7.PageInfo page = _i7.PageInfo(
+  static _i8.PageInfo page = _i8.PageInfo(
     name,
     builder: (data) {
       return const _i1.AdminDashboardPage();
@@ -42,13 +44,13 @@ class AdminDashboardRoute extends _i7.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i2.DetailsPage]
-class DetailsRoute extends _i7.PageRouteInfo<void> {
-  const DetailsRoute({List<_i7.PageRouteInfo>? children})
+class DetailsRoute extends _i8.PageRouteInfo<void> {
+  const DetailsRoute({List<_i8.PageRouteInfo>? children})
       : super(DetailsRoute.name, initialChildren: children);
 
   static const String name = 'DetailsRoute';
 
-  static _i7.PageInfo page = _i7.PageInfo(
+  static _i8.PageInfo page = _i8.PageInfo(
     name,
     builder: (data) {
       return const _i2.DetailsPage();
@@ -58,12 +60,12 @@ class DetailsRoute extends _i7.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i3.EnvelopePage]
-class EnvelopeRoute extends _i7.PageRouteInfo<EnvelopeRouteArgs> {
+class EnvelopeRoute extends _i8.PageRouteInfo<EnvelopeRouteArgs> {
   EnvelopeRoute({
-    _i8.Key? key,
+    _i9.Key? key,
     String recipientName = "Abigail Lazcano",
-    _i8.VoidCallback? onOpen,
-    List<_i7.PageRouteInfo>? children,
+    _i9.VoidCallback? onOpen,
+    List<_i8.PageRouteInfo>? children,
   }) : super(
           EnvelopeRoute.name,
           args: EnvelopeRouteArgs(
@@ -76,7 +78,7 @@ class EnvelopeRoute extends _i7.PageRouteInfo<EnvelopeRouteArgs> {
 
   static const String name = 'EnvelopeRoute';
 
-  static _i7.PageInfo page = _i7.PageInfo(
+  static _i8.PageInfo page = _i8.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<EnvelopeRouteArgs>(
@@ -98,11 +100,11 @@ class EnvelopeRouteArgs {
     this.onOpen,
   });
 
-  final _i8.Key? key;
+  final _i9.Key? key;
 
   final String recipientName;
 
-  final _i8.VoidCallback? onOpen;
+  final _i9.VoidCallback? onOpen;
 
   @override
   String toString() {
@@ -124,13 +126,13 @@ class EnvelopeRouteArgs {
 
 /// generated route for
 /// [_i4.InvitationPage]
-class InvitationRoute extends _i7.PageRouteInfo<void> {
-  const InvitationRoute({List<_i7.PageRouteInfo>? children})
+class InvitationRoute extends _i8.PageRouteInfo<void> {
+  const InvitationRoute({List<_i8.PageRouteInfo>? children})
       : super(InvitationRoute.name, initialChildren: children);
 
   static const String name = 'InvitationRoute';
 
-  static _i7.PageInfo page = _i7.PageInfo(
+  static _i8.PageInfo page = _i8.PageInfo(
     name,
     builder: (data) {
       return const _i4.InvitationPage();
@@ -140,13 +142,13 @@ class InvitationRoute extends _i7.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i5.LoginPage]
-class LoginRoute extends _i7.PageRouteInfo<void> {
-  const LoginRoute({List<_i7.PageRouteInfo>? children})
+class LoginRoute extends _i8.PageRouteInfo<void> {
+  const LoginRoute({List<_i8.PageRouteInfo>? children})
       : super(LoginRoute.name, initialChildren: children);
 
   static const String name = 'LoginRoute';
 
-  static _i7.PageInfo page = _i7.PageInfo(
+  static _i8.PageInfo page = _i8.PageInfo(
     name,
     builder: (data) {
       return const _i5.LoginPage();
@@ -155,17 +157,33 @@ class LoginRoute extends _i7.PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [_i6.SplashPage]
-class SplashRoute extends _i7.PageRouteInfo<void> {
-  const SplashRoute({List<_i7.PageRouteInfo>? children})
+/// [_i6.RsvpPage]
+class RsvpRoute extends _i8.PageRouteInfo<void> {
+  const RsvpRoute({List<_i8.PageRouteInfo>? children})
+      : super(RsvpRoute.name, initialChildren: children);
+
+  static const String name = 'RsvpRoute';
+
+  static _i8.PageInfo page = _i8.PageInfo(
+    name,
+    builder: (data) {
+      return const _i6.RsvpPage();
+    },
+  );
+}
+
+/// generated route for
+/// [_i7.SplashPage]
+class SplashRoute extends _i8.PageRouteInfo<void> {
+  const SplashRoute({List<_i8.PageRouteInfo>? children})
       : super(SplashRoute.name, initialChildren: children);
 
   static const String name = 'SplashRoute';
 
-  static _i7.PageInfo page = _i7.PageInfo(
+  static _i8.PageInfo page = _i8.PageInfo(
     name,
     builder: (data) {
-      return const _i6.SplashPage();
+      return const _i7.SplashPage();
     },
   );
 }

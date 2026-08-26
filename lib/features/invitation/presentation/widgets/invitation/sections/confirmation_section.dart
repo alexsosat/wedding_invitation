@@ -11,7 +11,13 @@ import "../../../../../shared/presentation/widgets/scaling_animated_widget.dart"
 /// Confirmation section for the invitation
 class ConfirmationSection extends StatelessWidget {
   /// Confirmation section for the invitation
-  const ConfirmationSection({super.key});
+  const ConfirmationSection({
+    required this.onTap,
+    super.key,
+  });
+
+  /// Callback to be executed when the envelope is tapped.
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) => Stack(
@@ -62,6 +68,7 @@ class ConfirmationSection extends StatelessWidget {
                 ),
               ),
               child: ScalingAnimatedWidget(
+                onTap: onTap,
                 child: Assets.images.envelopes.confirmation.image(),
               ),
             ),

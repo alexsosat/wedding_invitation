@@ -25,7 +25,9 @@ class InvitationPage extends StatelessWidget {
             DetailsSection(
               onTap: () => _goToDetails(context),
             ),
-            const ConfirmationSection(),
+            ConfirmationSection(
+              onTap: () => _goToRsvp(context),
+            ),
             const HistorySection(),
             const FooterSection(),
           ],
@@ -34,5 +36,9 @@ class InvitationPage extends StatelessWidget {
 
   Future _goToDetails(BuildContext context) => context.router.navigate(
         const DetailsRoute(),
+      );
+
+  Future _goToRsvp(BuildContext context) => context.router.navigate(
+        const RsvpRoute(),
       );
 }
