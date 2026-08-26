@@ -7,6 +7,8 @@ import "../../../../../core/gen/adobe_fonts.dart";
 import "../../../../../core/gen/assets.gen.dart";
 import "../../../../../core/gen/fonts.gen.dart";
 
+import "schedule_section.dart";
+
 /// Details Content Widget
 class DetailsContent extends StatelessWidget {
   /// Creates a [DetailsContent] widget
@@ -65,6 +67,17 @@ class DetailsContent extends StatelessWidget {
                 titleTextSize: titleTextSize,
                 subtitleTextSize: subtitleTextSize,
               ),
+              SizedBox(
+                height: getValueForScreenType<double>(
+                  context: context,
+                  mobile: 50,
+                  tablet: 60,
+                  desktop: 80,
+                ),
+              ),
+
+              /// Cronograma / Schedule timeline section
+              const ScheduleSection(),
             ],
           ),
         ),
