@@ -31,10 +31,13 @@ class DeleteInvitationDialog extends StatelessWidget {
               size: 26,
             ),
             const SizedBox(width: 10),
-            Text(
-              "Eliminar Invitación",
-              style: context.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
+            Expanded(
+              child: Text(
+                "Eliminar Invitación",
+                style: context.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],

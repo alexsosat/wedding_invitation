@@ -4,15 +4,24 @@ import "package:flutter_common_classes/errors/failure.dart";
 import "package:flutter_common_classes/extensions/cubit_extension.dart";
 
 import "../../../../core/config/dependency_injection.dart";
+import "../../../invitation/presentation/cubits/invitation_cubit.dart";
 
 part "splash_screen_state.dart";
 
 /// Cubit in charge of managing the splash screen state.
 class SplashScreenCubit extends Cubit<SplashScreenState> {
   /// Constructor for the cubit.
-  SplashScreenCubit() : super(const SplashScreenLoading()) {
+  SplashScreenCubit({
+    this.slug,
+    InvitationCubit? invitationCubit,
+  })  : _invitationCubit = invitationCubit,
+        super(const SplashScreenLoading()) {
     _startApp();
   }
+
+  /// Optional slug to load the invitation during app start
+  final String? slug;
+  final InvitationCubit? _invitationCubit;
 
   bool _isAnimationFinished = false;
   bool _areServicesReady = false;
@@ -44,6 +53,7 @@ class SplashScreenCubit extends Cubit<SplashScreenState> {
     if (state is SplashScreenFailure) {
       return;
     }
+    await _loadInvitationData();
     _markServicesReady();
   }
 
@@ -57,7 +67,21 @@ class SplashScreenCubit extends Cubit<SplashScreenState> {
     }
   }
 
-  Future _injectDependencies() async {
+  Future<void> _loadInvitationData() async {
+    final cleanSlug = slug?.trim();
+    if (cleanSlug != null &&
+        cleanSlug.isNotEmpty &&
+        !cleanSlug.startsWith(":")) {
+      try {
+        final cubit = _invitationCubit ?? getIt<InvitationCubit>();
+        await cubit.loadInvitationBySlug(cleanSlug);
+      } catch (_) {
+        // Handled within InvitationCubit states
+      }
+    }
+  }
+
+  Future<void> _injectDependencies() async {
     try {
       await DependencyInjection.injectServices();
       await DependencyInjection.injectRepositories();

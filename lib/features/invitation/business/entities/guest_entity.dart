@@ -33,21 +33,24 @@ enum AttendanceStatus {
 /// Enum representing guest dietary preferences
 enum DietaryRequirement {
   /// No special dietary restrictions
-  none("none"),
+  none("none", "Sin restricciones"),
 
   /// Meat preference
-  meat("meat"),
+  meat("meat", "Carne"),
 
   /// Vegetarian option
-  vegetarian("vegetarian"),
+  vegetarian("vegetarian", "Vegetariano"),
 
-  /// Custom dietary requirements
-  custom("custom");
+  /// Vegan option
+  vegan("vegan", "Vegano");
 
-  const DietaryRequirement(this.value);
+  const DietaryRequirement(this.value, this.label);
 
   /// String value matching Firestore schema
   final String value;
+
+  /// Human-readable label in Spanish
+  final String label;
 
   /// Helper to parse string to [DietaryRequirement]
   static DietaryRequirement fromString(String? value) {
@@ -56,8 +59,9 @@ enum DietaryRequirement {
         return DietaryRequirement.meat;
       case "vegetarian":
         return DietaryRequirement.vegetarian;
+      case "vegan":
       case "custom":
-        return DietaryRequirement.custom;
+        return DietaryRequirement.vegan;
       case "none":
       default:
         return DietaryRequirement.none;
@@ -75,6 +79,7 @@ class GuestEntity extends Equatable {
     required this.attendance,
     required this.dietary,
     required this.invitationId,
+    this.phone,
     this.dietaryDetails,
     this.updatedAt,
   });
@@ -87,6 +92,9 @@ class GuestEntity extends Equatable {
 
   /// Last name of the guest
   final String lastName;
+
+  /// Optional contact phone number of the guest
+  final String? phone;
 
   /// Attendance confirmation status
   final AttendanceStatus attendance;
@@ -111,6 +119,7 @@ class GuestEntity extends Equatable {
     String? id,
     String? firstName,
     String? lastName,
+    String? phone,
     AttendanceStatus? attendance,
     DietaryRequirement? dietary,
     String? dietaryDetails,
@@ -121,6 +130,7 @@ class GuestEntity extends Equatable {
         id: id ?? this.id,
         firstName: firstName ?? this.firstName,
         lastName: lastName ?? this.lastName,
+        phone: phone ?? this.phone,
         attendance: attendance ?? this.attendance,
         dietary: dietary ?? this.dietary,
         dietaryDetails: dietaryDetails ?? this.dietaryDetails,
@@ -133,6 +143,7 @@ class GuestEntity extends Equatable {
         id,
         firstName,
         lastName,
+        phone,
         attendance,
         dietary,
         dietaryDetails,

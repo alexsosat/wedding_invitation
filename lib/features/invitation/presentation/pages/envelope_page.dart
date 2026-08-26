@@ -6,6 +6,8 @@ import "package:flutter_common_classes/flutter_common_classes.dart";
 
 import "../../../../core/gen/assets.gen.dart";
 import "../../../../core/routes/app_router.gr.dart";
+import "../cubits/invitation_cubit.dart";
+import "../cubits/invitation_state.dart";
 import "../widgets/envelope/envelope_card.dart";
 import "../widgets/envelope/envelope_cta_button.dart";
 
@@ -75,6 +77,23 @@ class _EnvelopePageState extends State<EnvelopePage>
     }
   }
 
+  String get _resolvedRecipientName {
+    if (widget.recipientName.isNotEmpty &&
+        widget.recipientName != "Abigail Lazcano") {
+      return widget.recipientName;
+    }
+    try {
+      final cubitState = context.read<InvitationCubit>().state;
+      if (cubitState is InvitationLoaded &&
+          cubitState.invitation.groupName.trim().isNotEmpty) {
+        return cubitState.invitation.groupName.trim();
+      }
+    } catch (_) {
+      // Return fallback if InvitationCubit is not provided in context
+    }
+    return widget.recipientName;
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
         backgroundColor: context.colorScheme.primary,
@@ -131,7 +150,7 @@ class _EnvelopePageState extends State<EnvelopePage>
                               Transform.rotate(
                                 angle: -8 * math.pi / 180,
                                 child: EnvelopeCard(
-                                  recipientName: widget.recipientName,
+                                  recipientName: _resolvedRecipientName,
                                   onTap: _handleOpenInvitation,
                                 ),
                               ),

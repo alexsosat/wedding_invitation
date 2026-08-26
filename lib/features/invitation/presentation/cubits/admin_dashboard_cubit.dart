@@ -59,6 +59,14 @@ class AdminDashboardCubit extends Cubit<AdminDashboardState> {
     }
   }
 
+  /// Updates the active dietary filter
+  void updateDietaryFilter(DietaryFilterStatus filter) {
+    final currentState = state;
+    if (currentState is AdminDashboardLoaded) {
+      safeEmit(currentState.copyWith(selectedDietaryFilter: filter));
+    }
+  }
+
   /// Creates a new invitation
   Future<void> createInvitation(InvitationEntity invitation) async {
     final currentState = state;

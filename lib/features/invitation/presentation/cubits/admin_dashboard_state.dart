@@ -1,6 +1,7 @@
 import "package:equatable/equatable.dart";
 import "package:flutter_common_classes/flutter_common_classes.dart";
 
+import "../../business/entities/guest_entity.dart";
 import "../../business/entities/invitation_entity.dart";
 
 /// Filter options for displaying invitations in the admin dashboard
@@ -24,6 +25,29 @@ enum InvitationFilterStatus {
   declined("Declinadas");
 
   const InvitationFilterStatus(this.label);
+
+  /// User-facing label
+  final String label;
+}
+
+/// Filter options for filtering invitations by guest dietary preference
+enum DietaryFilterStatus {
+  /// Show all invitations regardless of dietary preference
+  all("Todas las dietas"),
+
+  /// Show invitations with at least one guest preferring meat
+  meat("Carne"),
+
+  /// Show invitations with at least one guest preferring vegetarian
+  vegetarian("Vegetariano"),
+
+  /// Show invitations with at least one guest preferring vegan
+  vegan("Vegano"),
+
+  /// Show invitations with at least one guest with no dietary restrictions
+  none("Sin restricciones");
+
+  const DietaryFilterStatus(this.label);
 
   /// User-facing label
   final String label;
@@ -56,6 +80,7 @@ class AdminDashboardLoaded extends AdminDashboardState {
     required this.invitations,
     this.searchQuery = "",
     this.selectedFilter = InvitationFilterStatus.all,
+    this.selectedDietaryFilter = DietaryFilterStatus.all,
     this.isPerformingAction = false,
     this.actionSuccessMessage,
   });
@@ -68,6 +93,9 @@ class AdminDashboardLoaded extends AdminDashboardState {
 
   /// Selected filter category
   final InvitationFilterStatus selectedFilter;
+
+  /// Selected dietary filter category
+  final DietaryFilterStatus selectedDietaryFilter;
 
   /// Whether an async mutation (create/update/delete) is in flight
   final bool isPerformingAction;
@@ -102,7 +130,37 @@ class AdminDashboardLoaded extends AdminDashboardState {
   int get unsentInvitationsCount =>
       invitations.where((inv) => !inv.isSent).length;
 
-  /// Filtered invitations based on search query and status filter
+  /// Total guests with meat preference across all invitations
+  int get totalMeatGuests => invitations.fold(
+        0,
+        (sum, inv) =>
+            sum +
+            inv.guests
+                .where((g) => g.dietary == DietaryRequirement.meat)
+                .length,
+      );
+
+  /// Total guests with vegetarian preference across all invitations
+  int get totalVegetarianGuests => invitations.fold(
+        0,
+        (sum, inv) =>
+            sum +
+            inv.guests
+                .where((g) => g.dietary == DietaryRequirement.vegetarian)
+                .length,
+      );
+
+  /// Total guests with vegan preference across all invitations
+  int get totalVeganGuests => invitations.fold(
+        0,
+        (sum, inv) =>
+            sum +
+            inv.guests
+                .where((g) => g.dietary == DietaryRequirement.vegan)
+                .length,
+      );
+
+  /// Filtered invitations based on search query and status/dietary filters
   List<InvitationEntity> get filteredInvitations => invitations.where((inv) {
         // 1. Apply search query
         if (searchQuery.trim().isNotEmpty) {
@@ -113,7 +171,9 @@ class AdminDashboardLoaded extends AdminDashboardState {
             (g) =>
                 g.fullName.toLowerCase().contains(query) ||
                 g.firstName.toLowerCase().contains(query) ||
-                g.lastName.toLowerCase().contains(query),
+                g.lastName.toLowerCase().contains(query) ||
+                (g.dietaryDetails != null &&
+                    g.dietaryDetails!.toLowerCase().contains(query)),
           );
 
           if (!matchesGroup && !matchesSlug && !matchesGuest) {
@@ -124,19 +184,50 @@ class AdminDashboardLoaded extends AdminDashboardState {
         // 2. Apply status filter
         switch (selectedFilter) {
           case InvitationFilterStatus.all:
-            return true;
+            break;
           case InvitationFilterStatus.sent:
-            return inv.isSent;
+            if (!inv.isSent) {
+              return false;
+            }
           case InvitationFilterStatus.unsent:
-            return !inv.isSent;
+            if (inv.isSent) {
+              return false;
+            }
           case InvitationFilterStatus.confirmed:
-            return inv.attendingGuestsCount > 0;
+            if (inv.attendingGuestsCount == 0) {
+              return false;
+            }
           case InvitationFilterStatus.pending:
-            return inv.pendingGuestsCount > 0;
+            if (inv.pendingGuestsCount == 0) {
+              return false;
+            }
           case InvitationFilterStatus.declined:
-            return inv.declinedGuestsCount > 0 &&
-                inv.attendingGuestsCount == 0;
+            if (inv.declinedGuestsCount == 0 ||
+                inv.attendingGuestsCount > 0) {
+              return false;
+            }
         }
+
+        // 3. Apply dietary filter
+        if (selectedDietaryFilter != DietaryFilterStatus.all) {
+          final targetDietary = switch (selectedDietaryFilter) {
+            DietaryFilterStatus.all => null,
+            DietaryFilterStatus.meat => DietaryRequirement.meat,
+            DietaryFilterStatus.vegetarian => DietaryRequirement.vegetarian,
+            DietaryFilterStatus.vegan => DietaryRequirement.vegan,
+            DietaryFilterStatus.none => DietaryRequirement.none,
+          };
+
+          if (targetDietary != null) {
+            final matchesDietary =
+                inv.guests.any((g) => g.dietary == targetDietary);
+            if (!matchesDietary) {
+              return false;
+            }
+          }
+        }
+
+        return true;
       }).toList();
 
   /// Creates a copy of this state with modified properties
@@ -144,6 +235,7 @@ class AdminDashboardLoaded extends AdminDashboardState {
     List<InvitationEntity>? invitations,
     String? searchQuery,
     InvitationFilterStatus? selectedFilter,
+    DietaryFilterStatus? selectedDietaryFilter,
     bool? isPerformingAction,
     String? actionSuccessMessage,
   }) =>
@@ -151,6 +243,8 @@ class AdminDashboardLoaded extends AdminDashboardState {
         invitations: invitations ?? this.invitations,
         searchQuery: searchQuery ?? this.searchQuery,
         selectedFilter: selectedFilter ?? this.selectedFilter,
+        selectedDietaryFilter:
+            selectedDietaryFilter ?? this.selectedDietaryFilter,
         isPerformingAction: isPerformingAction ?? this.isPerformingAction,
         actionSuccessMessage: actionSuccessMessage,
       );
@@ -160,6 +254,7 @@ class AdminDashboardLoaded extends AdminDashboardState {
         invitations,
         searchQuery,
         selectedFilter,
+        selectedDietaryFilter,
         isPerformingAction,
         actionSuccessMessage,
       ];

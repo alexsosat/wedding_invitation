@@ -23,6 +23,7 @@ import "../../features/invitation/business/use_cases/update_guest_rsvp.dart";
 import "../../features/invitation/business/use_cases/update_invitation.dart";
 import "../../features/invitation/data/data_sources/remote/invitation_remote_data_source.dart";
 import "../../features/invitation/data/repositories/invitation_repository_impl.dart";
+import "../../features/invitation/presentation/cubits/invitation_cubit.dart";
 import "../../firebase_options.dart";
 
 /// Service Locator instance
@@ -185,6 +186,16 @@ class DependencyInjection {
       getIt.registerLazySingleton<UpdateGuestRsvp>(
         () => UpdateGuestRsvp(
           invitationRepository: getIt<InvitationRepository>(),
+        ),
+      );
+    }
+
+    // Invitation Blocs / Cubits
+    if (!getIt.isRegistered<InvitationCubit>()) {
+      getIt.registerLazySingleton<InvitationCubit>(
+        () => InvitationCubit(
+          getInvitation: getIt<GetInvitation>(),
+          updateGuestRsvp: getIt<UpdateGuestRsvp>(),
         ),
       );
     }

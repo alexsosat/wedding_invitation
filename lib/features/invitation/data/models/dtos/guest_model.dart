@@ -12,6 +12,7 @@ class GuestModel extends GuestEntity {
     required super.attendance,
     required super.dietary,
     required super.invitationId,
+    super.phone,
     super.dietaryDetails,
     super.updatedAt,
   });
@@ -33,6 +34,7 @@ class GuestModel extends GuestEntity {
         id: id,
         firstName: map["firstName"] as String? ?? "",
         lastName: map["lastName"] as String? ?? "",
+        phone: map["phone"] as String?,
         attendance: AttendanceStatus.fromString(map["attendance"] as String?),
         dietary: DietaryRequirement.fromString(map["dietary"] as String?),
         dietaryDetails: map["dietaryDetails"] as String?,
@@ -45,6 +47,7 @@ class GuestModel extends GuestEntity {
         id: entity.id,
         firstName: entity.firstName,
         lastName: entity.lastName,
+        phone: entity.phone,
         attendance: entity.attendance,
         dietary: entity.dietary,
         dietaryDetails: entity.dietaryDetails,
@@ -61,6 +64,9 @@ class GuestModel extends GuestEntity {
       "dietary": dietary.value,
       "invitationId": invitationId,
     };
+    if (phone != null && phone!.trim().isNotEmpty) {
+      map["phone"] = phone!.trim();
+    }
     if (dietaryDetails != null) {
       map["dietaryDetails"] = dietaryDetails;
     }
@@ -90,6 +96,7 @@ class GuestModel extends GuestEntity {
         id: id,
         firstName: firstName,
         lastName: lastName,
+        phone: phone,
         attendance: attendance,
         dietary: dietary,
         dietaryDetails: dietaryDetails,

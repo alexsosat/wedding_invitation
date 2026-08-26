@@ -10,6 +10,7 @@ class GuestFormItem extends StatelessWidget {
     required this.index,
     required this.firstNameController,
     required this.lastNameController,
+    required this.phoneController,
     required this.attendance,
     required this.dietary,
     required this.dietaryDetailsController,
@@ -27,6 +28,9 @@ class GuestFormItem extends StatelessWidget {
 
   /// Controller for last name
   final TextEditingController lastNameController;
+
+  /// Controller for phone number
+  final TextEditingController phoneController;
 
   /// Selected attendance status
   final AttendanceStatus attendance;
@@ -57,50 +61,53 @@ class GuestFormItem extends StatelessWidget {
             color: context.colorScheme.outline.withValues(alpha: 0.25),
           ),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final isCompact = constraints.maxWidth < 420;
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CircleAvatar(
-                  radius: 12,
-                  backgroundColor: context.colorScheme.primaryContainer,
-                  child: Text(
-                    "${index + 1}",
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color: context.colorScheme.onPrimaryContainer,
+                Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 12,
+                      backgroundColor: context.colorScheme.primaryContainer,
+                      child: Text(
+                        "${index + 1}",
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: context.colorScheme.onPrimaryContainer,
+                        ),
+                      ),
                     ),
-                  ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        "Invitado #${index + 1}",
+                        style: context.textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: context.colorScheme.primary,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    IconButton(
+                      icon: Icon(
+                        Icons.delete_outline,
+                        color: context.colorScheme.error,
+                        size: 20,
+                      ),
+                      tooltip: "Eliminar invitado",
+                      onPressed: onRemove,
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 8),
-                Text(
-                  "Invitado #${index + 1}",
-                  style: context.textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: context.colorScheme.primary,
-                  ),
-                ),
-                const Spacer(),
-                IconButton(
-                  icon: Icon(
-                    Icons.delete_outline,
-                    color: context.colorScheme.error,
-                    size: 20,
-                  ),
-                  tooltip: "Eliminar invitado",
-                  onPressed: onRemove,
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: TextFormField(
+                const SizedBox(height: 12),
+                if (isCompact) ...[
+                  TextFormField(
                     controller: firstNameController,
                     decoration: const InputDecoration(
                       labelText: "Nombre(s) *",
@@ -110,26 +117,60 @@ class GuestFormItem extends StatelessWidget {
                         ? "Requerido"
                         : null,
                   ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: TextFormField(
+                  const SizedBox(height: 10),
+                  TextFormField(
                     controller: lastNameController,
                     decoration: const InputDecoration(
                       labelText: "Apellidos",
                       isDense: true,
                     ),
                   ),
+                ] else ...[
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                          controller: firstNameController,
+                          decoration: const InputDecoration(
+                            labelText: "Nombre(s) *",
+                            isDense: true,
+                          ),
+                          validator: (value) =>
+                              value == null || value.trim().isEmpty
+                                  ? "Requerido"
+                                  : null,
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: TextFormField(
+                          controller: lastNameController,
+                          decoration: const InputDecoration(
+                            labelText: "Apellidos",
+                            isDense: true,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+                const SizedBox(height: 10),
+                TextFormField(
+                  controller: phoneController,
+                  keyboardType: TextInputType.phone,
+                  decoration: const InputDecoration(
+                    labelText: "Teléfono (opcional)",
+                    hintText: "+52 123 456 7890",
+                    prefixIcon: Icon(Icons.phone_outlined, size: 18),
+                    isDense: true,
+                  ),
                 ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Row(
-              children: [
-                Expanded(
-                  child: DropdownButtonFormField<AttendanceStatus>(
+                const SizedBox(height: 10),
+                if (isCompact) ...[
+                  DropdownButtonFormField<AttendanceStatus>(
                     initialValue: attendance,
                     isDense: true,
+                    isExpanded: true,
                     decoration: const InputDecoration(
                       labelText: "Asistencia",
                     ),
@@ -153,12 +194,11 @@ class GuestFormItem extends StatelessWidget {
                       }
                     },
                   ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: DropdownButtonFormField<DietaryRequirement>(
+                  const SizedBox(height: 10),
+                  DropdownButtonFormField<DietaryRequirement>(
                     initialValue: dietary,
                     isDense: true,
+                    isExpanded: true,
                     decoration: const InputDecoration(
                       labelText: "Dieta",
                     ),
@@ -176,8 +216,8 @@ class GuestFormItem extends StatelessWidget {
                         child: Text("Vegetariano"),
                       ),
                       DropdownMenuItem(
-                        value: DietaryRequirement.custom,
-                        child: Text("Especial / Alergia"),
+                        value: DietaryRequirement.vegan,
+                        child: Text("Vegano"),
                       ),
                     ],
                     onChanged: (val) {
@@ -186,20 +226,78 @@ class GuestFormItem extends StatelessWidget {
                       }
                     },
                   ),
-                ),
+                ] else ...[
+                  Row(
+                    children: [
+                      Expanded(
+                        child: DropdownButtonFormField<AttendanceStatus>(
+                          initialValue: attendance,
+                          isDense: true,
+                          isExpanded: true,
+                          decoration: const InputDecoration(
+                            labelText: "Asistencia",
+                          ),
+                          items: const [
+                            DropdownMenuItem(
+                              value: AttendanceStatus.pending,
+                              child: Text("Pendiente"),
+                            ),
+                            DropdownMenuItem(
+                              value: AttendanceStatus.attending,
+                              child: Text("Confirmado"),
+                            ),
+                            DropdownMenuItem(
+                              value: AttendanceStatus.notAttending,
+                              child: Text("No asistirá"),
+                            ),
+                          ],
+                          onChanged: (val) {
+                            if (val != null) {
+                              onAttendanceChanged(val);
+                            }
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: DropdownButtonFormField<DietaryRequirement>(
+                          initialValue: dietary,
+                          isDense: true,
+                          isExpanded: true,
+                          decoration: const InputDecoration(
+                            labelText: "Dieta",
+                          ),
+                          items: const [
+                            DropdownMenuItem(
+                              value: DietaryRequirement.none,
+                              child: Text("Sin restricciones"),
+                            ),
+                            DropdownMenuItem(
+                              value: DietaryRequirement.meat,
+                              child: Text("Carne"),
+                            ),
+                            DropdownMenuItem(
+                              value: DietaryRequirement.vegetarian,
+                              child: Text("Vegetariano"),
+                            ),
+                            DropdownMenuItem(
+                              value: DietaryRequirement.vegan,
+                              child: Text("Vegano"),
+                            ),
+                          ],
+                          onChanged: (val) {
+                            if (val != null) {
+                              onDietaryChanged(val);
+                            }
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ],
-            ),
-            if (dietary == DietaryRequirement.custom) ...[
-              const SizedBox(height: 10),
-              TextFormField(
-                controller: dietaryDetailsController,
-                decoration: const InputDecoration(
-                  labelText: "Detalles de alergia o dieta especial",
-                  isDense: true,
-                ),
-              ),
-            ],
-          ],
+            );
+          },
         ),
       );
 }

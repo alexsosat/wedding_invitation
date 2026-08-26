@@ -29,6 +29,7 @@ class _GuestDraft {
     required this.id,
     required this.firstNameController,
     required this.lastNameController,
+    required this.phoneController,
     required this.attendance,
     required this.dietary,
     required this.dietaryDetailsController,
@@ -37,6 +38,7 @@ class _GuestDraft {
   final String id;
   final TextEditingController firstNameController;
   final TextEditingController lastNameController;
+  final TextEditingController phoneController;
   AttendanceStatus attendance;
   DietaryRequirement dietary;
   final TextEditingController dietaryDetailsController;
@@ -44,6 +46,7 @@ class _GuestDraft {
   void dispose() {
     firstNameController.dispose();
     lastNameController.dispose();
+    phoneController.dispose();
     dietaryDetailsController.dispose();
   }
 }
@@ -70,6 +73,7 @@ class _InvitationFormDialogState extends State<InvitationFormDialog> {
             id: g.id,
             firstNameController: TextEditingController(text: g.firstName),
             lastNameController: TextEditingController(text: g.lastName),
+            phoneController: TextEditingController(text: g.phone ?? ""),
             attendance: g.attendance,
             dietary: g.dietary,
             dietaryDetailsController:
@@ -89,6 +93,7 @@ class _InvitationFormDialogState extends State<InvitationFormDialog> {
           id: "",
           firstNameController: TextEditingController(),
           lastNameController: TextEditingController(),
+          phoneController: TextEditingController(),
           attendance: AttendanceStatus.pending,
           dietary: DietaryRequirement.none,
           dietaryDetailsController: TextEditingController(),
@@ -142,11 +147,12 @@ class _InvitationFormDialogState extends State<InvitationFormDialog> {
             id: g.id,
             firstName: g.firstNameController.text.trim(),
             lastName: g.lastNameController.text.trim(),
+            phone: g.phoneController.text.trim().isNotEmpty
+                ? g.phoneController.text.trim()
+                : null,
             attendance: g.attendance,
             dietary: g.dietary,
-            dietaryDetails: g.dietary == DietaryRequirement.custom
-                ? g.dietaryDetailsController.text.trim()
-                : null,
+            dietaryDetails: null,
             invitationId: widget.invitation?.id ?? "",
           ),
         )
@@ -181,13 +187,14 @@ class _InvitationFormDialogState extends State<InvitationFormDialog> {
     final isEditing = widget.invitation != null;
 
     return Dialog(
+      insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
       ),
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 620, maxHeight: 750),
         child: Padding(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.all(20),
           child: Form(
             key: _formKey,
             child: Column(
@@ -196,11 +203,14 @@ class _InvitationFormDialogState extends State<InvitationFormDialog> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      isEditing ? "Editar Invitación" : "Nueva Invitación",
-                      style: context.textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: context.colorScheme.primary,
+                    Expanded(
+                      child: Text(
+                        isEditing ? "Editar Invitación" : "Nueva Invitación",
+                        style: context.textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: context.colorScheme.primary,
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                     IconButton(
@@ -231,33 +241,62 @@ class _InvitationFormDialogState extends State<InvitationFormDialog> {
                                 : null,
                       ),
                       const SizedBox(height: 14),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: TextFormField(
-                              controller: _slugController,
-                              decoration: const InputDecoration(
-                                labelText: "Slug de URL *",
-                                hintText: "ej. familia-sosa-perez",
-                                prefixIcon: Icon(Icons.link),
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          if (constraints.maxWidth < 360) {
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                TextFormField(
+                                  controller: _slugController,
+                                  decoration: const InputDecoration(
+                                    labelText: "Slug de URL *",
+                                    hintText: "ej. familia-sosa-perez",
+                                    prefixIcon: Icon(Icons.link),
+                                  ),
+                                  validator: (value) =>
+                                      value == null || value.trim().isEmpty
+                                          ? "Ingresa un slug válido"
+                                          : null,
+                                ),
+                                const SizedBox(height: 8),
+                                OutlinedButton.icon(
+                                  onPressed: _autoGenerateSlug,
+                                  icon: const Icon(Icons.auto_awesome, size: 16),
+                                  label: const Text("Generar Slug"),
+                                ),
+                              ],
+                            );
+                          }
+                          return Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: TextFormField(
+                                  controller: _slugController,
+                                  decoration: const InputDecoration(
+                                    labelText: "Slug de URL *",
+                                    hintText: "ej. familia-sosa-perez",
+                                    prefixIcon: Icon(Icons.link),
+                                  ),
+                                  validator: (value) =>
+                                      value == null || value.trim().isEmpty
+                                          ? "Ingresa un slug válido"
+                                          : null,
+                                ),
                               ),
-                              validator: (value) =>
-                                  value == null || value.trim().isEmpty
-                                      ? "Ingresa un slug válido"
-                                      : null,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 4),
-                            child: OutlinedButton.icon(
-                              onPressed: _autoGenerateSlug,
-                              icon: const Icon(Icons.auto_awesome, size: 16),
-                              label: const Text("Generar"),
-                            ),
-                          ),
-                        ],
+                              const SizedBox(width: 8),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 4),
+                                child: OutlinedButton.icon(
+                                  onPressed: _autoGenerateSlug,
+                                  icon: const Icon(Icons.auto_awesome, size: 16),
+                                  label: const Text("Generar"),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
                       ),
                       const SizedBox(height: 14),
                       SwitchListTile.adaptive(
@@ -273,8 +312,11 @@ class _InvitationFormDialogState extends State<InvitationFormDialog> {
                         onChanged: (val) => setState(() => _isSent = val),
                       ),
                       const Divider(height: 32),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      Wrap(
+                        alignment: WrapAlignment.spaceBetween,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        spacing: 8,
+                        runSpacing: 8,
                         children: [
                           Text(
                             "Lista de Invitados (${_guests.length})",
@@ -297,6 +339,7 @@ class _InvitationFormDialogState extends State<InvitationFormDialog> {
                           index: i,
                           firstNameController: _guests[i].firstNameController,
                           lastNameController: _guests[i].lastNameController,
+                          phoneController: _guests[i].phoneController,
                           attendance: _guests[i].attendance,
                           dietary: _guests[i].dietary,
                           dietaryDetailsController:
@@ -311,14 +354,15 @@ class _InvitationFormDialogState extends State<InvitationFormDialog> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+                Wrap(
+                  alignment: WrapAlignment.end,
+                  spacing: 8,
+                  runSpacing: 8,
                   children: [
                     TextButton(
                       onPressed: () => Navigator.of(context).pop(),
                       child: const Text("Cancelar"),
                     ),
-                    const SizedBox(width: 8),
                     FilledButton(
                       onPressed: _submit,
                       child: Text(isEditing ? "Guardar Cambios" : "Crear"),

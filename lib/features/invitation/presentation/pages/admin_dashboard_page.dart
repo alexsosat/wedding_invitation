@@ -101,26 +101,31 @@ class _AdminDashboardViewState extends State<_AdminDashboardView> {
                 ),
               ),
               const SizedBox(width: 12),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Mayte & Alex",
-                    style: TextStyle(
-                      fontFamily: AdobeFonts.altesse,
-                      fontSize: 22,
-                      color: context.colorScheme.onPrimary,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      "Mayte & Alex",
+                      style: TextStyle(
+                        fontFamily: AdobeFonts.altesse,
+                        fontSize: 22,
+                        color: context.colorScheme.onPrimary,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  ),
-                  Text(
-                    "Panel de Administración",
-                    style: context.textTheme.labelSmall?.copyWith(
-                      color:
-                          context.colorScheme.onPrimary.withValues(alpha: 0.8),
-                      letterSpacing: 0.5,
+                    Text(
+                      "Panel de Administración",
+                      style: context.textTheme.labelSmall?.copyWith(
+                        color: context.colorScheme.onPrimary
+                            .withValues(alpha: 0.8),
+                        letterSpacing: 0.5,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),
@@ -248,17 +253,19 @@ class _AdminDashboardViewState extends State<_AdminDashboardView> {
                             const SizedBox(height: 12),
                             LayoutBuilder(
                               builder: (context, constraints) {
+                                final isWide = constraints.maxWidth > 650;
+                                final isNarrow = constraints.maxWidth < 360;
                                 final crossAxisCount =
-                                    constraints.maxWidth > 650 ? 4 : 2;
+                                    isWide ? 4 : (isNarrow ? 1 : 2);
+                                final childAspectRatio =
+                                    isWide ? 1.5 : (isNarrow ? 2.3 : 1.15);
                                 return GridView.count(
                                   shrinkWrap: true,
-                                  physics:
-                                      const NeverScrollableScrollPhysics(),
+                                  physics: const NeverScrollableScrollPhysics(),
                                   crossAxisCount: crossAxisCount,
                                   crossAxisSpacing: 12,
                                   mainAxisSpacing: 12,
-                                  childAspectRatio:
-                                      constraints.maxWidth > 650 ? 1.5 : 1.35,
+                                  childAspectRatio: childAspectRatio,
                                   children: [
                                     DashboardStatsCard(
                                       title: "Total Invitaciones",
@@ -296,6 +303,55 @@ class _AdminDashboardViewState extends State<_AdminDashboardView> {
                                 );
                               },
                             ),
+                            const SizedBox(height: 24),
+                            Text(
+                              "Preferencias de Menú",
+                              style: context.textTheme.titleLarge?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: context.colorScheme.primary,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            LayoutBuilder(
+                              builder: (context, constraints) {
+                                final isWide = constraints.maxWidth > 650;
+                                final crossAxisCount = isWide ? 3 : 1;
+                                final childAspectRatio = isWide ? 1.8 : 2.2;
+                                return GridView.count(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  crossAxisCount: crossAxisCount,
+                                  crossAxisSpacing: 12,
+                                  mainAxisSpacing: 12,
+                                  childAspectRatio: childAspectRatio,
+                                  children: [
+                                    DashboardStatsCard(
+                                      title: "Menú Carne",
+                                      value: "${state.totalMeatGuests}",
+                                      icon: Icons.restaurant,
+                                      color: const Color(0xff9E5A22),
+                                      subtitle:
+                                          "Total de invitados con menú carne",
+                                    ),
+                                    DashboardStatsCard(
+                                      title: "Menú Vegetariano",
+                                      value: "${state.totalVegetarianGuests}",
+                                      icon: Icons.eco_outlined,
+                                      color: const Color(0xff2E7D32),
+                                      subtitle:
+                                          "Total de invitados vegetarianos",
+                                    ),
+                                    DashboardStatsCard(
+                                      title: "Menú Vegano",
+                                      value: "${state.totalVeganGuests}",
+                                      icon: Icons.spa_outlined,
+                                      color: const Color(0xff558B2F),
+                                      subtitle: "Total de invitados veganos",
+                                    ),
+                                  ],
+                                );
+                              },
+                            ),
                           ],
                         ),
                       ),
@@ -306,12 +362,13 @@ class _AdminDashboardViewState extends State<_AdminDashboardView> {
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       sliver: SliverToBoxAdapter(
                         child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             TextField(
                               controller: _searchController,
                               decoration: InputDecoration(
                                 hintText:
-                                    "Buscar por familia, invitado o enlace...",
+                                    "Buscar por familia, invitado, nota de dieta o enlace...",
                                 prefixIcon: const Icon(Icons.search),
                                 suffixIcon: _searchController.text.isNotEmpty
                                     ? IconButton(
@@ -343,38 +400,132 @@ class _AdminDashboardViewState extends State<_AdminDashboardView> {
                                   .updateSearchQuery(val),
                             ),
                             const SizedBox(height: 12),
+                            // Status Filters
                             SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
                               child: Row(
-                                children: InvitationFilterStatus.values
-                                    .map((filter) {
-                                  final isSelected =
-                                      state.selectedFilter == filter;
-                                  return Padding(
-                                    padding: const EdgeInsets.only(right: 8),
-                                    child: FilterChip(
-                                      selected: isSelected,
-                                      label: Text(filter.label),
-                                      onSelected: (_) => context
-                                          .read<AdminDashboardCubit>()
-                                          .updateFilter(filter),
-                                      selectedColor: context
-                                          .colorScheme.primaryContainer
-                                          .withValues(alpha: 0.3),
-                                      checkmarkColor:
-                                          context.colorScheme.primary,
-                                      labelStyle: TextStyle(
-                                        color: isSelected
-                                            ? context.colorScheme.primary
-                                            : context
-                                                .colorScheme.onSurfaceVariant,
-                                        fontWeight: isSelected
-                                            ? FontWeight.bold
-                                            : FontWeight.normal,
-                                      ),
+                                children: [
+                                  Text(
+                                    "Estado:",
+                                    style:
+                                        context.textTheme.labelMedium?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color:
+                                          context.colorScheme.onSurfaceVariant,
                                     ),
-                                  );
-                                }).toList(),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  ...InvitationFilterStatus.values
+                                      .map((filter) {
+                                    final isSelected =
+                                        state.selectedFilter == filter;
+                                    return Padding(
+                                      padding: const EdgeInsets.only(right: 8),
+                                      child: FilterChip(
+                                        selected: isSelected,
+                                        label: Text(filter.label),
+                                        onSelected: (_) => context
+                                            .read<AdminDashboardCubit>()
+                                            .updateFilter(filter),
+                                        selectedColor: context
+                                            .colorScheme.primaryContainer
+                                            .withValues(alpha: 0.3),
+                                        checkmarkColor:
+                                            context.colorScheme.primary,
+                                        labelStyle: TextStyle(
+                                          color: isSelected
+                                              ? context.colorScheme.primary
+                                              : context
+                                                  .colorScheme.onSurfaceVariant,
+                                          fontWeight: isSelected
+                                              ? FontWeight.bold
+                                              : FontWeight.normal,
+                                        ),
+                                      ),
+                                    );
+                                  }),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            // Dietary Filters
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: [
+                                  Text(
+                                    "Dieta:",
+                                    style:
+                                        context.textTheme.labelMedium?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color:
+                                          context.colorScheme.onSurfaceVariant,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  ...DietaryFilterStatus.values
+                                      .map((dietaryFilter) {
+                                    final isSelected =
+                                        state.selectedDietaryFilter ==
+                                            dietaryFilter;
+                                    final (icon, activeColor) =
+                                        switch (dietaryFilter) {
+                                      DietaryFilterStatus.all => (
+                                          Icons.filter_list,
+                                          context.colorScheme.primary
+                                        ),
+                                      DietaryFilterStatus.meat => (
+                                          Icons.restaurant,
+                                          const Color(0xff9E5A22)
+                                        ),
+                                      DietaryFilterStatus.vegetarian => (
+                                          Icons.eco_outlined,
+                                          const Color(0xff2E7D32)
+                                        ),
+                                      DietaryFilterStatus.vegan => (
+                                          Icons.spa_outlined,
+                                          const Color(0xff558B2F)
+                                        ),
+                                      DietaryFilterStatus.none => (
+                                          Icons.check_circle_outline,
+                                          const Color(0xff5C80A3)
+                                        ),
+                                    };
+
+                                    return Padding(
+                                      padding: const EdgeInsets.only(right: 8),
+                                      child: FilterChip(
+                                        selected: isSelected,
+                                        avatar: Icon(
+                                          icon,
+                                          size: 15,
+                                          color: isSelected
+                                              ? activeColor
+                                              : context
+                                                  .colorScheme.onSurfaceVariant,
+                                        ),
+                                        label: Text(dietaryFilter.label),
+                                        onSelected: (_) => context
+                                            .read<AdminDashboardCubit>()
+                                            .updateDietaryFilter(
+                                              dietaryFilter,
+                                            ),
+                                        selectedColor:
+                                            activeColor.withValues(alpha: 0.15),
+                                        checkmarkColor: activeColor,
+                                        labelStyle: TextStyle(
+                                          color: isSelected
+                                              ? activeColor
+                                              : context
+                                                  .colorScheme.onSurfaceVariant,
+                                          fontWeight: isSelected
+                                              ? FontWeight.bold
+                                              : FontWeight.normal,
+                                        ),
+                                      ),
+                                    );
+                                  }),
+                                ],
                               ),
                             ),
                             const SizedBox(height: 16),
@@ -402,7 +553,9 @@ class _AdminDashboardViewState extends State<_AdminDashboardView> {
                                 Text(
                                   state.searchQuery.isNotEmpty ||
                                           state.selectedFilter !=
-                                              InvitationFilterStatus.all
+                                              InvitationFilterStatus.all ||
+                                          state.selectedDietaryFilter !=
+                                              DietaryFilterStatus.all
                                       ? "No se encontraron invitaciones para los filtros seleccionados"
                                       : "No hay invitaciones registradas aún",
                                   textAlign: TextAlign.center,
@@ -415,8 +568,7 @@ class _AdminDashboardViewState extends State<_AdminDashboardView> {
                                 FilledButton.icon(
                                   onPressed: () => _openCreateDialog(context),
                                   icon: const Icon(Icons.add),
-                                  label:
-                                      const Text("Crear Primera Invitación"),
+                                  label: const Text("Crear Primera Invitación"),
                                 ),
                               ],
                             ),

@@ -8,28 +8,37 @@ class AppRouter extends RootStackRouter {
   @override
   List<AutoRoute> get routes => [
         AutoRoute(
-          initial: true,
-          page: SplashRoute.page,
-        ),
-        AutoRoute(
-          page: EnvelopeRoute.page,
-        ),
-        AutoRoute(
-          page: InvitationRoute.page,
-        ),
-        AutoRoute(
-          page: DetailsRoute.page,
-        ),
-        AutoRoute(
-          page: RsvpRoute.page,
-        ),
-        AutoRoute(
           page: LoginRoute.page,
           path: "/admin/login",
         ),
         AutoRoute(
           page: AdminDashboardRoute.page,
           path: "/admin",
+        ),
+        AutoRoute(
+          page: InvitationRoute.page,
+          path: "/invitation",
+        ),
+        AutoRoute(
+          page: DetailsRoute.page,
+          path: "/details",
+        ),
+        AutoRoute(
+          page: RsvpRoute.page,
+          path: "/rsvp",
+        ),
+        AutoRoute(
+          page: EnvelopeRoute.page,
+          path: "/envelope",
+        ),
+        AutoRoute(
+          page: NotFoundRoute.page,
+          path: "/not-found",
+        ),
+        AutoRoute(
+          initial: true,
+          page: SplashRoute.page,
+          path: "/:slug?",
         ),
       ];
 }

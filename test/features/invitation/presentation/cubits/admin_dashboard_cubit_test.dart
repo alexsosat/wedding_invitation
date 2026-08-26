@@ -179,4 +179,76 @@ void main() {
     expect(state.filteredInvitations.length, equals(1));
     expect(state.filteredInvitations.first.groupName, equals("Familia Perez"));
   });
+
+  test("computes dietary metrics and filters by dietary option", () async {
+    repository.invitations = [
+      const InvitationEntity(
+        id: "1",
+        groupName: "Familia Sosa",
+        slug: "familia-sosa",
+        isSent: true,
+        guests: [
+          GuestEntity(
+            id: "g1",
+            firstName: "Alex",
+            lastName: "Sosa",
+            attendance: AttendanceStatus.attending,
+            dietary: DietaryRequirement.meat,
+            invitationId: "1",
+          ),
+          GuestEntity(
+            id: "g2",
+            firstName: "Mayte",
+            lastName: "López",
+            attendance: AttendanceStatus.attending,
+            dietary: DietaryRequirement.vegetarian,
+            invitationId: "1",
+          ),
+        ],
+      ),
+      const InvitationEntity(
+        id: "2",
+        groupName: "Familia Perez",
+        slug: "familia-perez",
+        isSent: false,
+        guests: [
+          GuestEntity(
+            id: "g3",
+            firstName: "Juan",
+            lastName: "Perez",
+            attendance: AttendanceStatus.attending,
+            dietary: DietaryRequirement.vegan,
+            invitationId: "2",
+          ),
+          GuestEntity(
+            id: "g4",
+            firstName: "Maria",
+            lastName: "Perez",
+            attendance: AttendanceStatus.attending,
+            dietary: DietaryRequirement.none,
+            invitationId: "2",
+          ),
+        ],
+      ),
+    ];
+
+    await cubit.loadInvitations();
+
+    var state = cubit.state as AdminDashboardLoaded;
+    expect(state.totalMeatGuests, equals(1));
+    expect(state.totalVegetarianGuests, equals(1));
+    expect(state.totalVeganGuests, equals(1));
+
+    // Filter by vegetarian
+    cubit.updateDietaryFilter(DietaryFilterStatus.vegetarian);
+    state = cubit.state as AdminDashboardLoaded;
+    expect(state.filteredInvitations.length, equals(1));
+    expect(state.filteredInvitations.first.id, equals("1"));
+
+    // Filter by vegan
+    cubit.updateDietaryFilter(DietaryFilterStatus.vegan);
+    state = cubit.state as AdminDashboardLoaded;
+    expect(state.filteredInvitations.length, equals(1));
+    expect(state.filteredInvitations.first.id, equals("2"));
+  });
 }

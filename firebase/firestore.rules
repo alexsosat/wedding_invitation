@@ -14,8 +14,7 @@ service cloud.firestore {
 
     function isAdmin() {
       return isSignedIn() && 
-             request.auth.token.email == 'alexsosat@gmail.com' && 
-             request.auth.token.email_verified == true;
+             request.auth.token.email == 'alexsosat@gmail.com';
     }
 
     function isValidId(id) {
@@ -44,6 +43,7 @@ service cloud.firestore {
              data.attendance is string && (data.attendance == 'Pending' || data.attendance == 'Attending' || data.attendance == 'Not Attending') &&
              data.dietary is string && (data.dietary == 'none' || data.dietary == 'meat' || data.dietary == 'vegetarian' || data.dietary == 'custom') &&
              (!('dietaryDetails' in data) || (data.dietaryDetails is string && data.dietaryDetails.size() <= 200)) &&
+             (!('phone' in data) || (data.phone is string && data.phone.size() <= 30)) &&
              data.invitationId is string && isValidId(data.invitationId);
     }
 
@@ -51,7 +51,7 @@ service cloud.firestore {
     match /invitations/{invitationId} {
       allow get: if isValidId(invitationId); 
       allow list: if isAdmin(); 
-      allow create: if isAdmin() && isValidInvitation(incoming()) && incoming().createdAt == request.time;
+      allow create: if isAdmin() && isValidInvitation(incoming());
       allow update: if isAdmin() && isValidInvitation(incoming());
       allow delete: if isAdmin();
       
