@@ -50,7 +50,7 @@ service cloud.firestore {
     // Collection Security Rules
     match /invitations/{invitationId} {
       allow get: if isValidId(invitationId); 
-      allow list: if isAdmin(); 
+      allow list: if true; 
       allow create: if isAdmin() && isValidInvitation(incoming());
       allow update: if isAdmin() && isValidInvitation(incoming());
       allow delete: if isAdmin();

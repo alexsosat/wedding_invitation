@@ -68,7 +68,7 @@ class SplashScreenCubit extends Cubit<SplashScreenState> {
   }
 
   Future<void> _loadInvitationData() async {
-    final cleanSlug = slug?.trim();
+    final cleanSlug = slug?.trim().toLowerCase();
     if (cleanSlug != null &&
         cleanSlug.isNotEmpty &&
         !cleanSlug.startsWith(":")) {

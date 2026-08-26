@@ -59,9 +59,10 @@ class InvitationRemoteDataSourceImpl implements InvitationRemoteDataSource {
 
   @override
   Future<InvitationModel?> getInvitationBySlug(String slug) async {
+    final cleanSlug = slug.trim().toLowerCase();
     final querySnapshot = await _firestore
         .collection(_invitationsCollection)
-        .where("slug", isEqualTo: slug)
+        .where("slug", isEqualTo: cleanSlug)
         .limit(1)
         .get();
 

@@ -56,7 +56,6 @@ flutter:
     - assets/images/logos/
     - assets/images/couple/
     - assets/images/couple/masonry/
-    - assets/images/backgrounds/
     - assets/images/symbols/
 
   fonts:

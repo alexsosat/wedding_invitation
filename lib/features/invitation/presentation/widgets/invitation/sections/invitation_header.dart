@@ -10,6 +10,7 @@ class InvitationHeader extends StatelessWidget {
   /// Header of the invitation
   const InvitationHeader({super.key, this.alternativeImage = false});
 
+  /// Whether to use the alternative background image
   final bool alternativeImage;
 
   @override

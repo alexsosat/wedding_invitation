@@ -62,17 +62,17 @@ class SplashPage extends StatelessWidget {
     if (pathSlug != null &&
         pathSlug.trim().isNotEmpty &&
         !pathSlug.startsWith(":")) {
-      return Uri.decodeComponent(pathSlug.trim());
+      return Uri.decodeComponent(pathSlug.trim()).toLowerCase();
     }
 
     if (querySlug != null && querySlug.trim().isNotEmpty) {
-      return Uri.decodeComponent(querySlug.trim());
+      return Uri.decodeComponent(querySlug.trim()).toLowerCase();
     }
 
     // Check base query parameters (?slug=...)
     final qSlug = Uri.base.queryParameters["slug"];
     if (qSlug != null && qSlug.trim().isNotEmpty) {
-      return Uri.decodeComponent(qSlug.trim());
+      return Uri.decodeComponent(qSlug.trim()).toLowerCase();
     }
 
     // Check fragment (#/... or #...)
@@ -84,7 +84,7 @@ class SplashPage extends StatelessWidget {
       if (fragmentUri != null) {
         final fragSlug = fragmentUri.queryParameters["slug"];
         if (fragSlug != null && fragSlug.trim().isNotEmpty) {
-          return Uri.decodeComponent(fragSlug.trim());
+          return Uri.decodeComponent(fragSlug.trim()).toLowerCase();
         }
 
         final segments =
@@ -92,7 +92,7 @@ class SplashPage extends StatelessWidget {
         if (segments.isNotEmpty) {
           final first = segments.first;
           if (!_isReservedRoute(first)) {
-            return Uri.decodeComponent(first);
+            return Uri.decodeComponent(first).toLowerCase();
           }
         }
       }
@@ -104,7 +104,7 @@ class SplashPage extends StatelessWidget {
     if (pathSegments.isNotEmpty) {
       final first = pathSegments.first;
       if (!_isReservedRoute(first)) {
-        return Uri.decodeComponent(first);
+        return Uri.decodeComponent(first).toLowerCase();
       }
     }
 
