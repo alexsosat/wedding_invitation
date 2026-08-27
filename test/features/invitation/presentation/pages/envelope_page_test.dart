@@ -2,6 +2,7 @@ import "package:boda_ma/features/invitation/presentation/pages/envelope_page.dar
 import "package:boda_ma/features/invitation/presentation/widgets/envelope/envelope_card.dart";
 import "package:boda_ma/features/invitation/presentation/widgets/envelope/envelope_cta_button.dart";
 import "package:boda_ma/features/invitation/presentation/widgets/envelope/ribbon_recipient_text.dart";
+import "package:flutter/gestures.dart";
 import "package:flutter/material.dart";
 import "package:flutter_test/flutter_test.dart";
 
@@ -72,5 +73,44 @@ void main() {
     await tester.pump(const Duration(milliseconds: 700));
 
     expect(wasOpened, isTrue);
+  });
+
+  testWidgets("EnvelopeCard scales on mouse hover", (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: EnvelopeCard(
+            recipientName: "Invitado",
+            onTap: () {},
+          ),
+        ),
+      ),
+    );
+
+    await tester.pump();
+
+    final animatedScaleFinder = find.descendant(
+      of: find.byType(EnvelopeCard),
+      matching: find.byType(AnimatedScale),
+    );
+    expect(animatedScaleFinder, findsOneWidget);
+
+    final initialScale =
+        tester.widget<AnimatedScale>(animatedScaleFinder).scale;
+    expect(initialScale, equals(1.0));
+
+    // Simulate mouse hover
+    final gesture =
+        await tester.createGesture(kind: PointerDeviceKind.mouse);
+    await gesture.addPointer(location: Offset.zero);
+    addTearDown(gesture.removePointer);
+
+    await gesture.moveTo(tester.getCenter(find.byType(EnvelopeCard)));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+
+    final hoveredScale =
+        tester.widget<AnimatedScale>(animatedScaleFinder).scale;
+    expect(hoveredScale, equals(1.04));
   });
 }
