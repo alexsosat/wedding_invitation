@@ -1,3 +1,5 @@
+import "dart:async";
+
 import "package:boda_ma/features/invitation/presentation/pages/envelope_page.dart";
 import "package:boda_ma/features/invitation/presentation/widgets/envelope/envelope_card.dart";
 import "package:boda_ma/features/invitation/presentation/widgets/envelope/envelope_cta_button.dart";
@@ -100,8 +102,7 @@ void main() {
     expect(initialScale, equals(1.0));
 
     // Simulate mouse hover
-    final gesture =
-        await tester.createGesture(kind: PointerDeviceKind.mouse);
+    final gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
     await gesture.addPointer(location: Offset.zero);
     addTearDown(gesture.removePointer);
 
@@ -112,5 +113,44 @@ void main() {
     final hoveredScale =
         tester.widget<AnimatedScale>(animatedScaleFinder).scale;
     expect(hoveredScale, equals(1.04));
+  });
+
+  testWidgets("EnvelopeCard applies SlideTransition to ribbon", (
+    tester,
+  ) async {
+    final controller = AnimationController(
+      vsync: const TestVSync(),
+      duration: const Duration(milliseconds: 500),
+    );
+    final slideAnimation = Tween<Offset>(
+      begin: const Offset(-0.35, 0),
+      end: Offset.zero,
+    ).animate(controller);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: EnvelopeCard(
+            recipientName: "Invitado",
+            ribbonSlideAnimation: slideAnimation,
+          ),
+        ),
+      ),
+    );
+
+    final slideFinder = find.byWidgetPredicate(
+      (widget) =>
+          widget is SlideTransition && widget.position == slideAnimation,
+    );
+    expect(slideFinder, findsOneWidget);
+    final slideTransition = tester.widget<SlideTransition>(slideFinder);
+    expect(slideTransition.position.value, equals(const Offset(-0.35, 0)));
+
+    unawaited(controller.forward());
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+
+    expect(slideTransition.position.value, equals(Offset.zero));
+    controller.dispose();
   });
 }

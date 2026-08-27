@@ -48,20 +48,20 @@ class $AssetsImagesGen {
 class $AssetsImagesCoupleGen {
   const $AssetsImagesCoupleGen();
 
-  /// File path: assets/images/couple/hands.JPG
+  /// File path: assets/images/couple/hands.jpg
   AssetGenImage get hands =>
-      const AssetGenImage('assets/images/couple/hands.JPG');
+      const AssetGenImage('assets/images/couple/hands.jpg');
 
-  /// File path: assets/images/couple/hug.JPG
-  AssetGenImage get hug => const AssetGenImage('assets/images/couple/hug.JPG');
+  /// File path: assets/images/couple/hug.jpg
+  AssetGenImage get hug => const AssetGenImage('assets/images/couple/hug.jpg');
 
   /// Directory path: assets/images/couple/masonry
   $AssetsImagesCoupleMasonryGen get masonry =>
       const $AssetsImagesCoupleMasonryGen();
 
-  /// File path: assets/images/couple/view.JPG
+  /// File path: assets/images/couple/view.jpg
   AssetGenImage get view =>
-      const AssetGenImage('assets/images/couple/view.JPG');
+      const AssetGenImage('assets/images/couple/view.jpg');
 
   /// List of all assets
   List<AssetGenImage> get values => [hands, hug, view];
@@ -258,29 +258,29 @@ class $AssetsImagesTexturesGen {
 class $AssetsImagesCoupleMasonryGen {
   const $AssetsImagesCoupleMasonryGen();
 
-  /// File path: assets/images/couple/masonry/masonry_1.JPG
+  /// File path: assets/images/couple/masonry/masonry_1.jpg
   AssetGenImage get masonry1 =>
-      const AssetGenImage('assets/images/couple/masonry/masonry_1.JPG');
+      const AssetGenImage('assets/images/couple/masonry/masonry_1.jpg');
 
-  /// File path: assets/images/couple/masonry/masonry_2.JPG
+  /// File path: assets/images/couple/masonry/masonry_2.jpg
   AssetGenImage get masonry2 =>
-      const AssetGenImage('assets/images/couple/masonry/masonry_2.JPG');
+      const AssetGenImage('assets/images/couple/masonry/masonry_2.jpg');
 
-  /// File path: assets/images/couple/masonry/masonry_3.JPG
+  /// File path: assets/images/couple/masonry/masonry_3.jpg
   AssetGenImage get masonry3 =>
-      const AssetGenImage('assets/images/couple/masonry/masonry_3.JPG');
+      const AssetGenImage('assets/images/couple/masonry/masonry_3.jpg');
 
-  /// File path: assets/images/couple/masonry/masonry_4.JPG
+  /// File path: assets/images/couple/masonry/masonry_4.jpg
   AssetGenImage get masonry4 =>
-      const AssetGenImage('assets/images/couple/masonry/masonry_4.JPG');
+      const AssetGenImage('assets/images/couple/masonry/masonry_4.jpg');
 
-  /// File path: assets/images/couple/masonry/masonry_5.JPG
+  /// File path: assets/images/couple/masonry/masonry_5.jpg
   AssetGenImage get masonry5 =>
-      const AssetGenImage('assets/images/couple/masonry/masonry_5.JPG');
+      const AssetGenImage('assets/images/couple/masonry/masonry_5.jpg');
 
-  /// File path: assets/images/couple/masonry/masonry_6.JPG
+  /// File path: assets/images/couple/masonry/masonry_6.jpg
   AssetGenImage get masonry6 =>
-      const AssetGenImage('assets/images/couple/masonry/masonry_6.JPG');
+      const AssetGenImage('assets/images/couple/masonry/masonry_6.jpg');
 
   /// List of all assets
   List<AssetGenImage> get values =>

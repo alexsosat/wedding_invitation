@@ -96,6 +96,7 @@ class LoginPage extends StatelessWidget {
           ),
           extendBodyBehindAppBar: true,
           body: SignInScreen(
+            showAuthActionSwitch: false,
             providers: [
               EmailAuthProvider(),
             ],

@@ -43,6 +43,7 @@ class _EnvelopePageState extends State<EnvelopePage>
   late final AnimationController _entryController;
   late final Animation<double> _fadeAnimation;
   late final Animation<double> _scaleAnimation;
+  late final Animation<Offset> _ribbonSlideAnimation;
   bool _isOpening = false;
 
   @override
@@ -59,6 +60,13 @@ class _EnvelopePageState extends State<EnvelopePage>
     );
 
     _scaleAnimation = Tween<double>(begin: 0.94, end: 1).animate(
+      CurvedAnimation(parent: _entryController, curve: Curves.easeOutCubic),
+    );
+
+    _ribbonSlideAnimation = Tween<Offset>(
+      begin: const Offset(-0.35, 0),
+      end: Offset.zero,
+    ).animate(
       CurvedAnimation(parent: _entryController, curve: Curves.easeOutCubic),
     );
 
@@ -172,6 +180,7 @@ class _EnvelopePageState extends State<EnvelopePage>
                               onTap: _isOpening ? null : _handleOpenInvitation,
                               ribbonFadeAnimation: _fadeAnimation,
                               ribbonScaleAnimation: _scaleAnimation,
+                              ribbonSlideAnimation: _ribbonSlideAnimation,
                             ),
                           )
                               .animate(

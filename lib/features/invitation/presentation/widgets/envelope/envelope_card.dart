@@ -18,6 +18,7 @@ class EnvelopeCard extends StatefulWidget {
     this.onTap,
     this.ribbonFadeAnimation,
     this.ribbonScaleAnimation,
+    this.ribbonSlideAnimation,
     this.hoverScale = 1.04,
   });
 
@@ -32,6 +33,9 @@ class EnvelopeCard extends StatefulWidget {
 
   /// Optional scale animation for the ribbon.
   final Animation<double>? ribbonScaleAnimation;
+
+  /// Optional slide transition animation (left to right) for the ribbon.
+  final Animation<Offset>? ribbonSlideAnimation;
 
   /// Scale multiplier when the mouse hovers over the envelope (defaults to 1.04).
   final double hoverScale;
@@ -172,6 +176,12 @@ class _EnvelopeCardState extends State<EnvelopeCard> {
 
   Widget _wrapWithRibbonAnimation({required Widget child}) {
     Widget animated = child;
+    if (widget.ribbonSlideAnimation != null) {
+      animated = SlideTransition(
+        position: widget.ribbonSlideAnimation!,
+        child: animated,
+      );
+    }
     if (widget.ribbonScaleAnimation != null) {
       animated = ScaleTransition(
         scale: widget.ribbonScaleAnimation!,
