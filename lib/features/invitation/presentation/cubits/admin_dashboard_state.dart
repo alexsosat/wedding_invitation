@@ -122,6 +122,12 @@ class AdminDashboardLoaded extends AdminDashboardState {
   int get totalPendingGuests =>
       invitations.fold(0, (sum, inv) => sum + inv.pendingGuestsCount);
 
+  /// Total guests whose invitation response has been confirmed by the admin
+  int get totalAdminConfirmedGuests => invitations.fold(
+        0,
+        (sum, inv) => sum + inv.guests.where((g) => g.isConfirmed).length,
+      );
+
   /// Total invitations marked as sent
   int get sentInvitationsCount => invitations.where((inv) => inv.isSent).length;
 

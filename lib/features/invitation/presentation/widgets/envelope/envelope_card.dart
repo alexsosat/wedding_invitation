@@ -108,31 +108,32 @@ class EnvelopeCard extends StatelessWidget {
               ),
 
               // 4. Rose Ribbon with Guest Name
-              Positioned(
-                left: -70,
-                bottom: -40,
-                child: SizedBox(
-                  width: 350,
-                  height: 175,
-                  child: Transform.rotate(
-                    angle: 8 * math.pi / 180,
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Assets.images.ribbons.pinkHorizontal.image(
-                          fit: BoxFit.contain,
-                          filterQuality: FilterQuality.high,
-                        ),
-                        Positioned.fill(
-                          child: RibbonRecipientText(
-                            recipientName: recipientName,
+              if (recipientName.isNotEmpty)
+                Positioned(
+                  left: -70,
+                  bottom: -40,
+                  child: SizedBox(
+                    width: 350,
+                    height: 175,
+                    child: Transform.rotate(
+                      angle: 8 * math.pi / 180,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Assets.images.ribbons.pinkHorizontal.image(
+                            fit: BoxFit.contain,
+                            filterQuality: FilterQuality.high,
                           ),
-                        ),
-                      ],
+                          Positioned.fill(
+                            child: RibbonRecipientText(
+                              recipientName: recipientName,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
             ],
           ),
         ),

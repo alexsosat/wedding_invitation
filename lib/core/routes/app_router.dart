@@ -31,9 +31,11 @@ class AppRouter extends RootStackRouter {
           page: RsvpRoute.page,
           path: "/rsvp",
         ),
-        AutoRoute(
+        CustomRoute(
           page: EnvelopeRoute.page,
           path: "/envelope",
+          transitionsBuilder: TransitionsBuilders.noTransition,
+          duration: Duration.zero,
         ),
         AutoRoute(
           page: HistoryRoute.page,

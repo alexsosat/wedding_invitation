@@ -4,6 +4,7 @@ import "../../business/entities/invitation_entity.dart";
 import "../../business/use_cases/create_invitation.dart";
 import "../../business/use_cases/delete_invitation.dart";
 import "../../business/use_cases/get_all_invitations.dart";
+import "../../business/use_cases/toggle_guest_confirmation_status.dart";
 import "../../business/use_cases/toggle_invitation_sent_status.dart";
 import "../../business/use_cases/update_invitation.dart";
 import "../../data/models/params/admin_invitation_params.dart";
@@ -18,11 +19,13 @@ class AdminDashboardCubit extends Cubit<AdminDashboardState> {
     required UpdateInvitation updateInvitation,
     required DeleteInvitation deleteInvitation,
     required ToggleInvitationSentStatus toggleInvitationSentStatus,
+    required ToggleGuestConfirmationStatus toggleGuestConfirmationStatus,
   })  : _getAllInvitations = getAllInvitations,
         _createInvitation = createInvitation,
         _updateInvitation = updateInvitation,
         _deleteInvitation = deleteInvitation,
         _toggleInvitationSentStatus = toggleInvitationSentStatus,
+        _toggleGuestConfirmationStatus = toggleGuestConfirmationStatus,
         super(const AdminDashboardInitial());
 
   final GetAllInvitations _getAllInvitations;
@@ -30,6 +33,7 @@ class AdminDashboardCubit extends Cubit<AdminDashboardState> {
   final UpdateInvitation _updateInvitation;
   final DeleteInvitation _deleteInvitation;
   final ToggleInvitationSentStatus _toggleInvitationSentStatus;
+  final ToggleGuestConfirmationStatus _toggleGuestConfirmationStatus;
 
   /// Loads all invitations from Firestore
   Future<void> loadInvitations() async {
@@ -192,6 +196,62 @@ class AdminDashboardCubit extends Cubit<AdminDashboardState> {
                 : "Invitación marcada como no enviada",
           ),
         );
+      },
+    );
+  }
+
+  /// Toggles admin confirmation status of a guest
+  Future<void> toggleGuestConfirmation(
+    String invitationId,
+    String guestId,
+    bool isConfirmed,
+  ) async {
+    final currentState = state;
+    if (currentState is! AdminDashboardLoaded) {
+      return;
+    }
+
+    // Optimistically update the guest state
+    final updatedList = currentState.invitations.map((inv) {
+      if (inv.id == invitationId) {
+        final updatedGuests = inv.guests.map((g) {
+          if (g.id == guestId) {
+            return g.copyWith(isConfirmed: isConfirmed);
+          }
+          return g;
+        }).toList();
+        return inv.copyWith(guests: updatedGuests);
+      }
+      return inv;
+    }).toList();
+
+    safeEmit(currentState.copyWith(invitations: updatedList));
+
+    final result = await _toggleGuestConfirmationStatus(
+      params: ToggleGuestConfirmationParams(
+        invitationId: invitationId,
+        guestId: guestId,
+        isConfirmed: isConfirmed,
+      ),
+    );
+
+    result.fold(
+      (failure) {
+        // Rollback on failure
+        safeEmit(currentState);
+        safeEmit(AdminDashboardError(failure: failure));
+      },
+      (_) {
+        final latestState = state;
+        if (latestState is AdminDashboardLoaded) {
+          safeEmit(
+            latestState.copyWith(
+              actionSuccessMessage: isConfirmed
+                  ? "Invitado confirmado"
+                  : "Confirmación removida",
+            ),
+          );
+        }
       },
     );
   }

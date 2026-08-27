@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import "package:flutter_common_classes/extensions/theme_extension.dart";
+import "package:form_builder_phone_field/form_builder_phone_field.dart";
 
 import "../../../business/entities/guest_entity.dart";
 
@@ -10,13 +11,18 @@ class GuestFormItem extends StatelessWidget {
     required this.index,
     required this.firstNameController,
     required this.lastNameController,
-    required this.phoneController,
     required this.attendance,
     required this.dietary,
     required this.dietaryDetailsController,
     required this.onAttendanceChanged,
     required this.onDietaryChanged,
     required this.onRemove,
+    this.phoneController,
+    this.phoneFieldKey,
+    this.initialPhone,
+    this.onPhoneChanged,
+    this.isConfirmed = false,
+    this.onConfirmedChanged,
     super.key,
   });
 
@@ -29,8 +35,17 @@ class GuestFormItem extends StatelessWidget {
   /// Controller for last name
   final TextEditingController lastNameController;
 
-  /// Controller for phone number
-  final TextEditingController phoneController;
+  /// Controller for phone number (optional fallback)
+  final TextEditingController? phoneController;
+
+  /// Key for FormBuilderPhoneField state
+  final Key? phoneFieldKey;
+
+  /// Initial phone value
+  final String? initialPhone;
+
+  /// Callback when phone changes
+  final ValueChanged<String?>? onPhoneChanged;
 
   /// Selected attendance status
   final AttendanceStatus attendance;
@@ -41,11 +56,17 @@ class GuestFormItem extends StatelessWidget {
   /// Controller for custom dietary notes
   final TextEditingController dietaryDetailsController;
 
+  /// Whether the guest details are confirmed by admin
+  final bool isConfirmed;
+
   /// Callback when attendance changes
   final ValueChanged<AttendanceStatus> onAttendanceChanged;
 
   /// Callback when dietary changes
   final ValueChanged<DietaryRequirement> onDietaryChanged;
+
+  /// Callback when admin confirmation status changes
+  final ValueChanged<bool>? onConfirmedChanged;
 
   /// Callback to remove this guest
   final VoidCallback onRemove;
@@ -155,15 +176,29 @@ class GuestFormItem extends StatelessWidget {
                   ),
                 ],
                 const SizedBox(height: 10),
-                TextFormField(
-                  controller: phoneController,
-                  keyboardType: TextInputType.phone,
+                FormBuilderPhoneField(
+                  key: phoneFieldKey,
+                  name: "phone_$index",
+                  initialValue: initialPhone ?? phoneController?.text,
+                  defaultSelectedCountryIsoCode: "MX",
+                  isSearchable: true,
+                  priorityListByIsoCode: const [
+                    "MX",
+                    "US",
+                    "ES",
+                    "CO",
+                    "AR",
+                    "CL",
+                    "GT",
+                    "PE",
+                  ],
                   decoration: const InputDecoration(
-                    labelText: "Teléfono (opcional)",
-                    hintText: "+52 123 456 7890",
-                    prefixIcon: Icon(Icons.phone_outlined, size: 18),
+                    labelText: "Teléfono internacional (opcional)",
+                    hintText: "123 456 7890",
                     isDense: true,
+                    prefixIcon: Icon(Icons.phone_outlined, size: 18),
                   ),
+                  onChanged: onPhoneChanged,
                 ),
                 const SizedBox(height: 10),
                 if (isCompact) ...[
@@ -295,6 +330,65 @@ class GuestFormItem extends StatelessWidget {
                     ],
                   ),
                 ],
+                const SizedBox(height: 10),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: isConfirmed
+                        ? Colors.teal.withValues(alpha: 0.08)
+                        : context.colorScheme.surface,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: isConfirmed
+                          ? Colors.teal.withValues(alpha: 0.35)
+                          : context.colorScheme.outline.withValues(alpha: 0.2),
+                    ),
+                  ),
+                  child: SwitchListTile.adaptive(
+                    value: isConfirmed,
+                    onChanged: onConfirmedChanged,
+                    dense: true,
+                    contentPadding: EdgeInsets.zero,
+                    activeThumbColor: Colors.teal,
+                    title: Row(
+                      children: [
+                        Icon(
+                          isConfirmed
+                              ? Icons.verified
+                              : Icons.hourglass_top_outlined,
+                          size: 16,
+                          color: isConfirmed
+                              ? Colors.teal.shade800
+                              : context.colorScheme.onSurfaceVariant,
+                        ),
+                        const SizedBox(width: 6),
+                        Flexible(
+                          child: Text(
+                            "Confirmación Admin",
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: isConfirmed
+                                  ? Colors.teal.shade900
+                                  : context.colorScheme.onSurface,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    subtitle: Text(
+                      isConfirmed
+                          ? "Datos validados y confirmados por el administrador."
+                          : "Pendiente de validación por el administrador.",
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: context.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ),
+                ),
               ],
             );
           },

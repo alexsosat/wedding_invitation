@@ -1,5 +1,7 @@
 import "package:flutter/material.dart";
 import "package:flutter_common_classes/extensions/theme_extension.dart";
+import "package:flutter_form_builder/flutter_form_builder.dart";
+import "package:form_builder_phone_field/form_builder_phone_field.dart";
 
 import "../../../business/entities/guest_entity.dart";
 import "../../../business/entities/invitation_entity.dart";
@@ -29,24 +31,29 @@ class _GuestDraft {
     required this.id,
     required this.firstNameController,
     required this.lastNameController,
-    required this.phoneController,
+    required this.phoneFieldKey,
     required this.attendance,
     required this.dietary,
     required this.dietaryDetailsController,
+    this.initialPhone,
+    this.phone,
+    this.isConfirmed = false,
   });
 
   final String id;
   final TextEditingController firstNameController;
   final TextEditingController lastNameController;
-  final TextEditingController phoneController;
+  final GlobalKey<FormBuilderFieldState> phoneFieldKey;
+  final String? initialPhone;
+  String? phone;
   AttendanceStatus attendance;
   DietaryRequirement dietary;
   final TextEditingController dietaryDetailsController;
+  bool isConfirmed;
 
   void dispose() {
     firstNameController.dispose();
     lastNameController.dispose();
-    phoneController.dispose();
     dietaryDetailsController.dispose();
   }
 }
@@ -73,11 +80,14 @@ class _InvitationFormDialogState extends State<InvitationFormDialog> {
             id: g.id,
             firstNameController: TextEditingController(text: g.firstName),
             lastNameController: TextEditingController(text: g.lastName),
-            phoneController: TextEditingController(text: g.phone ?? ""),
+            phoneFieldKey: GlobalKey<FormBuilderFieldState>(),
+            initialPhone: g.phone,
+            phone: g.phone,
             attendance: g.attendance,
             dietary: g.dietary,
             dietaryDetailsController:
                 TextEditingController(text: g.dietaryDetails ?? ""),
+            isConfirmed: g.isConfirmed,
           ),
         );
       }
@@ -93,10 +103,13 @@ class _InvitationFormDialogState extends State<InvitationFormDialog> {
           id: "",
           firstNameController: TextEditingController(),
           lastNameController: TextEditingController(),
-          phoneController: TextEditingController(),
+          phoneFieldKey: GlobalKey<FormBuilderFieldState>(),
+          initialPhone: null,
+          phone: null,
           attendance: AttendanceStatus.pending,
           dietary: DietaryRequirement.none,
           dietaryDetailsController: TextEditingController(),
+          isConfirmed: false,
         ),
       );
     });
@@ -143,18 +156,28 @@ class _InvitationFormDialogState extends State<InvitationFormDialog> {
 
     final guestsEntities = _guests
         .map(
-          (g) => GuestEntity(
-            id: g.id,
-            firstName: g.firstNameController.text.trim(),
-            lastName: g.lastNameController.text.trim(),
-            phone: g.phoneController.text.trim().isNotEmpty
-                ? g.phoneController.text.trim()
-                : null,
-            attendance: g.attendance,
-            dietary: g.dietary,
-            dietaryDetails: null,
-            invitationId: widget.invitation?.id ?? "",
-          ),
+          (g) {
+            final phoneState =
+                g.phoneFieldKey.currentState as FormBuilderPhoneFieldState?;
+            final fullNumber = phoneState?.fullNumber.trim();
+            final phone = (fullNumber != null && fullNumber.isNotEmpty)
+                ? fullNumber
+                : (g.phone != null && g.phone!.trim().isNotEmpty
+                    ? g.phone!.trim()
+                    : null);
+
+            return GuestEntity(
+              id: g.id,
+              firstName: g.firstNameController.text.trim(),
+              lastName: g.lastNameController.text.trim(),
+              phone: phone,
+              attendance: g.attendance,
+              dietary: g.dietary,
+              dietaryDetails: null,
+              invitationId: widget.invitation?.id ?? "",
+              isConfirmed: g.isConfirmed,
+            );
+          },
         )
         .toList();
 
@@ -339,15 +362,20 @@ class _InvitationFormDialogState extends State<InvitationFormDialog> {
                           index: i,
                           firstNameController: _guests[i].firstNameController,
                           lastNameController: _guests[i].lastNameController,
-                          phoneController: _guests[i].phoneController,
+                          phoneFieldKey: _guests[i].phoneFieldKey,
+                          initialPhone: _guests[i].initialPhone,
                           attendance: _guests[i].attendance,
                           dietary: _guests[i].dietary,
                           dietaryDetailsController:
                               _guests[i].dietaryDetailsController,
+                          isConfirmed: _guests[i].isConfirmed,
                           onAttendanceChanged: (val) =>
                               setState(() => _guests[i].attendance = val),
                           onDietaryChanged: (val) =>
                               setState(() => _guests[i].dietary = val),
+                          onConfirmedChanged: (val) =>
+                              setState(() => _guests[i].isConfirmed = val),
+                          onPhoneChanged: (val) => _guests[i].phone = val,
                           onRemove: () => _removeGuest(i),
                         ),
                     ],

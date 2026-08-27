@@ -31,6 +31,13 @@ abstract class InvitationRemoteDataSource {
 
   /// Updates RSVP details for a single guest
   Future<void> updateGuestRsvp(GuestModel guest);
+
+  /// Toggles the admin confirmation status of a single guest
+  Future<void> toggleGuestConfirmation(
+    String invitationId,
+    String guestId,
+    bool isConfirmed,
+  );
 }
 
 /// Remote data source implementation communicating with Cloud Firestore
@@ -126,6 +133,7 @@ class InvitationRemoteDataSourceImpl implements InvitationRemoteDataSource {
         dietary: guest.dietary,
         invitationId: invitationRef.id,
         dietaryDetails: guest.dietaryDetails,
+        isConfirmed: guest.isConfirmed,
         updatedAt: now,
       );
 
@@ -191,6 +199,7 @@ class InvitationRemoteDataSourceImpl implements InvitationRemoteDataSource {
         dietary: guest.dietary,
         invitationId: invitation.id,
         dietaryDetails: guest.dietaryDetails,
+        isConfirmed: guest.isConfirmed,
         updatedAt: guest.updatedAt ?? now,
       );
 
@@ -263,5 +272,23 @@ class InvitationRemoteDataSourceImpl implements InvitationRemoteDataSource {
         .collection(_guestsSubcollection)
         .doc(guest.id)
         .update(guest.toRsvpUpdateMap());
+  }
+
+  @override
+  Future<void> toggleGuestConfirmation(
+    String invitationId,
+    String guestId,
+    bool isConfirmed,
+  ) async {
+    final now = DateTime.now();
+    await _firestore
+        .collection(_invitationsCollection)
+        .doc(invitationId)
+        .collection(_guestsSubcollection)
+        .doc(guestId)
+        .update({
+      "isConfirmed": isConfirmed,
+      "updatedAt": Timestamp.fromDate(now),
+    });
   }
 }

@@ -45,4 +45,11 @@ abstract class InvitationRepository {
   Future<Either<Failure, Unit>> updateGuestRsvp({
     required GuestEntity guest,
   });
+
+  /// Toggles the admin confirmation status of a specific guest
+  Future<Either<Failure, Unit>> toggleGuestConfirmationStatus({
+    required String invitationId,
+    required String guestId,
+    required bool isConfirmed,
+  });
 }

@@ -20,6 +20,7 @@ import "../../features/invitation/business/use_cases/export_guests_to_excel.dart
 import "../../features/invitation/business/use_cases/get_all_invitations.dart";
 import "../../features/invitation/business/use_cases/get_guests.dart";
 import "../../features/invitation/business/use_cases/get_invitation.dart";
+import "../../features/invitation/business/use_cases/toggle_guest_confirmation_status.dart";
 import "../../features/invitation/business/use_cases/toggle_invitation_sent_status.dart";
 import "../../features/invitation/business/use_cases/update_guest_rsvp.dart";
 import "../../features/invitation/business/use_cases/update_invitation.dart";
@@ -171,6 +172,14 @@ class DependencyInjection {
     if (!getIt.isRegistered<ToggleInvitationSentStatus>()) {
       getIt.registerLazySingleton<ToggleInvitationSentStatus>(
         () => ToggleInvitationSentStatus(
+          invitationRepository: getIt<InvitationRepository>(),
+        ),
+      );
+    }
+
+    if (!getIt.isRegistered<ToggleGuestConfirmationStatus>()) {
+      getIt.registerLazySingleton<ToggleGuestConfirmationStatus>(
+        () => ToggleGuestConfirmationStatus(
           invitationRepository: getIt<InvitationRepository>(),
         ),
       );

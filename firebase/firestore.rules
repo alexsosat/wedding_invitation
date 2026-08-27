@@ -44,6 +44,7 @@ service cloud.firestore {
              data.dietary is string && (data.dietary == 'none' || data.dietary == 'meat' || data.dietary == 'vegetarian' || data.dietary == 'vegan' || data.dietary == 'custom') &&
              (!('dietaryDetails' in data) || (data.dietaryDetails is string && data.dietaryDetails.size() <= 200)) &&
              (!('phone' in data) || (data.phone is string && data.phone.size() <= 30)) &&
+             (!('isConfirmed' in data) || (data.isConfirmed is bool)) &&
              data.invitationId is string && isValidId(data.invitationId);
     }
 

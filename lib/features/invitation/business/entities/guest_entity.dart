@@ -81,6 +81,7 @@ class GuestEntity extends Equatable {
     required this.invitationId,
     this.phone,
     this.dietaryDetails,
+    this.isConfirmed = false,
     this.updatedAt,
   });
 
@@ -108,6 +109,9 @@ class GuestEntity extends Equatable {
   /// Associated invitation ID
   final String invitationId;
 
+  /// Whether the guest invitation details have been verified and confirmed by the administrator
+  final bool isConfirmed;
+
   /// Timestamp of the last update
   final DateTime? updatedAt;
 
@@ -124,6 +128,7 @@ class GuestEntity extends Equatable {
     DietaryRequirement? dietary,
     String? dietaryDetails,
     String? invitationId,
+    bool? isConfirmed,
     DateTime? updatedAt,
   }) =>
       GuestEntity(
@@ -135,6 +140,7 @@ class GuestEntity extends Equatable {
         dietary: dietary ?? this.dietary,
         dietaryDetails: dietaryDetails ?? this.dietaryDetails,
         invitationId: invitationId ?? this.invitationId,
+        isConfirmed: isConfirmed ?? this.isConfirmed,
         updatedAt: updatedAt ?? this.updatedAt,
       );
 
@@ -148,6 +154,7 @@ class GuestEntity extends Equatable {
         dietary,
         dietaryDetails,
         invitationId,
+        isConfirmed,
         updatedAt,
       ];
 

@@ -42,6 +42,34 @@ void main() {
     // Tap CTA Button
     await tester.tap(find.byType(EnvelopeCtaButton));
     await tester.pump();
+    await tester.pump(const Duration(milliseconds: 700));
+
+    expect(wasOpened, isTrue);
+  });
+
+  testWidgets("EnvelopePage handles tap on EnvelopeCard directly", (
+    tester,
+  ) async {
+    bool wasOpened = false;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: EnvelopePage(
+          recipientName: "Invitado Especial",
+          onOpen: () {
+            wasOpened = true;
+          },
+        ),
+      ),
+    );
+
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+
+    // Tap EnvelopeCard
+    await tester.tap(find.byType(EnvelopeCard));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 700));
 
     expect(wasOpened, isTrue);
   });

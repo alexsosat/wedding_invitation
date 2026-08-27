@@ -78,6 +78,14 @@ class FakeInvitationRepository implements InvitationRepository {
     required String invitationId,
   }) async =>
       const Right([]);
+
+  @override
+  Future<Either<Failure, Unit>> toggleGuestConfirmationStatus({
+    required String invitationId,
+    required String guestId,
+    required bool isConfirmed,
+  }) async =>
+      const Right(unit);
 }
 
 void main() {

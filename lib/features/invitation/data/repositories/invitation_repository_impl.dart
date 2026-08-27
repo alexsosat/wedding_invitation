@@ -224,4 +224,33 @@ class InvitationRepositoryImpl implements InvitationRepository {
       );
     }
   }
+
+  @override
+  Future<Either<Failure, Unit>> toggleGuestConfirmationStatus({
+    required String invitationId,
+    required String guestId,
+    required bool isConfirmed,
+  }) async {
+    try {
+      await remoteDataSource.toggleGuestConfirmation(
+        invitationId,
+        guestId,
+        isConfirmed,
+      );
+      return const Right(unit);
+    } on FirebaseException catch (e) {
+      return Left(
+        ServerFailure(
+          message: e.message ??
+              "Firebase error occurred while updating guest confirmation status",
+        ),
+      );
+    } catch (e) {
+      return Left(
+        AppFailure.unexpected(
+          e.toString(),
+        ),
+      );
+    }
+  }
 }

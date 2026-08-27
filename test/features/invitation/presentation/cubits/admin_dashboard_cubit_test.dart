@@ -4,6 +4,7 @@ import "package:boda_ma/features/invitation/business/repositories/invitation_rep
 import "package:boda_ma/features/invitation/business/use_cases/create_invitation.dart";
 import "package:boda_ma/features/invitation/business/use_cases/delete_invitation.dart";
 import "package:boda_ma/features/invitation/business/use_cases/get_all_invitations.dart";
+import "package:boda_ma/features/invitation/business/use_cases/toggle_guest_confirmation_status.dart";
 import "package:boda_ma/features/invitation/business/use_cases/toggle_invitation_sent_status.dart";
 import "package:boda_ma/features/invitation/business/use_cases/update_invitation.dart";
 import "package:boda_ma/features/invitation/data/models/params/invitation_params.dart";
@@ -64,6 +65,25 @@ class FakeInvitationRepository implements InvitationRepository {
   }
 
   @override
+  Future<Either<Failure, Unit>> toggleGuestConfirmationStatus({
+    required String invitationId,
+    required String guestId,
+    required bool isConfirmed,
+  }) async {
+    final index = invitations.indexWhere((i) => i.id == invitationId);
+    if (index >= 0) {
+      final updatedGuests = invitations[index].guests.map((g) {
+        if (g.id == guestId) {
+          return g.copyWith(isConfirmed: isConfirmed);
+        }
+        return g;
+      }).toList();
+      invitations[index] = invitations[index].copyWith(guests: updatedGuests);
+    }
+    return const Right(unit);
+  }
+
+  @override
   Future<Either<Failure, InvitationEntity>> getInvitation({
     required InvitationParams params,
   }) async =>
@@ -99,6 +119,8 @@ void main() {
           DeleteInvitation(invitationRepository: repository),
       toggleInvitationSentStatus:
           ToggleInvitationSentStatus(invitationRepository: repository),
+      toggleGuestConfirmationStatus:
+          ToggleGuestConfirmationStatus(invitationRepository: repository),
     );
   });
 
@@ -250,5 +272,46 @@ void main() {
     state = cubit.state as AdminDashboardLoaded;
     expect(state.filteredInvitations.length, equals(1));
     expect(state.filteredInvitations.first.id, equals("2"));
+  });
+
+  test("toggles guest confirmation status optimistically and in repository",
+      () async {
+    repository.invitations = [
+      const InvitationEntity(
+        id: "inv1",
+        groupName: "Familia Sosa",
+        slug: "familia-sosa",
+        guests: [
+          GuestEntity(
+            id: "g1",
+            firstName: "Alejandro",
+            lastName: "Sosa",
+            attendance: AttendanceStatus.attending,
+            dietary: DietaryRequirement.none,
+            invitationId: "inv1",
+            isConfirmed: false,
+          ),
+        ],
+      ),
+    ];
+
+    await cubit.loadInvitations();
+    var state = cubit.state as AdminDashboardLoaded;
+    expect(state.totalAdminConfirmedGuests, equals(0));
+    expect(state.invitations.first.guests.first.isConfirmed, isFalse);
+
+    // Toggle confirmation to true
+    await cubit.toggleGuestConfirmation("inv1", "g1", true);
+    state = cubit.state as AdminDashboardLoaded;
+    expect(state.totalAdminConfirmedGuests, equals(1));
+    expect(state.invitations.first.guests.first.isConfirmed, isTrue);
+    expect(repository.invitations.first.guests.first.isConfirmed, isTrue);
+
+    // Toggle confirmation to false
+    await cubit.toggleGuestConfirmation("inv1", "g1", false);
+    state = cubit.state as AdminDashboardLoaded;
+    expect(state.totalAdminConfirmedGuests, equals(0));
+    expect(state.invitations.first.guests.first.isConfirmed, isFalse);
+    expect(repository.invitations.first.guests.first.isConfirmed, isFalse);
   });
 }

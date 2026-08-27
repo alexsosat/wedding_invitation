@@ -38,7 +38,8 @@ class ExportGuestsToExcel
       final headers = [
         "Nombre Completo",
         "Teléfono",
-        "Confirmación",
+        "Asistencia (RSVP)",
+        "Confirmado Admin",
         "Opción Dietética",
         "Detalles de Dieta",
       ];
@@ -108,8 +109,26 @@ class ExportGuestsToExcel
                 ..fontColor = "#856404";
           }
 
-          // 4. Dietary Option
-          final dietaryCell = sheet.getRangeByIndex(currentRow, 4);
+          // 4. Admin Confirmation Status
+          final confirmedCell = sheet.getRangeByIndex(currentRow, 4);
+          confirmedCell.cellStyle
+            ..hAlign = HAlignType.center
+            ..vAlign = VAlignType.center;
+          if (guest.isConfirmed) {
+            confirmedCell.setText("Confirmado");
+            confirmedCell.cellStyle
+              ..backColor = "#D4EDDA"
+              ..fontColor = "#155724"
+              ..bold = true;
+          } else {
+            confirmedCell.setText("Pendiente");
+            confirmedCell.cellStyle
+              ..backColor = "#F2F2F2"
+              ..fontColor = "#595959";
+          }
+
+          // 5. Dietary Option
+          final dietaryCell = sheet.getRangeByIndex(currentRow, 5);
           dietaryCell.cellStyle
             ..hAlign = HAlignType.center
             ..vAlign = VAlignType.center;
@@ -136,8 +155,8 @@ class ExportGuestsToExcel
                 ..fontColor = "#595959";
           }
 
-          // 5. Dietary Details
-          final detailsCell = sheet.getRangeByIndex(currentRow, 5)
+          // 6. Dietary Details
+          final detailsCell = sheet.getRangeByIndex(currentRow, 6)
             ..setText(
               guest.dietaryDetails != null && guest.dietaryDetails!.isNotEmpty
                   ? guest.dietaryDetails!
@@ -163,7 +182,7 @@ class ExportGuestsToExcel
           .autoFitColumns();
 
       // Ensure minimum readable column widths
-      final defaultWidths = [24.0, 16.0, 18.0, 20.0, 26.0];
+      final defaultWidths = [24.0, 16.0, 18.0, 18.0, 20.0, 26.0];
       for (int i = 0; i < defaultWidths.length; i++) {
         final currentWidth = sheet.getRangeByIndex(1, i + 1).columnWidth;
         if (currentWidth < defaultWidths[i]) {

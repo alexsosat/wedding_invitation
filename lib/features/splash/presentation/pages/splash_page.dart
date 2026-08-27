@@ -1,12 +1,14 @@
+import "dart:math" as math;
+
 import "package:auto_route/auto_route.dart";
 import "package:flutter/material.dart";
 import "package:flutter_common_classes/flutter_common_classes.dart";
-import "package:responsive_builder/responsive_builder.dart";
 
 import "../../../../core/gen/assets.gen.dart";
 import "../../../../core/routes/app_router.gr.dart";
 import "../../../invitation/presentation/cubits/invitation_cubit.dart";
 import "../../../invitation/presentation/cubits/invitation_state.dart";
+import "../../../invitation/presentation/widgets/envelope/envelope_card.dart";
 import "../../../shared/presentation/widgets/scaling_animated_widget.dart";
 import "../cubits/splash_screen_cubit.dart";
 
@@ -38,18 +40,17 @@ class SplashPage extends StatelessWidget {
     );
 
     return Scaffold(
-      body: Center(
-        child: MultiBlocProvider(
-          providers: [
-            BlocProvider<SplashScreenCubit>(
-              create: (_) => SplashScreenCubit(
-                slug: effectiveSlug,
-              ),
+      backgroundColor: context.colorScheme.primary,
+      body: MultiBlocProvider(
+        providers: [
+          BlocProvider<SplashScreenCubit>(
+            create: (_) => SplashScreenCubit(
+              slug: effectiveSlug,
             ),
-          ],
-          child: _SplashScreenContent(
-            slug: effectiveSlug,
           ),
+        ],
+        child: _SplashScreenContent(
+          slug: effectiveSlug,
         ),
       ),
     );
@@ -178,58 +179,65 @@ class _SplashScreenContentState extends State<_SplashScreenContent>
   }
 
   @override
-  Widget build(BuildContext context) =>
-      BlocConsumer<SplashScreenCubit, SplashScreenState>(
-        listener: (context, state) {
-          if (state is SplashScreenSuccess) {
-            _onPageExit();
-          }
-        },
-        builder: (context, state) {
-          final svgSize = getValueForScreenType<double>(
-            context: context,
-            mobile: 350,
-            tablet: 500,
-            desktop: 700,
-          );
-          return switch (state.status) {
-            SplashScreenStatus.loading => ScalingAnimatedWidget(
-                child: Assets.images.logos.logo.svg(
-                  width: svgSize,
-                  colorFilter: ColorFilter.mode(
-                    context.colorScheme.primary,
-                    BlendMode.srcIn,
-                  ),
-                ),
+  Widget build(BuildContext context) => Stack(
+        children: [
+          // 1. Floral paper texture overlay on dark navy background
+          Positioned.fill(
+            child: Opacity(
+              opacity: 0.16,
+              child: Assets.images.textures.flowersTransparent.image(
+                fit: BoxFit.cover,
+                filterQuality: FilterQuality.medium,
               ),
-            SplashScreenStatus.animationFinished => Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Assets.images.logos.logo.svg(
-                    width: svgSize,
-                    colorFilter: ColorFilter.mode(
-                      context.colorScheme.primary,
-                      BlendMode.srcIn,
+            ),
+          ),
+
+          SafeArea(
+            child: Center(
+              child: BlocConsumer<SplashScreenCubit, SplashScreenState>(
+                listener: (context, state) {
+                  if (state is SplashScreenSuccess) {
+                    _onPageExit();
+                  }
+                },
+                builder: (context, state) => switch (state.status) {
+                  SplashScreenStatus.loading => Transform.rotate(
+                      angle: -8 * math.pi / 180,
+                      child: const ScalingAnimatedWidget(
+                        child: EnvelopeCard(
+                          recipientName: "",
+                        ),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 20),
-                  const CircularProgressIndicator.adaptive(),
-                ],
+                  SplashScreenStatus.animationFinished => Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Transform.rotate(
+                          angle: -8 * math.pi / 180,
+                          child: const EnvelopeCard(
+                            recipientName: "",
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        const CircularProgressIndicator.adaptive(),
+                      ],
+                    ),
+                  SplashScreenStatus.success => Transform.rotate(
+                      angle: -8 * math.pi / 180,
+                      child: const EnvelopeCard(
+                        recipientName: "",
+                      ),
+                    ),
+                  SplashScreenStatus.failure => Text(
+                      state.failure!.message,
+                      style: context.textTheme.headlineLarge?.copyWith(
+                        color: context.colorScheme.onSecondary,
+                      ),
+                    ),
+                },
               ),
-            SplashScreenStatus.success => Assets.images.logos.logo.svg(
-                width: svgSize,
-                colorFilter: ColorFilter.mode(
-                  context.colorScheme.primary,
-                  BlendMode.srcIn,
-                ),
-              ),
-            SplashScreenStatus.failure => Text(
-                state.failure!.message,
-                style: context.textTheme.headlineLarge?.copyWith(
-                  color: context.colorScheme.onSecondary,
-                ),
-              ),
-          };
-        },
+            ),
+          ),
+        ],
       );
 }

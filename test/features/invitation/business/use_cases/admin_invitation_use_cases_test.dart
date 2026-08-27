@@ -4,6 +4,7 @@ import "package:boda_ma/features/invitation/business/repositories/invitation_rep
 import "package:boda_ma/features/invitation/business/use_cases/create_invitation.dart";
 import "package:boda_ma/features/invitation/business/use_cases/delete_invitation.dart";
 import "package:boda_ma/features/invitation/business/use_cases/get_all_invitations.dart";
+import "package:boda_ma/features/invitation/business/use_cases/toggle_guest_confirmation_status.dart";
 import "package:boda_ma/features/invitation/business/use_cases/toggle_invitation_sent_status.dart";
 import "package:boda_ma/features/invitation/business/use_cases/update_invitation.dart";
 import "package:boda_ma/features/invitation/data/models/params/admin_invitation_params.dart";
@@ -79,6 +80,25 @@ class FakeInvitationRepository implements InvitationRepository {
     required GuestEntity guest,
   }) async =>
       const Right(unit);
+
+  @override
+  Future<Either<Failure, Unit>> toggleGuestConfirmationStatus({
+    required String invitationId,
+    required String guestId,
+    required bool isConfirmed,
+  }) async {
+    final index = invitations.indexWhere((i) => i.id == invitationId);
+    if (index >= 0) {
+      final updatedGuests = invitations[index].guests.map((g) {
+        if (g.id == guestId) {
+          return g.copyWith(isConfirmed: isConfirmed);
+        }
+        return g;
+      }).toList();
+      invitations[index] = invitations[index].copyWith(guests: updatedGuests);
+    }
+    return const Right(unit);
+  }
 }
 
 void main() {
@@ -88,6 +108,7 @@ void main() {
   late UpdateInvitation updateInvitation;
   late DeleteInvitation deleteInvitation;
   late ToggleInvitationSentStatus toggleInvitationSentStatus;
+  late ToggleGuestConfirmationStatus toggleGuestConfirmationStatus;
 
   setUp(() {
     repository = FakeInvitationRepository();
@@ -97,6 +118,8 @@ void main() {
     deleteInvitation = DeleteInvitation(invitationRepository: repository);
     toggleInvitationSentStatus =
         ToggleInvitationSentStatus(invitationRepository: repository);
+    toggleGuestConfirmationStatus =
+        ToggleGuestConfirmationStatus(invitationRepository: repository);
   });
 
   test("creates, retrieves, updates, and deletes invitations", () async {
@@ -138,7 +161,18 @@ void main() {
     expect(toggleResult.isRight(), isTrue);
     expect(repository.invitations.first.isSent, isTrue);
 
-    // 4. Update
+    // 4. Toggle Guest Confirmation
+    final toggleGuestResult = await toggleGuestConfirmationStatus(
+      params: ToggleGuestConfirmationParams(
+        invitationId: "inv_1",
+        guestId: "g1",
+        isConfirmed: true,
+      ),
+    );
+    expect(toggleGuestResult.isRight(), isTrue);
+    expect(repository.invitations.first.guests.first.isConfirmed, isTrue);
+
+    // 5. Update
     final updatedInv = created.copyWith(groupName: "Familia Sosa Pérez");
     final updateResult = await updateInvitation(
       params: UpdateInvitationParams(invitation: updatedInv),
@@ -149,7 +183,7 @@ void main() {
       equals("Familia Sosa Pérez"),
     );
 
-    // 5. Delete
+    // 6. Delete
     final deleteResult = await deleteInvitation(
       params: DeleteInvitationParams(invitationId: "inv_1"),
     );

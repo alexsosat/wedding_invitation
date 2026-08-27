@@ -34,6 +34,7 @@ class AdminDashboardPage extends StatelessWidget {
           updateInvitation: GetIt.I(),
           deleteInvitation: GetIt.I(),
           toggleInvitationSentStatus: GetIt.I(),
+          toggleGuestConfirmationStatus: GetIt.I(),
         )..loadInvitations(),
         child: const _AdminDashboardView(),
       );
@@ -722,6 +723,14 @@ class _AdminDashboardViewState extends State<_AdminDashboardView> {
                                       invitation.id,
                                       isSent,
                                     ),
+                                onToggleGuestConfirmation:
+                                    (guestId, isConfirmed) => context
+                                        .read<AdminDashboardCubit>()
+                                        .toggleGuestConfirmation(
+                                          invitation.id,
+                                          guestId,
+                                          isConfirmed,
+                                        ),
                               );
                             },
                             childCount: invitations.length,

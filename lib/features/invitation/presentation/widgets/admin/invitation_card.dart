@@ -14,6 +14,7 @@ class InvitationCard extends StatelessWidget {
     required this.onEdit,
     required this.onDelete,
     required this.onToggleSent,
+    this.onToggleGuestConfirmation,
     super.key,
   });
 
@@ -28,6 +29,48 @@ class InvitationCard extends StatelessWidget {
 
   /// Callback when sent status is toggled
   final ValueChanged<bool> onToggleSent;
+
+  /// Callback when a guest's admin confirmation status is toggled
+  final void Function(String guestId, bool isConfirmed)?
+      onToggleGuestConfirmation;
+
+  /// Builds the WhatsApp message template based on invitation and RSVP status
+  static String buildWhatsAppMessage({
+    required GuestEntity guest,
+    required String invitationSlug,
+    required bool isInvitationSent,
+    String? baseOrigin,
+  }) {
+    final origin = baseOrigin ?? Uri.base.origin;
+    final link = "$origin/#/$invitationSlug";
+
+    if (!isInvitationSent) {
+      return "¡Hola ${guest.firstName}! Te compartimos el enlace a tu invitación para nuestra boda (Mayte & Alex): $link\n\nPor favor entra al enlace para ver los detalles y confirmar tu asistencia. ¡Esperamos contar con tu presencia! ✨";
+    }
+
+    if (guest.attendance == AttendanceStatus.pending) {
+      return "¡Hola ${guest.firstName}! Te escribimos para recordarte confirmar tu asistencia para nuestra boda (Mayte & Alex): $link\n\nPor favor entra al enlace para ver los detalles y confirmar tus lugares. ¡Esperamos contar con tu presencia! ✨";
+    }
+
+    // When the invitation was sent and the guest has already filled their RSVP choices
+    final attendanceText = guest.attendance == AttendanceStatus.attending
+        ? "Asistencia: Sí asistiré"
+        : "Asistencia: No podré asistir";
+
+    final dietaryBuffer = StringBuffer();
+    if (guest.attendance == AttendanceStatus.attending) {
+      dietaryBuffer.write("\n• Menú: ${guest.dietary.label}");
+      if (guest.dietaryDetails != null &&
+          guest.dietaryDetails!.trim().isNotEmpty) {
+        dietaryBuffer.write(" (${guest.dietaryDetails!.trim()})");
+      }
+    }
+
+    return "¡Hola ${guest.firstName}! Te escribimos para validar los datos que registraste para nuestra boda (Mayte & Alex):\n\n"
+        "• $attendanceText$dietaryBuffer\n\n"
+        "Por favor confirma si esta información sigue siendo correcta o si necesitas realizar algún cambio ingresando aquí: $link\n\n"
+        "¡Muchas gracias! ✨";
+  }
 
   void _copyInvitationLink(BuildContext context) {
     final link = "${Uri.base.origin}/#/${invitation.slug}";
@@ -208,6 +251,13 @@ class InvitationCard extends StatelessWidget {
                       (guest) => _GuestChip(
                         guest: guest,
                         invitationSlug: invitation.slug,
+                        isInvitationSent: invitation.isSent,
+                        onToggleConfirmed: onToggleGuestConfirmation != null
+                            ? (isConfirmed) => onToggleGuestConfirmation!(
+                                  guest.id,
+                                  isConfirmed,
+                                )
+                            : null,
                       ),
                     )
                     .toList(),
@@ -294,13 +344,20 @@ class _GuestChip extends StatelessWidget {
   const _GuestChip({
     required this.guest,
     required this.invitationSlug,
+    required this.isInvitationSent,
+    this.onToggleConfirmed,
   });
 
   final GuestEntity guest;
   final String invitationSlug;
+  final bool isInvitationSent;
+  final ValueChanged<bool>? onToggleConfirmed;
 
   Future<void> _makePhoneCall(BuildContext context, String phone) async {
-    final cleanPhone = phone.replaceAll(RegExp(r"[^\+0-9]"), "");
+    var cleanPhone = phone.replaceAll(RegExp(r"[^\+0-9]"), "");
+    if (!cleanPhone.startsWith("+") && cleanPhone.length == 10) {
+      cleanPhone = "+52$cleanPhone";
+    }
     final uri = Uri(scheme: "tel", path: cleanPhone);
     try {
       if (await canLaunchUrl(uri)) {
@@ -344,13 +401,16 @@ class _GuestChip extends StatelessWidget {
       return;
     }
 
-    if (cleanPhone.length == 10) {
+    // Default to Mexico (+52) only if a 10-digit number without country code was provided
+    if (cleanPhone.length == 10 && !rawPhone.trim().startsWith("+")) {
       cleanPhone = "52$cleanPhone";
     }
 
-    final link = "${Uri.base.origin}/#/$invitationSlug";
-    final message =
-        "¡Hola ${guest.firstName}! Te compartimos el enlace a tu invitación para nuestra boda (Mayte & Alex): $link\n\nPor favor entra al enlace para ver los detalles y confirmar tu asistencia. ¡Esperamos contar con tu presencia! ✨";
+    final message = InvitationCard.buildWhatsAppMessage(
+      guest: guest,
+      invitationSlug: invitationSlug,
+      isInvitationSent: isInvitationSent,
+    );
 
     final uri = Uri.parse(
       "https://wa.me/$cleanPhone?text=${Uri.encodeComponent(message)}",
@@ -457,15 +517,23 @@ class _GuestChip extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Text(
-                              "Enviar WhatsApp",
-                              style: TextStyle(
+                            Text(
+                              !isInvitationSent
+                                  ? "Enviar WhatsApp"
+                                  : (guest.attendance == AttendanceStatus.pending
+                                      ? "Recordatorio WhatsApp"
+                                      : "Confirmar WhatsApp"),
+                              style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 13,
                               ),
                             ),
                             Text(
-                              "Invitación con enlace",
+                              !isInvitationSent
+                                  ? "Invitación con enlace"
+                                  : (guest.attendance == AttendanceStatus.pending
+                                      ? "Recordatorio de confirmación"
+                                      : "Validar selección del invitado"),
                               style: TextStyle(
                                 fontSize: 11,
                                 color: context.colorScheme.onSurfaceVariant,
@@ -632,6 +700,60 @@ class _GuestChip extends StatelessWidget {
                 ),
               );
             }(),
+          // Admin Confirmation Badge / Quick-Toggle
+          Tooltip(
+            message: guest.isConfirmed
+                ? "Confirmado por el administrador (Clic para desmarcar)"
+                : "Sin confirmación de admin (Clic para confirmar datos)",
+            child: InkWell(
+              onTap: onToggleConfirmed != null
+                  ? () => onToggleConfirmed!(!guest.isConfirmed)
+                  : null,
+              borderRadius: BorderRadius.circular(6),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                decoration: BoxDecoration(
+                  color: guest.isConfirmed
+                      ? Colors.teal.withValues(alpha: 0.15)
+                      : context.colorScheme.onSurfaceVariant
+                          .withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(5),
+                  border: Border.all(
+                    color: guest.isConfirmed
+                        ? Colors.teal.withValues(alpha: 0.4)
+                        : context.colorScheme.outline
+                            .withValues(alpha: 0.25),
+                    width: 0.8,
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      guest.isConfirmed
+                          ? Icons.verified
+                          : Icons.hourglass_top_outlined,
+                      size: 10,
+                      color: guest.isConfirmed
+                          ? Colors.teal.shade800
+                          : context.colorScheme.onSurfaceVariant,
+                    ),
+                    const SizedBox(width: 3),
+                    Text(
+                      guest.isConfirmed ? "Admin: OK" : "Admin: Pend.",
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                        color: guest.isConfirmed
+                            ? Colors.teal.shade800
+                            : context.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );

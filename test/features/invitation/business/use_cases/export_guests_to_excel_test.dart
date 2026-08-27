@@ -26,6 +26,7 @@ void main() {
             dietary: DietaryRequirement.meat,
             dietaryDetails: "Sin cebolla",
             invitationId: "inv_1",
+            isConfirmed: true,
           ),
           GuestEntity(
             id: "g2",
@@ -36,6 +37,7 @@ void main() {
             dietary: DietaryRequirement.vegetarian,
             dietaryDetails: "Alergia a nueces",
             invitationId: "inv_1",
+            isConfirmed: false,
           ),
         ],
       ),
@@ -51,6 +53,7 @@ void main() {
             attendance: AttendanceStatus.notAttending,
             dietary: DietaryRequirement.vegan,
             invitationId: "inv_2",
+            isConfirmed: true,
           ),
           GuestEntity(
             id: "g4",
@@ -59,6 +62,7 @@ void main() {
             attendance: AttendanceStatus.pending,
             dietary: DietaryRequirement.none,
             invitationId: "inv_2",
+            isConfirmed: false,
           ),
         ],
       ),

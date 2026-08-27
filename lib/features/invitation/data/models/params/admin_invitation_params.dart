@@ -43,3 +43,22 @@ class ToggleInvitationSentParams extends Params {
   /// The new sent status
   final bool isSent;
 }
+
+/// Parameters for toggling a guest's admin confirmation status
+class ToggleGuestConfirmationParams extends Params {
+  /// Creates a [ToggleGuestConfirmationParams] instance
+  ToggleGuestConfirmationParams({
+    required this.invitationId,
+    required this.guestId,
+    required this.isConfirmed,
+  });
+
+  /// The ID of the invitation
+  final String invitationId;
+
+  /// The ID of the guest
+  final String guestId;
+
+  /// The new confirmation status
+  final bool isConfirmed;
+}

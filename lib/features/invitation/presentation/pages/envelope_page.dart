@@ -2,6 +2,7 @@ import "dart:math" as math;
 
 import "package:auto_route/auto_route.dart";
 import "package:flutter/material.dart";
+import "package:flutter_animate/flutter_animate.dart";
 import "package:flutter_common_classes/flutter_common_classes.dart";
 
 import "../../../../core/gen/assets.gen.dart";
@@ -42,6 +43,7 @@ class _EnvelopePageState extends State<EnvelopePage>
   late final AnimationController _entryController;
   late final Animation<double> _fadeAnimation;
   late final Animation<double> _scaleAnimation;
+  bool _isOpening = false;
 
   @override
   void initState() {
@@ -70,6 +72,15 @@ class _EnvelopePageState extends State<EnvelopePage>
   }
 
   void _handleOpenInvitation() {
+    if (_isOpening) {
+      return;
+    }
+    setState(() {
+      _isOpening = true;
+    });
+  }
+
+  void _navigateToInvitation() {
     if (widget.onOpen != null) {
       widget.onOpen!();
     } else {
@@ -134,15 +145,20 @@ class _EnvelopePageState extends State<EnvelopePage>
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               // Top calligraphy message (centered)
-                              Assets.images.texts.envelopeTitle.svg(
-                                width: 340,
-                                fit: BoxFit.contain,
-                                alignment: Alignment.center,
-                                colorFilter: ColorFilter.mode(
-                                  context.theme.scaffoldBackgroundColor,
-                                  BlendMode.srcIn,
-                                ),
-                              ),
+                              Assets.images.texts.envelopeTitle
+                                  .svg(
+                                    width: 340,
+                                    fit: BoxFit.contain,
+                                    alignment: Alignment.center,
+                                    colorFilter: ColorFilter.mode(
+                                      context.theme.scaffoldBackgroundColor,
+                                      BlendMode.srcIn,
+                                    ),
+                                  )
+                                  .animate(target: _isOpening ? 1.0 : 0.0)
+                                  .fadeOut(
+                                    duration: const Duration(milliseconds: 350),
+                                  ),
 
                               const SizedBox(height: 12),
 
@@ -151,9 +167,28 @@ class _EnvelopePageState extends State<EnvelopePage>
                                 angle: -8 * math.pi / 180,
                                 child: EnvelopeCard(
                                   recipientName: _resolvedRecipientName,
-                                  onTap: _handleOpenInvitation,
+                                  onTap:
+                                      _isOpening ? null : _handleOpenInvitation,
                                 ),
-                              ),
+                              )
+                                  .animate(
+                                    target: _isOpening ? 1.0 : 0.0,
+                                    onComplete: (_) {
+                                      if (_isOpening && mounted) {
+                                        _navigateToInvitation();
+                                      }
+                                    },
+                                  )
+                                  .scale(
+                                    begin: const Offset(1, 1),
+                                    end: const Offset(1.35, 1.35),
+                                    duration: const Duration(milliseconds: 600),
+                                    curve: Curves.easeInOutCubic,
+                                  )
+                                  .fadeOut(
+                                    duration: const Duration(milliseconds: 600),
+                                    curve: Curves.easeIn,
+                                  ),
 
                               const SizedBox(height: 14),
 
@@ -161,9 +196,14 @@ class _EnvelopePageState extends State<EnvelopePage>
                               Transform.rotate(
                                 angle: -8 * math.pi / 180,
                                 child: EnvelopeCtaButton(
-                                  onTap: _handleOpenInvitation,
+                                  onTap:
+                                      _isOpening ? null : _handleOpenInvitation,
                                 ),
-                              ),
+                              )
+                                  .animate(target: _isOpening ? 1.0 : 0.0)
+                                  .fadeOut(
+                                    duration: const Duration(milliseconds: 350),
+                                  ),
                             ],
                           ),
                         ),
