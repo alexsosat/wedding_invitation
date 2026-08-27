@@ -130,22 +130,22 @@ class _EnvelopePageState extends State<EnvelopePage>
                     horizontal: 16,
                     vertical: 20,
                   ),
-                  child: FadeTransition(
-                    opacity: _fadeAnimation,
-                    child: ScaleTransition(
-                      scale: _scaleAnimation,
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        alignment: Alignment.center,
-                        child: SizedBox(
-                          width: 380,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              // Top calligraphy message (centered)
-                              Assets.images.texts.envelopeTitle
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.center,
+                    child: SizedBox(
+                      width: 380,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          // Top calligraphy message (centered)
+                          FadeTransition(
+                            opacity: _fadeAnimation,
+                            child: ScaleTransition(
+                              scale: _scaleAnimation,
+                              child: Assets.images.texts.envelopeTitle
                                   .svg(
                                     width: 340,
                                     fit: BoxFit.contain,
@@ -159,54 +159,59 @@ class _EnvelopePageState extends State<EnvelopePage>
                                   .fadeOut(
                                     duration: const Duration(milliseconds: 350),
                                   ),
+                            ),
+                          ),
 
-                              const SizedBox(height: 12),
+                          const SizedBox(height: 12),
 
-                              // Envelope composite card (tilted to match the title calligraphy angle)
-                              Transform.rotate(
-                                angle: -8 * math.pi / 180,
-                                child: EnvelopeCard(
-                                  recipientName: _resolvedRecipientName,
-                                  onTap:
-                                      _isOpening ? null : _handleOpenInvitation,
-                                ),
+                          // Envelope composite card (tilted to match the title calligraphy angle)
+                          Transform.rotate(
+                            angle: -8 * math.pi / 180,
+                            child: EnvelopeCard(
+                              recipientName: _resolvedRecipientName,
+                              onTap: _isOpening ? null : _handleOpenInvitation,
+                              ribbonFadeAnimation: _fadeAnimation,
+                              ribbonScaleAnimation: _scaleAnimation,
+                            ),
+                          )
+                              .animate(
+                                target: _isOpening ? 1.0 : 0.0,
+                                onComplete: (_) {
+                                  if (_isOpening && mounted) {
+                                    _navigateToInvitation();
+                                  }
+                                },
                               )
-                                  .animate(
-                                    target: _isOpening ? 1.0 : 0.0,
-                                    onComplete: (_) {
-                                      if (_isOpening && mounted) {
-                                        _navigateToInvitation();
-                                      }
-                                    },
-                                  )
-                                  .scale(
-                                    begin: const Offset(1, 1),
-                                    end: const Offset(1.35, 1.35),
-                                    duration: const Duration(milliseconds: 600),
-                                    curve: Curves.easeInOutCubic,
-                                  )
-                                  .fadeOut(
-                                    duration: const Duration(milliseconds: 600),
-                                    curve: Curves.easeIn,
-                                  ),
+                              .scale(
+                                begin: const Offset(1, 1),
+                                end: const Offset(1.35, 1.35),
+                                duration: const Duration(milliseconds: 600),
+                                curve: Curves.easeInOutCubic,
+                              )
+                              .fadeOut(
+                                duration: const Duration(milliseconds: 600),
+                                curve: Curves.easeIn,
+                              ),
 
-                              const SizedBox(height: 14),
+                          const SizedBox(height: 14),
 
-                              // CTA button (tilted to match envelope & title angle)
-                              Transform.rotate(
+                          // CTA button (tilted to match envelope & title angle)
+                          FadeTransition(
+                            opacity: _fadeAnimation,
+                            child: ScaleTransition(
+                              scale: _scaleAnimation,
+                              child: Transform.rotate(
                                 angle: -8 * math.pi / 180,
                                 child: EnvelopeCtaButton(
                                   onTap:
                                       _isOpening ? null : _handleOpenInvitation,
                                 ),
-                              )
-                                  .animate(target: _isOpening ? 1.0 : 0.0)
-                                  .fadeOut(
+                              ).animate(target: _isOpening ? 1.0 : 0.0).fadeOut(
                                     duration: const Duration(milliseconds: 350),
                                   ),
-                            ],
+                            ),
                           ),
-                        ),
+                        ],
                       ),
                     ),
                   ),
