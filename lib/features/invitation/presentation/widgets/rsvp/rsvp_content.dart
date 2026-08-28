@@ -81,6 +81,10 @@ class RsvpContent extends StatelessWidget {
               _ConfirmButton(
                 onTap: onConfirmTap ?? () => _openConfirmationDialog(context),
               ),
+
+              /// No kids section
+              const _NoKidsSection(),
+
               SizedBox(
                 height: getValueForScreenType<double>(
                   context: context,
@@ -305,24 +309,18 @@ class _GiftsSection extends StatelessWidget {
   Widget build(BuildContext context) => Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Assets.images.symbols.gifts.svg(
-            height: getValueForScreenType<double>(
-              context: context,
-              mobile: 90,
-              tablet: 110,
-              desktop: 130,
-            ),
-            colorFilter: const ColorFilter.mode(
-              Color(0xFF682637),
-              BlendMode.srcIn,
-            ),
-          ),
-          SizedBox(
-            height: getValueForScreenType<double>(
-              context: context,
-              mobile: 16,
-              tablet: 20,
-              desktop: 24,
+          Text(
+            "Mesa de regalos",
+            style: TextStyle(
+              color: const Color(0xFF682637),
+              fontSize: getValueForScreenType<double>(
+                context: context,
+                mobile: 45,
+                tablet: 55,
+                desktop: 65,
+              ),
+              fontFamily: AdobeFonts.altesse,
+              fontWeight: FontWeight.bold,
             ),
           ),
           ConstrainedBox(
@@ -341,6 +339,59 @@ class _GiftsSection extends StatelessWidget {
                 color: const Color(0xFF682637),
                 height: 1.45,
               ),
+            ),
+          ),
+          SizedBox(
+            height: getValueForScreenType<double>(
+              context: context,
+              mobile: 16,
+              tablet: 20,
+              desktop: 24,
+            ),
+          ),
+          Assets.images.symbols.gifts.svg(
+            height: getValueForScreenType<double>(
+              context: context,
+              mobile: 90,
+              tablet: 110,
+              desktop: 130,
+            ),
+            colorFilter: const ColorFilter.mode(
+              Color(0xFF682637),
+              BlendMode.srcIn,
+            ),
+          ),
+        ],
+      );
+}
+
+class _NoKidsSection extends StatelessWidget {
+  const _NoKidsSection();
+
+  @override
+  Widget build(BuildContext context) => Column(
+        children: [
+          SizedBox(
+            height: getValueForScreenType(
+              context: context,
+              mobile: 20,
+              tablet: 20,
+              desktop: 40,
+            ),
+          ),
+          Text(
+            "* Por motivos de seguridad, no será posible el ingreso de niños menores de 4 años. Agradecemos de corazón su comprensión y esperamos poder compartir juntos este momento tan especial.",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontFamily: FontFamily.untoldHistory,
+              fontSize: getValueForScreenType<double>(
+                context: context,
+                mobile: 13,
+                tablet: 15,
+                desktop: 16,
+              ),
+              color: const Color(0xFF682637),
+              height: 1.45,
             ),
           ),
         ],

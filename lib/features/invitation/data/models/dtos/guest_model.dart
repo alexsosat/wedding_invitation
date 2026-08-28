@@ -14,6 +14,7 @@ class GuestModel extends GuestEntity {
     required super.invitationId,
     super.phone,
     super.dietaryDetails,
+    super.side = GuestSide.none,
     super.isConfirmed = false,
     super.updatedAt,
   });
@@ -39,6 +40,7 @@ class GuestModel extends GuestEntity {
         attendance: AttendanceStatus.fromString(map["attendance"] as String?),
         dietary: DietaryRequirement.fromString(map["dietary"] as String?),
         dietaryDetails: map["dietaryDetails"] as String?,
+        side: GuestSide.fromString(map["side"] as String?),
         invitationId: map["invitationId"] as String? ?? "",
         isConfirmed: map["isConfirmed"] as bool? ??
             map["confirmed"] as bool? ??
@@ -55,6 +57,7 @@ class GuestModel extends GuestEntity {
         attendance: entity.attendance,
         dietary: entity.dietary,
         dietaryDetails: entity.dietaryDetails,
+        side: entity.side,
         invitationId: entity.invitationId,
         isConfirmed: entity.isConfirmed,
         updatedAt: entity.updatedAt,
@@ -67,6 +70,7 @@ class GuestModel extends GuestEntity {
       "lastName": lastName,
       "attendance": attendance.value,
       "dietary": dietary.value,
+      "side": side.value,
       "invitationId": invitationId,
       "isConfirmed": isConfirmed,
     };
@@ -106,6 +110,7 @@ class GuestModel extends GuestEntity {
         attendance: attendance,
         dietary: dietary,
         dietaryDetails: dietaryDetails,
+        side: side,
         invitationId: invitationId,
         isConfirmed: isConfirmed,
         updatedAt: updatedAt,

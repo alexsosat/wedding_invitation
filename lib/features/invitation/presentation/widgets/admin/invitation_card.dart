@@ -45,11 +45,11 @@ class InvitationCard extends StatelessWidget {
     final link = "$origin/#/$invitationSlug";
 
     if (!isInvitationSent) {
-      return "¡Hola ${guest.firstName}! Te compartimos el enlace a tu invitación para nuestra boda (Mayte & Alex): $link\n\nPor favor entra al enlace para ver los detalles y confirmar tu asistencia. ¡Esperamos contar con tu presencia! ✨";
+      return "¡Hola ${guest.firstName}! Te compartimos el enlace a tu invitación para nuestra boda (Mayte & Alex): $link\n\nPor favor entra al enlace para ver los detalles y confirmar tu asistencia. Para cualquier duda o pregunta, no dudes en contactarnos. ¡Esperamos contar con tu presencia!";
     }
 
     if (guest.attendance == AttendanceStatus.pending) {
-      return "¡Hola ${guest.firstName}! Te escribimos para recordarte confirmar tu asistencia para nuestra boda (Mayte & Alex): $link\n\nPor favor entra al enlace para ver los detalles y confirmar tus lugares. ¡Esperamos contar con tu presencia! ✨";
+      return "¡Hola ${guest.firstName}! Te escribimos para recordarte confirmar tu asistencia para nuestra boda (Mayte & Alex): $link\n\nPor favor entra al enlace para ver los detalles y confirmar tus lugares. ¡Esperamos contar con tu presencia!";
     }
 
     // When the invitation was sent and the guest has already filled their RSVP choices
@@ -69,7 +69,7 @@ class InvitationCard extends StatelessWidget {
     return "¡Hola ${guest.firstName}! Te escribimos para validar los datos que registraste para nuestra boda (Mayte & Alex):\n\n"
         "• $attendanceText$dietaryBuffer\n\n"
         "Por favor confirma si esta información sigue siendo correcta o si necesitas realizar algún cambio ingresando aquí: $link\n\n"
-        "¡Muchas gracias! ✨";
+        "¡Muchas gracias!";
   }
 
   void _copyInvitationLink(BuildContext context) {
@@ -520,7 +520,8 @@ class _GuestChip extends StatelessWidget {
                             Text(
                               !isInvitationSent
                                   ? "Enviar WhatsApp"
-                                  : (guest.attendance == AttendanceStatus.pending
+                                  : (guest.attendance ==
+                                          AttendanceStatus.pending
                                       ? "Recordatorio WhatsApp"
                                       : "Confirmar WhatsApp"),
                               style: const TextStyle(
@@ -531,7 +532,8 @@ class _GuestChip extends StatelessWidget {
                             Text(
                               !isInvitationSent
                                   ? "Invitación con enlace"
-                                  : (guest.attendance == AttendanceStatus.pending
+                                  : (guest.attendance ==
+                                          AttendanceStatus.pending
                                       ? "Recordatorio de confirmación"
                                       : "Validar selección del invitado"),
                               style: TextStyle(
@@ -646,6 +648,58 @@ class _GuestChip extends StatelessWidget {
                 ),
               ),
             ),
+          if (guest.side != GuestSide.none)
+            () {
+              final (sideColor, sideIcon) = switch (guest.side) {
+                GuestSide.bride => (
+                    const Color(0xffD81B60),
+                    Icons.favorite_outline,
+                  ),
+                GuestSide.groom => (
+                    const Color(0xff1565C0),
+                    Icons.favorite,
+                  ),
+                GuestSide.both => (
+                    const Color(0xff7B1FA2),
+                    Icons.people_alt_outlined,
+                  ),
+                GuestSide.none => (
+                    context.colorScheme.secondary,
+                    Icons.person_outline,
+                  ),
+              };
+
+              return Container(
+                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                decoration: BoxDecoration(
+                  color: sideColor.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(4),
+                  border: Border.all(
+                    color: sideColor.withValues(alpha: 0.3),
+                    width: 0.8,
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      sideIcon,
+                      size: 10,
+                      color: sideColor,
+                    ),
+                    const SizedBox(width: 3),
+                    Text(
+                      guest.side.label,
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: sideColor,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }(),
           if (guest.dietary != DietaryRequirement.none)
             () {
               final (dietColor, dietIcon) = switch (guest.dietary) {
@@ -721,8 +775,7 @@ class _GuestChip extends StatelessWidget {
                   border: Border.all(
                     color: guest.isConfirmed
                         ? Colors.teal.withValues(alpha: 0.4)
-                        : context.colorScheme.outline
-                            .withValues(alpha: 0.25),
+                        : context.colorScheme.outline.withValues(alpha: 0.25),
                     width: 0.8,
                   ),
                 ),

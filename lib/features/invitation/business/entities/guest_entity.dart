@@ -69,6 +69,44 @@ enum DietaryRequirement {
   }
 }
 
+/// Enum representing the host/side the guest is invited by (Bride, Groom, or Both)
+enum GuestSide {
+  /// Unspecified or unassigned side
+  none("none", "No especificado"),
+
+  /// Invited by the bride
+  bride("bride", "Novia"),
+
+  /// Invited by the groom
+  groom("groom", "Novio"),
+
+  /// Invited by both bride and groom
+  both("both", "Ambos");
+
+  const GuestSide(this.value, this.label);
+
+  /// String value matching Firestore schema
+  final String value;
+
+  /// Human-readable label in Spanish
+  final String label;
+
+  /// Helper to parse string to [GuestSide]
+  static GuestSide fromString(String? value) {
+    switch (value) {
+      case "bride":
+        return GuestSide.bride;
+      case "groom":
+        return GuestSide.groom;
+      case "both":
+        return GuestSide.both;
+      case "none":
+      default:
+        return GuestSide.none;
+    }
+  }
+}
+
 /// Business entity representing a Guest linked to an invitation
 class GuestEntity extends Equatable {
   /// Creates a [GuestEntity]
@@ -81,6 +119,7 @@ class GuestEntity extends Equatable {
     required this.invitationId,
     this.phone,
     this.dietaryDetails,
+    this.side = GuestSide.none,
     this.isConfirmed = false,
     this.updatedAt,
   });
@@ -106,6 +145,9 @@ class GuestEntity extends Equatable {
   /// Custom dietary details if specified
   final String? dietaryDetails;
 
+  /// Side/Host the guest is invited by (Bride, Groom, Both, or none)
+  final GuestSide side;
+
   /// Associated invitation ID
   final String invitationId;
 
@@ -127,6 +169,7 @@ class GuestEntity extends Equatable {
     AttendanceStatus? attendance,
     DietaryRequirement? dietary,
     String? dietaryDetails,
+    GuestSide? side,
     String? invitationId,
     bool? isConfirmed,
     DateTime? updatedAt,
@@ -139,6 +182,7 @@ class GuestEntity extends Equatable {
         attendance: attendance ?? this.attendance,
         dietary: dietary ?? this.dietary,
         dietaryDetails: dietaryDetails ?? this.dietaryDetails,
+        side: side ?? this.side,
         invitationId: invitationId ?? this.invitationId,
         isConfirmed: isConfirmed ?? this.isConfirmed,
         updatedAt: updatedAt ?? this.updatedAt,
@@ -153,6 +197,7 @@ class GuestEntity extends Equatable {
         attendance,
         dietary,
         dietaryDetails,
+        side,
         invitationId,
         isConfirmed,
         updatedAt,

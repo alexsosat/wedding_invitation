@@ -38,6 +38,7 @@ class ExportGuestsToExcel
       final headers = [
         "Nombre Completo",
         "Teléfono",
+        "Anfitrión / Lado",
         "Asistencia (RSVP)",
         "Confirmado Admin",
         "Opción Dietética",
@@ -84,8 +85,39 @@ class ExportGuestsToExcel
             ..hAlign = HAlignType.center
             ..vAlign = VAlignType.center;
 
-          // 3. Attendance Status
-          final attendanceCell = sheet.getRangeByIndex(currentRow, 3);
+          // 3. Host / Side
+          final sideCell = sheet.getRangeByIndex(currentRow, 3);
+          sideCell.cellStyle
+            ..hAlign = HAlignType.center
+            ..vAlign = VAlignType.center;
+          switch (guest.side) {
+            case GuestSide.bride:
+              sideCell.setText("Novia");
+              sideCell.cellStyle
+                ..backColor = "#F8D7DA"
+                ..fontColor = "#721C24"
+                ..bold = true;
+            case GuestSide.groom:
+              sideCell.setText("Novio");
+              sideCell.cellStyle
+                ..backColor = "#CCE5FF"
+                ..fontColor = "#004085"
+                ..bold = true;
+            case GuestSide.both:
+              sideCell.setText("Ambos");
+              sideCell.cellStyle
+                ..backColor = "#E2D9F3"
+                ..fontColor = "#381E72"
+                ..bold = true;
+            case GuestSide.none:
+              sideCell.setText("No especificado");
+              sideCell.cellStyle
+                ..backColor = "#F2F2F2"
+                ..fontColor = "#595959";
+          }
+
+          // 4. Attendance Status
+          final attendanceCell = sheet.getRangeByIndex(currentRow, 4);
           attendanceCell.cellStyle
             ..hAlign = HAlignType.center
             ..vAlign = VAlignType.center;
@@ -109,8 +141,8 @@ class ExportGuestsToExcel
                 ..fontColor = "#856404";
           }
 
-          // 4. Admin Confirmation Status
-          final confirmedCell = sheet.getRangeByIndex(currentRow, 4);
+          // 5. Admin Confirmation Status
+          final confirmedCell = sheet.getRangeByIndex(currentRow, 5);
           confirmedCell.cellStyle
             ..hAlign = HAlignType.center
             ..vAlign = VAlignType.center;
@@ -127,8 +159,8 @@ class ExportGuestsToExcel
               ..fontColor = "#595959";
           }
 
-          // 5. Dietary Option
-          final dietaryCell = sheet.getRangeByIndex(currentRow, 5);
+          // 6. Dietary Option
+          final dietaryCell = sheet.getRangeByIndex(currentRow, 6);
           dietaryCell.cellStyle
             ..hAlign = HAlignType.center
             ..vAlign = VAlignType.center;
@@ -155,8 +187,8 @@ class ExportGuestsToExcel
                 ..fontColor = "#595959";
           }
 
-          // 6. Dietary Details
-          final detailsCell = sheet.getRangeByIndex(currentRow, 6)
+          // 7. Dietary Details
+          final detailsCell = sheet.getRangeByIndex(currentRow, 7)
             ..setText(
               guest.dietaryDetails != null && guest.dietaryDetails!.isNotEmpty
                   ? guest.dietaryDetails!
@@ -182,7 +214,7 @@ class ExportGuestsToExcel
           .autoFitColumns();
 
       // Ensure minimum readable column widths
-      final defaultWidths = [24.0, 16.0, 18.0, 18.0, 20.0, 26.0];
+      final defaultWidths = [24.0, 16.0, 18.0, 18.0, 18.0, 20.0, 26.0];
       for (int i = 0; i < defaultWidths.length; i++) {
         final currentWidth = sheet.getRangeByIndex(1, i + 1).columnWidth;
         if (currentWidth < defaultWidths[i]) {

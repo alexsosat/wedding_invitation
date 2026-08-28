@@ -126,7 +126,7 @@ class ScheduleSection extends StatelessWidget {
               BlendMode.srcIn,
             ),
           ),
-          time: "10:00 p.m.",
+          time: "9:30 p.m.",
           title: "Despedida y\nfin del evento",
         ),
       ],

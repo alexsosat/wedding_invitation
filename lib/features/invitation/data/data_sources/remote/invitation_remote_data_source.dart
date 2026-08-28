@@ -133,6 +133,7 @@ class InvitationRemoteDataSourceImpl implements InvitationRemoteDataSource {
         dietary: guest.dietary,
         invitationId: invitationRef.id,
         dietaryDetails: guest.dietaryDetails,
+        side: guest.side,
         isConfirmed: guest.isConfirmed,
         updatedAt: now,
       );
@@ -199,6 +200,7 @@ class InvitationRemoteDataSourceImpl implements InvitationRemoteDataSource {
         dietary: guest.dietary,
         invitationId: invitation.id,
         dietaryDetails: guest.dietaryDetails,
+        side: guest.side,
         isConfirmed: guest.isConfirmed,
         updatedAt: guest.updatedAt ?? now,
       );

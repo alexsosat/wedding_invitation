@@ -433,6 +433,53 @@ class _AdminDashboardViewState extends State<_AdminDashboardView> {
                             ),
                             const SizedBox(height: 24),
                             Text(
+                              "Distribución por Anfitrión",
+                              style: context.textTheme.titleLarge?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: context.colorScheme.primary,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            LayoutBuilder(
+                              builder: (context, constraints) {
+                                final isWide = constraints.maxWidth > 650;
+                                final crossAxisCount = isWide ? 3 : 1;
+                                final childAspectRatio = isWide ? 1.8 : 2.2;
+                                return GridView.count(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  crossAxisCount: crossAxisCount,
+                                  crossAxisSpacing: 12,
+                                  mainAxisSpacing: 12,
+                                  childAspectRatio: childAspectRatio,
+                                  children: [
+                                    DashboardStatsCard(
+                                      title: "Novia (Mayte)",
+                                      value: "${state.totalBrideGuests}",
+                                      icon: Icons.favorite_outline,
+                                      color: const Color(0xffD81B60),
+                                      subtitle: "Invitados de la novia",
+                                    ),
+                                    DashboardStatsCard(
+                                      title: "Novio (Alex)",
+                                      value: "${state.totalGroomGuests}",
+                                      icon: Icons.favorite,
+                                      color: const Color(0xff1565C0),
+                                      subtitle: "Invitados del novio",
+                                    ),
+                                    DashboardStatsCard(
+                                      title: "Ambos",
+                                      value: "${state.totalBothGuests}",
+                                      icon: Icons.people_alt_outlined,
+                                      color: const Color(0xff7B1FA2),
+                                      subtitle: "Invitados de ambos novios",
+                                    ),
+                                  ],
+                                );
+                              },
+                            ),
+                            const SizedBox(height: 24),
+                            Text(
                               "Preferencias de Menú",
                               style: context.textTheme.titleLarge?.copyWith(
                                 fontWeight: FontWeight.bold,

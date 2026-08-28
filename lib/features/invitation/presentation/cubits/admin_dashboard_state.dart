@@ -165,6 +165,34 @@ class AdminDashboardLoaded extends AdminDashboardState {
                 .length,
       );
 
+  /// Total guests belonging to the bride
+  int get totalBrideGuests => invitations.fold(
+        0,
+        (sum, inv) =>
+            sum + inv.guests.where((g) => g.side == GuestSide.bride).length,
+      );
+
+  /// Total guests belonging to the groom
+  int get totalGroomGuests => invitations.fold(
+        0,
+        (sum, inv) =>
+            sum + inv.guests.where((g) => g.side == GuestSide.groom).length,
+      );
+
+  /// Total guests belonging to both bride and groom
+  int get totalBothGuests => invitations.fold(
+        0,
+        (sum, inv) =>
+            sum + inv.guests.where((g) => g.side == GuestSide.both).length,
+      );
+
+  /// Total guests with unassigned host side
+  int get totalUnassignedSideGuests => invitations.fold(
+        0,
+        (sum, inv) =>
+            sum + inv.guests.where((g) => g.side == GuestSide.none).length,
+      );
+
   /// Filtered invitations based on search query and status/dietary filters
   List<InvitationEntity> get filteredInvitations => invitations.where((inv) {
         // 1. Apply search query

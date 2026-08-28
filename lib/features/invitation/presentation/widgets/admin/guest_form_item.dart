@@ -16,7 +16,9 @@ class GuestFormItem extends StatelessWidget {
     required this.dietaryDetailsController,
     required this.onAttendanceChanged,
     required this.onDietaryChanged,
+    required this.onSideChanged,
     required this.onRemove,
+    this.side = GuestSide.none,
     this.phoneController,
     this.phoneFieldKey,
     this.initialPhone,
@@ -53,6 +55,9 @@ class GuestFormItem extends StatelessWidget {
   /// Selected dietary requirement
   final DietaryRequirement dietary;
 
+  /// Selected host/side affiliation (Bride, Groom, Both, None)
+  final GuestSide side;
+
   /// Controller for custom dietary notes
   final TextEditingController dietaryDetailsController;
 
@@ -64,6 +69,9 @@ class GuestFormItem extends StatelessWidget {
 
   /// Callback when dietary changes
   final ValueChanged<DietaryRequirement> onDietaryChanged;
+
+  /// Callback when host/side changes
+  final ValueChanged<GuestSide> onSideChanged;
 
   /// Callback when admin confirmation status changes
   final ValueChanged<bool>? onConfirmedChanged;
@@ -261,6 +269,38 @@ class GuestFormItem extends StatelessWidget {
                       }
                     },
                   ),
+                  const SizedBox(height: 10),
+                  DropdownButtonFormField<GuestSide>(
+                    initialValue: side,
+                    isDense: true,
+                    isExpanded: true,
+                    decoration: const InputDecoration(
+                      labelText: "Lado / Anfitrión (opcional)",
+                    ),
+                    items: const [
+                      DropdownMenuItem(
+                        value: GuestSide.none,
+                        child: Text("No especificado"),
+                      ),
+                      DropdownMenuItem(
+                        value: GuestSide.bride,
+                        child: Text("Novia"),
+                      ),
+                      DropdownMenuItem(
+                        value: GuestSide.groom,
+                        child: Text("Novio"),
+                      ),
+                      DropdownMenuItem(
+                        value: GuestSide.both,
+                        child: Text("Ambos"),
+                      ),
+                    ],
+                    onChanged: (val) {
+                      if (val != null) {
+                        onSideChanged(val);
+                      }
+                    },
+                  ),
                 ] else ...[
                   Row(
                     children: [
@@ -323,6 +363,40 @@ class GuestFormItem extends StatelessWidget {
                           onChanged: (val) {
                             if (val != null) {
                               onDietaryChanged(val);
+                            }
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: DropdownButtonFormField<GuestSide>(
+                          initialValue: side,
+                          isDense: true,
+                          isExpanded: true,
+                          decoration: const InputDecoration(
+                            labelText: "Lado / Anfitrión",
+                          ),
+                          items: const [
+                            DropdownMenuItem(
+                              value: GuestSide.none,
+                              child: Text("No especificado"),
+                            ),
+                            DropdownMenuItem(
+                              value: GuestSide.bride,
+                              child: Text("Novia"),
+                            ),
+                            DropdownMenuItem(
+                              value: GuestSide.groom,
+                              child: Text("Novio"),
+                            ),
+                            DropdownMenuItem(
+                              value: GuestSide.both,
+                              child: Text("Ambos"),
+                            ),
+                          ],
+                          onChanged: (val) {
+                            if (val != null) {
+                              onSideChanged(val);
                             }
                           },
                         ),

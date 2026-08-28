@@ -97,5 +97,76 @@ void main() {
       expect(rsvpMap.containsKey("dietary"), isTrue);
       expect(rsvpMap.containsKey("updatedAt"), isTrue);
     });
+
+    test("GuestEntity defaults side to GuestSide.none and copyWith updates side", () {
+      const entity = GuestEntity(
+        id: "g1",
+        firstName: "Alejandro",
+        lastName: "Sosa",
+        attendance: AttendanceStatus.attending,
+        dietary: DietaryRequirement.meat,
+        invitationId: "inv1",
+      );
+
+      expect(entity.side, equals(GuestSide.none));
+
+      final updated = entity.copyWith(side: GuestSide.bride);
+      expect(updated.side, equals(GuestSide.bride));
+    });
+
+    test("GuestModel fromMap parses side correctly", () {
+      final mapBride = {
+        "firstName": "Mayte",
+        "lastName": "López",
+        "attendance": "Attending",
+        "dietary": "vegetarian",
+        "side": "bride",
+        "invitationId": "inv1",
+      };
+      final mapGroom = {
+        "firstName": "Alex",
+        "lastName": "Sosa",
+        "attendance": "Attending",
+        "dietary": "meat",
+        "side": "groom",
+        "invitationId": "inv1",
+      };
+      final mapBoth = {
+        "firstName": "Carlos",
+        "lastName": "Pérez",
+        "attendance": "Pending",
+        "dietary": "none",
+        "side": "both",
+        "invitationId": "inv1",
+      };
+
+      expect(
+        GuestModel.fromMap(map: mapBride, id: "g1").side,
+        equals(GuestSide.bride),
+      );
+      expect(
+        GuestModel.fromMap(map: mapGroom, id: "g2").side,
+        equals(GuestSide.groom),
+      );
+      expect(
+        GuestModel.fromMap(map: mapBoth, id: "g3").side,
+        equals(GuestSide.both),
+      );
+    });
+
+    test("GuestModel toMap serializes side", () {
+      const model = GuestModel(
+        id: "g1",
+        firstName: "Mayte",
+        lastName: "López",
+        attendance: AttendanceStatus.attending,
+        dietary: DietaryRequirement.vegetarian,
+        side: GuestSide.bride,
+        invitationId: "inv1",
+      );
+
+      final map = model.toMap();
+      expect(map["side"], equals("bride"));
+    });
   });
 }

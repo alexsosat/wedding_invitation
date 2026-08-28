@@ -35,6 +35,7 @@ class _GuestDraft {
     required this.attendance,
     required this.dietary,
     required this.dietaryDetailsController,
+    this.side = GuestSide.none,
     this.initialPhone,
     this.phone,
     this.isConfirmed = false,
@@ -48,6 +49,7 @@ class _GuestDraft {
   String? phone;
   AttendanceStatus attendance;
   DietaryRequirement dietary;
+  GuestSide side;
   final TextEditingController dietaryDetailsController;
   bool isConfirmed;
 
@@ -85,6 +87,7 @@ class _InvitationFormDialogState extends State<InvitationFormDialog> {
             phone: g.phone,
             attendance: g.attendance,
             dietary: g.dietary,
+            side: g.side,
             dietaryDetailsController:
                 TextEditingController(text: g.dietaryDetails ?? ""),
             isConfirmed: g.isConfirmed,
@@ -108,6 +111,7 @@ class _InvitationFormDialogState extends State<InvitationFormDialog> {
           phone: null,
           attendance: AttendanceStatus.pending,
           dietary: DietaryRequirement.none,
+          side: GuestSide.none,
           dietaryDetailsController: TextEditingController(),
           isConfirmed: false,
         ),
@@ -173,6 +177,7 @@ class _InvitationFormDialogState extends State<InvitationFormDialog> {
               phone: phone,
               attendance: g.attendance,
               dietary: g.dietary,
+              side: g.side,
               dietaryDetails: null,
               invitationId: widget.invitation?.id ?? "",
               isConfirmed: g.isConfirmed,
@@ -366,6 +371,7 @@ class _InvitationFormDialogState extends State<InvitationFormDialog> {
                           initialPhone: _guests[i].initialPhone,
                           attendance: _guests[i].attendance,
                           dietary: _guests[i].dietary,
+                          side: _guests[i].side,
                           dietaryDetailsController:
                               _guests[i].dietaryDetailsController,
                           isConfirmed: _guests[i].isConfirmed,
@@ -373,6 +379,8 @@ class _InvitationFormDialogState extends State<InvitationFormDialog> {
                               setState(() => _guests[i].attendance = val),
                           onDietaryChanged: (val) =>
                               setState(() => _guests[i].dietary = val),
+                          onSideChanged: (val) =>
+                              setState(() => _guests[i].side = val),
                           onConfirmedChanged: (val) =>
                               setState(() => _guests[i].isConfirmed = val),
                           onPhoneChanged: (val) => _guests[i].phone = val,

@@ -42,6 +42,7 @@ void main() {
   );
 
   Widget createWidgetUnderTest(InvitationEntity invitation) => MaterialApp(
+        theme: ThemeData(splashFactory: InkRipple.splashFactory),
         home: Scaffold(
           body: SingleChildScrollView(
             child: InvitationCard(
@@ -135,6 +136,7 @@ void main() {
 
         await tester.pumpWidget(
           MaterialApp(
+            theme: ThemeData(splashFactory: InkRipple.splashFactory),
             home: Scaffold(
               body: SingleChildScrollView(
                 child: InvitationCard(
@@ -162,6 +164,44 @@ void main() {
 
         expect(toggledGuestId, equals("g-1"));
         expect(toggledStatus, isTrue);
+      },
+    );
+
+    testWidgets(
+      "displays host side badge when guest has side assigned",
+      (tester) async {
+        const invitationWithSide = InvitationEntity(
+          id: "inv-side",
+          groupName: "Familia Sosa",
+          slug: "familia-sosa",
+          isSent: true,
+          guests: [
+            GuestEntity(
+              id: "g-bride",
+              firstName: "Mayte",
+              lastName: "López",
+              attendance: AttendanceStatus.attending,
+              dietary: DietaryRequirement.vegetarian,
+              side: GuestSide.bride,
+              invitationId: "inv-side",
+            ),
+            GuestEntity(
+              id: "g-groom",
+              firstName: "Alex",
+              lastName: "Sosa",
+              attendance: AttendanceStatus.attending,
+              dietary: DietaryRequirement.meat,
+              side: GuestSide.groom,
+              invitationId: "inv-side",
+            ),
+          ],
+        );
+
+        await tester.pumpWidget(createWidgetUnderTest(invitationWithSide));
+        await tester.pumpAndSettle();
+
+        expect(find.text("Novia"), findsOneWidget);
+        expect(find.text("Novio"), findsOneWidget);
       },
     );
   });

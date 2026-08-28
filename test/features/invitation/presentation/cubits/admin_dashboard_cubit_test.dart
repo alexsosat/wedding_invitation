@@ -314,4 +314,78 @@ void main() {
     expect(state.invitations.first.guests.first.isConfirmed, isFalse);
     expect(repository.invitations.first.guests.first.isConfirmed, isFalse);
   });
+
+  test("computes host side metrics (bride, groom, both, unassigned)", () async {
+    repository.invitations = [
+      const InvitationEntity(
+        id: "1",
+        groupName: "Familia Sosa",
+        slug: "familia-sosa",
+        isSent: true,
+        guests: [
+          GuestEntity(
+            id: "g1",
+            firstName: "Mayte",
+            lastName: "López",
+            attendance: AttendanceStatus.attending,
+            dietary: DietaryRequirement.vegetarian,
+            side: GuestSide.bride,
+            invitationId: "1",
+          ),
+          GuestEntity(
+            id: "g2",
+            firstName: "Alex",
+            lastName: "Sosa",
+            attendance: AttendanceStatus.attending,
+            dietary: DietaryRequirement.meat,
+            side: GuestSide.groom,
+            invitationId: "1",
+          ),
+        ],
+      ),
+      const InvitationEntity(
+        id: "2",
+        groupName: "Familia Amigos",
+        slug: "familia-amigos",
+        isSent: false,
+        guests: [
+          GuestEntity(
+            id: "g3",
+            firstName: "Carlos",
+            lastName: "Perez",
+            attendance: AttendanceStatus.attending,
+            dietary: DietaryRequirement.none,
+            side: GuestSide.both,
+            invitationId: "2",
+          ),
+          GuestEntity(
+            id: "g4",
+            firstName: "Ana",
+            lastName: "Perez",
+            attendance: AttendanceStatus.pending,
+            dietary: DietaryRequirement.none,
+            side: GuestSide.none,
+            invitationId: "2",
+          ),
+          GuestEntity(
+            id: "g5",
+            firstName: "Diana",
+            lastName: "López",
+            attendance: AttendanceStatus.attending,
+            dietary: DietaryRequirement.none,
+            side: GuestSide.bride,
+            invitationId: "2",
+          ),
+        ],
+      ),
+    ];
+
+    await cubit.loadInvitations();
+
+    final state = cubit.state as AdminDashboardLoaded;
+    expect(state.totalBrideGuests, equals(2));
+    expect(state.totalGroomGuests, equals(1));
+    expect(state.totalBothGuests, equals(1));
+    expect(state.totalUnassignedSideGuests, equals(1));
+  });
 }
