@@ -1,3 +1,4 @@
+import "package:cloud_firestore/cloud_firestore.dart";
 import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
@@ -14,6 +15,13 @@ void main() async {
 
   await DependencyInjection.injectCriticalServices();
   await loadAdobeFont();
+
+  if (kIsWeb) {
+    // Disable web persistence to prevent Safari WebKit IndexedDB hangs
+    FirebaseFirestore.instance.settings = const Settings(
+      persistenceEnabled: false,
+    );
+  }
 
   runApp(
     const BodaMaApp(),

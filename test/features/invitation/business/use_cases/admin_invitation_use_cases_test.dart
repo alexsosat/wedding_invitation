@@ -5,6 +5,7 @@ import "package:boda_ma/features/invitation/business/use_cases/create_invitation
 import "package:boda_ma/features/invitation/business/use_cases/delete_invitation.dart";
 import "package:boda_ma/features/invitation/business/use_cases/get_all_invitations.dart";
 import "package:boda_ma/features/invitation/business/use_cases/toggle_guest_confirmation_status.dart";
+import "package:boda_ma/features/invitation/business/use_cases/toggle_invitation_cancelled_status.dart";
 import "package:boda_ma/features/invitation/business/use_cases/toggle_invitation_sent_status.dart";
 import "package:boda_ma/features/invitation/business/use_cases/update_invitation.dart";
 import "package:boda_ma/features/invitation/data/models/params/admin_invitation_params.dart";
@@ -64,6 +65,21 @@ class FakeInvitationRepository implements InvitationRepository {
   }
 
   @override
+  Future<Either<Failure, Unit>> toggleInvitationCancelledStatus({
+    required String invitationId,
+    required bool isCancelled,
+  }) async {
+    final index = invitations.indexWhere((i) => i.id == invitationId);
+    if (index >= 0) {
+      invitations[index] = invitations[index].copyWith(
+        isCancelled: isCancelled,
+        cancelledAt: isCancelled ? DateTime.now() : null,
+      );
+    }
+    return const Right(unit);
+  }
+
+  @override
   Future<Either<Failure, InvitationEntity>> getInvitation({
     required InvitationParams params,
   }) async =>
@@ -108,6 +124,7 @@ void main() {
   late UpdateInvitation updateInvitation;
   late DeleteInvitation deleteInvitation;
   late ToggleInvitationSentStatus toggleInvitationSentStatus;
+  late ToggleInvitationCancelledStatus toggleInvitationCancelledStatus;
   late ToggleGuestConfirmationStatus toggleGuestConfirmationStatus;
 
   setUp(() {
@@ -118,6 +135,8 @@ void main() {
     deleteInvitation = DeleteInvitation(invitationRepository: repository);
     toggleInvitationSentStatus =
         ToggleInvitationSentStatus(invitationRepository: repository);
+    toggleInvitationCancelledStatus =
+        ToggleInvitationCancelledStatus(invitationRepository: repository);
     toggleGuestConfirmationStatus =
         ToggleGuestConfirmationStatus(invitationRepository: repository);
   });
@@ -183,7 +202,17 @@ void main() {
       equals("Familia Sosa Pérez"),
     );
 
-    // 6. Delete
+    // 6. Toggle Cancelled
+    final toggleCancelledResult = await toggleInvitationCancelledStatus(
+      params: ToggleInvitationCancelledParams(
+        invitationId: "inv_1",
+        isCancelled: true,
+      ),
+    );
+    expect(toggleCancelledResult.isRight(), isTrue);
+    expect(repository.invitations.first.isCancelled, isTrue);
+
+    // 7. Delete
     final deleteResult = await deleteInvitation(
       params: DeleteInvitationParams(invitationId: "inv_1"),
     );

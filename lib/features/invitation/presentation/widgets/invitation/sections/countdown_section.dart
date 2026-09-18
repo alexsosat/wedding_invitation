@@ -185,16 +185,40 @@ class _CountdownTimerTextState extends State<CountdownTimerText> {
   @override
   void initState() {
     super.initState();
-    _targetDate = widget.targetDate ?? DateTime(2026, 11, 8, 16);
+    _initTargetDate();
     _calculateRemaining();
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
       _calculateRemaining();
     });
   }
 
+  @override
+  void didUpdateWidget(covariant CountdownTimerText oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.targetDate != oldWidget.targetDate) {
+      _initTargetDate();
+      _calculateRemaining();
+    }
+  }
+
+  void _initTargetDate() {
+    final target = widget.targetDate ?? DateTime(2026, 11, 8, 16);
+    _targetDate = DateTime.utc(
+      target.year,
+      target.month,
+      target.day,
+      target.hour,
+      target.minute,
+      target.second,
+      target.millisecond,
+      target.microsecond,
+    );
+  }
+
   void _calculateRemaining() {
-    final now = DateTime.now();
-    final difference = _targetDate.difference(now);
+    final nowUtc = DateTime.now().toUtc();
+    final nowGmtMinus6 = nowUtc.subtract(const Duration(hours: 6));
+    final difference = _targetDate.difference(nowGmtMinus6);
     if (mounted) {
       setState(() {
         _remaining = difference.isNegative ? Duration.zero : difference;

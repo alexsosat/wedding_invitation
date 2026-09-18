@@ -36,6 +36,12 @@ abstract class InvitationRepository {
     required bool isSent,
   });
 
+  /// Toggles the cancelled status of an invitation
+  Future<Either<Failure, Unit>> toggleInvitationCancelledStatus({
+    required String invitationId,
+    required bool isCancelled,
+  });
+
   /// Fetches the list of guests belonging to an invitation
   Future<Either<Failure, List<GuestEntity>>> getGuests({
     required String invitationId,

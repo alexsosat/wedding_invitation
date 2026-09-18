@@ -50,6 +50,7 @@ void main() {
               onEdit: () {},
               onDelete: () {},
               onToggleSent: (_) {},
+              onToggleCancelled: (_) {},
             ),
           ),
         ),
@@ -144,6 +145,7 @@ void main() {
                   onEdit: () {},
                   onDelete: () {},
                   onToggleSent: (_) {},
+                  onToggleCancelled: (_) {},
                   onToggleGuestConfirmation: (guestId, isConfirmed) {
                     toggledGuestId = guestId;
                     toggledStatus = isConfirmed;
@@ -202,6 +204,86 @@ void main() {
 
         expect(find.text("Novia"), findsOneWidget);
         expect(find.text("Novio"), findsOneWidget);
+      },
+    );
+  });
+
+  group("InvitationCard Cancel Status Tests", () {
+    testWidgets(
+      "shows Cancelar tooltip and invokes onToggleCancelled(true) when active",
+      (tester) async {
+        bool? toggledValue;
+
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: ThemeData(splashFactory: InkRipple.splashFactory),
+            home: Scaffold(
+              body: SingleChildScrollView(
+                child: InvitationCard(
+                  invitation: notSentInvitation,
+                  onEdit: () {},
+                  onDelete: () {},
+                  onToggleSent: (_) {},
+                  onToggleCancelled: (value) => toggledValue = value,
+                ),
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text("Cancelada"), findsNothing);
+
+        final cancelButtonFinder = find.byTooltip("Cancelar invitación");
+        expect(cancelButtonFinder, findsOneWidget);
+
+        await tester.tap(cancelButtonFinder);
+        await tester.pumpAndSettle();
+
+        expect(toggledValue, isTrue);
+      },
+    );
+
+    testWidgets(
+      "shows Cancelada badge and Reactivar tooltip when isCancelled is true",
+      (tester) async {
+        const cancelledInvitation = InvitationEntity(
+          id: "inv-cancelled",
+          groupName: "Familia Torres",
+          slug: "familia-torres",
+          isCancelled: true,
+          guests: [],
+        );
+
+        bool? toggledValue;
+
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: ThemeData(splashFactory: InkRipple.splashFactory),
+            home: Scaffold(
+              body: SingleChildScrollView(
+                child: InvitationCard(
+                  invitation: cancelledInvitation,
+                  onEdit: () {},
+                  onDelete: () {},
+                  onToggleSent: (_) {},
+                  onToggleCancelled: (value) => toggledValue = value,
+                ),
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text("Cancelada"), findsOneWidget);
+
+        final reactivateButtonFinder = find.byTooltip("Reactivar invitación");
+        expect(reactivateButtonFinder, findsOneWidget);
+
+        await tester.tap(reactivateButtonFinder);
+        await tester.pumpAndSettle();
+
+        expect(toggledValue, isFalse);
       },
     );
   });

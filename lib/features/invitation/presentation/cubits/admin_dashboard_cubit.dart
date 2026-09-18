@@ -5,6 +5,7 @@ import "../../business/use_cases/create_invitation.dart";
 import "../../business/use_cases/delete_invitation.dart";
 import "../../business/use_cases/get_all_invitations.dart";
 import "../../business/use_cases/toggle_guest_confirmation_status.dart";
+import "../../business/use_cases/toggle_invitation_cancelled_status.dart";
 import "../../business/use_cases/toggle_invitation_sent_status.dart";
 import "../../business/use_cases/update_invitation.dart";
 import "../../data/models/params/admin_invitation_params.dart";
@@ -19,12 +20,14 @@ class AdminDashboardCubit extends Cubit<AdminDashboardState> {
     required UpdateInvitation updateInvitation,
     required DeleteInvitation deleteInvitation,
     required ToggleInvitationSentStatus toggleInvitationSentStatus,
+    required ToggleInvitationCancelledStatus toggleInvitationCancelledStatus,
     required ToggleGuestConfirmationStatus toggleGuestConfirmationStatus,
   })  : _getAllInvitations = getAllInvitations,
         _createInvitation = createInvitation,
         _updateInvitation = updateInvitation,
         _deleteInvitation = deleteInvitation,
         _toggleInvitationSentStatus = toggleInvitationSentStatus,
+        _toggleInvitationCancelledStatus = toggleInvitationCancelledStatus,
         _toggleGuestConfirmationStatus = toggleGuestConfirmationStatus,
         super(const AdminDashboardInitial());
 
@@ -33,6 +36,7 @@ class AdminDashboardCubit extends Cubit<AdminDashboardState> {
   final UpdateInvitation _updateInvitation;
   final DeleteInvitation _deleteInvitation;
   final ToggleInvitationSentStatus _toggleInvitationSentStatus;
+  final ToggleInvitationCancelledStatus _toggleInvitationCancelledStatus;
   final ToggleGuestConfirmationStatus _toggleGuestConfirmationStatus;
 
   /// Loads all invitations from Firestore
@@ -194,6 +198,48 @@ class AdminDashboardCubit extends Cubit<AdminDashboardState> {
             actionSuccessMessage: isSent
                 ? "Invitación marcada como enviada"
                 : "Invitación marcada como no enviada",
+          ),
+        );
+      },
+    );
+  }
+
+  /// Toggles cancelled status of an invitation
+  Future<void> toggleCancelledStatus(
+    String invitationId,
+    bool isCancelled,
+  ) async {
+    final currentState = state;
+    if (currentState is! AdminDashboardLoaded) {
+      return;
+    }
+
+    final result = await _toggleInvitationCancelledStatus(
+      params: ToggleInvitationCancelledParams(
+        invitationId: invitationId,
+        isCancelled: isCancelled,
+      ),
+    );
+
+    result.fold(
+      (failure) => safeEmit(AdminDashboardError(failure: failure)),
+      (_) {
+        final updatedList = currentState.invitations.map((inv) {
+          if (inv.id == invitationId) {
+            return inv.copyWith(
+              isCancelled: isCancelled,
+              cancelledAt: isCancelled ? DateTime.now() : null,
+            );
+          }
+          return inv;
+        }).toList();
+
+        safeEmit(
+          currentState.copyWith(
+            invitations: updatedList,
+            actionSuccessMessage: isCancelled
+                ? "Invitación cancelada"
+                : "Invitación reactivada",
           ),
         );
       },

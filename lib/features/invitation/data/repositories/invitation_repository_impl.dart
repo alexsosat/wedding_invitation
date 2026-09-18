@@ -39,7 +39,7 @@ class InvitationRepositoryImpl implements InvitationRepository {
         );
       }
 
-      if (result == null) {
+      if (result == null || result.isCancelled) {
         return Left(
           NotFoundFailure(
             message: "Invitation not found",
@@ -169,6 +169,30 @@ class InvitationRepositoryImpl implements InvitationRepository {
         ServerFailure(
           message:
               e.message ?? "Firebase error occurred while updating sent status",
+        ),
+      );
+    } catch (e) {
+      return Left(
+        AppFailure.unexpected(
+          e.toString(),
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, Unit>> toggleInvitationCancelledStatus({
+    required String invitationId,
+    required bool isCancelled,
+  }) async {
+    try {
+      await remoteDataSource.toggleCancelledStatus(invitationId, isCancelled);
+      return const Right(unit);
+    } on FirebaseException catch (e) {
+      return Left(
+        ServerFailure(
+          message: e.message ??
+              "Firebase error occurred while updating cancelled status",
         ),
       );
     } catch (e) {

@@ -26,6 +26,9 @@ abstract class InvitationRemoteDataSource {
   /// Toggles the sent status of an invitation
   Future<void> toggleSentStatus(String invitationId, bool isSent);
 
+  /// Toggles the cancelled status of an invitation
+  Future<void> toggleCancelledStatus(String invitationId, bool isCancelled);
+
   /// Fetches all guests linked to a specific invitation
   Future<List<GuestModel>> getGuests(String invitationId);
 
@@ -249,6 +252,22 @@ class InvitationRemoteDataSourceImpl implements InvitationRemoteDataSource {
         .update({
       "isSent": isSent,
       "sentAt": isSent ? Timestamp.fromDate(now) : null,
+      "updatedAt": Timestamp.fromDate(now),
+    });
+  }
+
+  @override
+  Future<void> toggleCancelledStatus(
+    String invitationId,
+    bool isCancelled,
+  ) async {
+    final now = DateTime.now();
+    await _firestore
+        .collection(_invitationsCollection)
+        .doc(invitationId)
+        .update({
+      "isCancelled": isCancelled,
+      "cancelledAt": isCancelled ? Timestamp.fromDate(now) : null,
       "updatedAt": Timestamp.fromDate(now),
     });
   }

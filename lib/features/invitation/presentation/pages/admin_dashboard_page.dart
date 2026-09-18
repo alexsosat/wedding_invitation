@@ -15,6 +15,7 @@ import "../../business/entities/invitation_entity.dart";
 import "../../business/use_cases/export_guests_to_excel.dart";
 import "../cubits/admin_dashboard_cubit.dart";
 import "../cubits/admin_dashboard_state.dart";
+import "../widgets/admin/cancel_invitation_dialog.dart";
 import "../widgets/admin/dashboard_stats_card.dart";
 import "../widgets/admin/delete_invitation_dialog.dart";
 import "../widgets/admin/invitation_card.dart";
@@ -34,6 +35,7 @@ class AdminDashboardPage extends StatelessWidget {
           updateInvitation: GetIt.I(),
           deleteInvitation: GetIt.I(),
           toggleInvitationSentStatus: GetIt.I(),
+          toggleInvitationCancelledStatus: GetIt.I(),
           toggleGuestConfirmationStatus: GetIt.I(),
         )..loadInvitations(),
         child: const _AdminDashboardView(),
@@ -84,6 +86,17 @@ class _AdminDashboardViewState extends State<_AdminDashboardView> {
       builder: (_) => DeleteInvitationDialog(
         invitation: invitation,
         onConfirm: () => cubit.deleteInvitation(invitation.id),
+      ),
+    );
+  }
+
+  void _openCancelDialog(BuildContext context, InvitationEntity invitation) {
+    final cubit = context.read<AdminDashboardCubit>();
+    showDialog(
+      context: context,
+      builder: (_) => CancelInvitationDialog(
+        invitation: invitation,
+        onConfirm: () => cubit.toggleCancelledStatus(invitation.id, true),
       ),
     );
   }
@@ -770,6 +783,18 @@ class _AdminDashboardViewState extends State<_AdminDashboardView> {
                                       invitation.id,
                                       isSent,
                                     ),
+                                onToggleCancelled: (isCancelled) {
+                                  if (isCancelled) {
+                                    _openCancelDialog(context, invitation);
+                                  } else {
+                                    context
+                                        .read<AdminDashboardCubit>()
+                                        .toggleCancelledStatus(
+                                          invitation.id,
+                                          false,
+                                        );
+                                  }
+                                },
                                 onToggleGuestConfirmation:
                                     (guestId, isConfirmed) => context
                                         .read<AdminDashboardCubit>()

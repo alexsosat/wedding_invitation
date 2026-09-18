@@ -5,6 +5,7 @@ import "package:boda_ma/features/invitation/business/use_cases/create_invitation
 import "package:boda_ma/features/invitation/business/use_cases/delete_invitation.dart";
 import "package:boda_ma/features/invitation/business/use_cases/get_all_invitations.dart";
 import "package:boda_ma/features/invitation/business/use_cases/toggle_guest_confirmation_status.dart";
+import "package:boda_ma/features/invitation/business/use_cases/toggle_invitation_cancelled_status.dart";
 import "package:boda_ma/features/invitation/business/use_cases/toggle_invitation_sent_status.dart";
 import "package:boda_ma/features/invitation/business/use_cases/update_invitation.dart";
 import "package:boda_ma/features/invitation/data/models/params/invitation_params.dart";
@@ -65,6 +66,21 @@ class FakeInvitationRepository implements InvitationRepository {
   }
 
   @override
+  Future<Either<Failure, Unit>> toggleInvitationCancelledStatus({
+    required String invitationId,
+    required bool isCancelled,
+  }) async {
+    final index = invitations.indexWhere((i) => i.id == invitationId);
+    if (index >= 0) {
+      invitations[index] = invitations[index].copyWith(
+        isCancelled: isCancelled,
+        cancelledAt: isCancelled ? DateTime.now() : null,
+      );
+    }
+    return const Right(unit);
+  }
+
+  @override
   Future<Either<Failure, Unit>> toggleGuestConfirmationStatus({
     required String invitationId,
     required String guestId,
@@ -119,6 +135,8 @@ void main() {
           DeleteInvitation(invitationRepository: repository),
       toggleInvitationSentStatus:
           ToggleInvitationSentStatus(invitationRepository: repository),
+      toggleInvitationCancelledStatus:
+          ToggleInvitationCancelledStatus(invitationRepository: repository),
       toggleGuestConfirmationStatus:
           ToggleGuestConfirmationStatus(invitationRepository: repository),
     );
@@ -313,6 +331,33 @@ void main() {
     expect(state.totalAdminConfirmedGuests, equals(0));
     expect(state.invitations.first.guests.first.isConfirmed, isFalse);
     expect(repository.invitations.first.guests.first.isConfirmed, isFalse);
+  });
+
+  test("toggles cancelled status of an invitation", () async {
+    repository.invitations = [
+      const InvitationEntity(
+        id: "inv1",
+        groupName: "Familia Sosa",
+        slug: "familia-sosa",
+        guests: [],
+      ),
+    ];
+
+    await cubit.loadInvitations();
+    var state = cubit.state as AdminDashboardLoaded;
+    expect(state.invitations.first.isCancelled, isFalse);
+
+    await cubit.toggleCancelledStatus("inv1", true);
+    state = cubit.state as AdminDashboardLoaded;
+    expect(state.invitations.first.isCancelled, isTrue);
+    expect(repository.invitations.first.isCancelled, isTrue);
+    expect(state.actionSuccessMessage, equals("Invitación cancelada"));
+
+    await cubit.toggleCancelledStatus("inv1", false);
+    state = cubit.state as AdminDashboardLoaded;
+    expect(state.invitations.first.isCancelled, isFalse);
+    expect(repository.invitations.first.isCancelled, isFalse);
+    expect(state.actionSuccessMessage, equals("Invitación reactivada"));
   });
 
   test("computes host side metrics (bride, groom, both, unassigned)", () async {

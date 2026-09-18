@@ -65,6 +65,7 @@ void main() {
                 onEdit: () {},
                 onDelete: () {},
                 onToggleSent: (_) {},
+                onToggleCancelled: (_) {},
               ),
             ),
           ),

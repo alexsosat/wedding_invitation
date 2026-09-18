@@ -14,6 +14,8 @@ class InvitationModel extends InvitationEntity {
     super.slug = "",
     super.isSent = false,
     super.sentAt,
+    super.isCancelled = false,
+    super.cancelledAt,
     super.createdAt,
     super.updatedAt,
     super.guests = const [],
@@ -44,6 +46,8 @@ class InvitationModel extends InvitationEntity {
         slug: map["slug"] as String? ?? "",
         isSent: map["isSent"] as bool? ?? false,
         sentAt: _parseDateTime(map["sentAt"]),
+        isCancelled: map["isCancelled"] as bool? ?? false,
+        cancelledAt: _parseDateTime(map["cancelledAt"]),
         createdAt: _parseDateTime(map["createdAt"]),
         updatedAt: _parseDateTime(map["updatedAt"]),
         guests: guests ?? const [],
@@ -57,6 +61,8 @@ class InvitationModel extends InvitationEntity {
         slug: entity.slug,
         isSent: entity.isSent,
         sentAt: entity.sentAt,
+        isCancelled: entity.isCancelled,
+        cancelledAt: entity.cancelledAt,
         createdAt: entity.createdAt,
         updatedAt: entity.updatedAt,
         guests: entity.guests
@@ -70,9 +76,13 @@ class InvitationModel extends InvitationEntity {
       "groupName": groupName,
       "slug": slug,
       "isSent": isSent,
+      "isCancelled": isCancelled,
     };
     if (sentAt != null) {
       map["sentAt"] = Timestamp.fromDate(sentAt!);
+    }
+    if (cancelledAt != null) {
+      map["cancelledAt"] = Timestamp.fromDate(cancelledAt!);
     }
     if (createdAt != null) {
       map["createdAt"] = Timestamp.fromDate(createdAt!);
@@ -93,6 +103,8 @@ class InvitationModel extends InvitationEntity {
         slug: slug,
         isSent: isSent,
         sentAt: sentAt,
+        isCancelled: isCancelled,
+        cancelledAt: cancelledAt,
         createdAt: createdAt,
         updatedAt: updatedAt,
         guests: guests,

@@ -14,6 +14,7 @@ class InvitationCard extends StatelessWidget {
     required this.onEdit,
     required this.onDelete,
     required this.onToggleSent,
+    required this.onToggleCancelled,
     this.onToggleGuestConfirmation,
     super.key,
   });
@@ -29,6 +30,9 @@ class InvitationCard extends StatelessWidget {
 
   /// Callback when sent status is toggled
   final ValueChanged<bool> onToggleSent;
+
+  /// Callback when cancelled status is toggled
+  final ValueChanged<bool> onToggleCancelled;
 
   /// Callback when a guest's admin confirmation status is toggled
   final void Function(String guestId, bool isConfirmed)?
@@ -156,6 +160,42 @@ class InvitationCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 8),
+                  if (invitation.isCancelled)
+                    Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.red.withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: Colors.red.withValues(alpha: 0.3),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.block,
+                              size: 15,
+                              color: Colors.red.shade800,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              "Cancelada",
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.red.shade800,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   // Sent Status Badge & Toggle
                   InkWell(
                     onTap: () => onToggleSent(!invitation.isSent),
@@ -291,6 +331,22 @@ class InvitationCard extends StatelessWidget {
                         visualDensity: VisualDensity.compact,
                         padding: const EdgeInsets.symmetric(horizontal: 12),
                       ),
+                    ),
+                    IconButton(
+                      onPressed: () =>
+                          onToggleCancelled(!invitation.isCancelled),
+                      icon: Icon(
+                        invitation.isCancelled
+                            ? Icons.restore_outlined
+                            : Icons.block,
+                        color: invitation.isCancelled
+                            ? context.colorScheme.primary
+                            : context.colorScheme.error,
+                        size: 20,
+                      ),
+                      tooltip: invitation.isCancelled
+                          ? "Reactivar invitación"
+                          : "Cancelar invitación",
                     ),
                     IconButton(
                       onPressed: onDelete,

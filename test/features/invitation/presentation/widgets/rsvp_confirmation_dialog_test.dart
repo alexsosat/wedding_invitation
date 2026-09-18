@@ -74,6 +74,13 @@ class FakeInvitationRepository implements InvitationRepository {
       const Right(unit);
 
   @override
+  Future<Either<Failure, Unit>> toggleInvitationCancelledStatus({
+    required String invitationId,
+    required bool isCancelled,
+  }) async =>
+      const Right(unit);
+
+  @override
   Future<Either<Failure, List<GuestEntity>>> getGuests({
     required String invitationId,
   }) async =>

@@ -11,6 +11,8 @@ class InvitationEntity extends Equatable {
     this.slug = "",
     this.isSent = false,
     this.sentAt,
+    this.isCancelled = false,
+    this.cancelledAt,
     this.createdAt,
     this.updatedAt,
     this.guests = const [],
@@ -30,6 +32,12 @@ class InvitationEntity extends Equatable {
 
   /// Timestamp when the invitation was sent
   final DateTime? sentAt;
+
+  /// Whether this invitation has been cancelled, hiding it from guests
+  final bool isCancelled;
+
+  /// Timestamp when the invitation was cancelled
+  final DateTime? cancelledAt;
 
   /// Creation timestamp
   final DateTime? createdAt;
@@ -67,6 +75,8 @@ class InvitationEntity extends Equatable {
     String? slug,
     bool? isSent,
     DateTime? sentAt,
+    bool? isCancelled,
+    DateTime? cancelledAt,
     DateTime? createdAt,
     DateTime? updatedAt,
     List<GuestEntity>? guests,
@@ -77,6 +87,8 @@ class InvitationEntity extends Equatable {
         slug: slug ?? this.slug,
         isSent: isSent ?? this.isSent,
         sentAt: sentAt ?? this.sentAt,
+        isCancelled: isCancelled ?? this.isCancelled,
+        cancelledAt: cancelledAt ?? this.cancelledAt,
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
         guests: guests ?? this.guests,
@@ -89,6 +101,8 @@ class InvitationEntity extends Equatable {
         slug,
         isSent,
         sentAt,
+        isCancelled,
+        cancelledAt,
         createdAt,
         updatedAt,
         guests,
