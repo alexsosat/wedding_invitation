@@ -36,6 +36,7 @@ class ExportGuestsToExcel
 
       // Header labels
       final headers = [
+        "Invitación",
         "Nombre Completo",
         "Teléfono",
         "Anfitrión / Lado",
@@ -66,16 +67,26 @@ class ExportGuestsToExcel
         for (final guest in invitation.guests) {
           sheet.getRangeByIndex(currentRow, 1).rowHeight = 22;
 
-          // 1. Full Name
+          // 1. Invitation
+          final invitationLabel = invitation.groupName.isNotEmpty
+              ? invitation.groupName
+              : invitation.slug;
+          final invitationCell = sheet.getRangeByIndex(currentRow, 1)
+            ..setText(invitationLabel.isNotEmpty ? invitationLabel : "-");
+          invitationCell.cellStyle
+            ..vAlign = VAlignType.center
+            ..bold = true;
+
+          // 2. Full Name
           final guestFullName = guest.fullName.isNotEmpty
               ? guest.fullName
               : "${guest.firstName} ${guest.lastName}".trim();
-          final nameCell = sheet.getRangeByIndex(currentRow, 1)
+          final nameCell = sheet.getRangeByIndex(currentRow, 2)
             ..setText(guestFullName.isNotEmpty ? guestFullName : "-");
           nameCell.cellStyle.vAlign = VAlignType.center;
 
-          // 2. Phone
-          final phoneCell = sheet.getRangeByIndex(currentRow, 2)
+          // 3. Phone
+          final phoneCell = sheet.getRangeByIndex(currentRow, 3)
             ..setText(
               guest.phone != null && guest.phone!.isNotEmpty
                   ? guest.phone!
@@ -85,8 +96,8 @@ class ExportGuestsToExcel
             ..hAlign = HAlignType.center
             ..vAlign = VAlignType.center;
 
-          // 3. Host / Side
-          final sideCell = sheet.getRangeByIndex(currentRow, 3);
+          // 4. Host / Side
+          final sideCell = sheet.getRangeByIndex(currentRow, 4);
           sideCell.cellStyle
             ..hAlign = HAlignType.center
             ..vAlign = VAlignType.center;
@@ -116,8 +127,8 @@ class ExportGuestsToExcel
                 ..fontColor = "#595959";
           }
 
-          // 4. Attendance Status
-          final attendanceCell = sheet.getRangeByIndex(currentRow, 4);
+          // 5. Attendance Status
+          final attendanceCell = sheet.getRangeByIndex(currentRow, 5);
           attendanceCell.cellStyle
             ..hAlign = HAlignType.center
             ..vAlign = VAlignType.center;
@@ -141,8 +152,8 @@ class ExportGuestsToExcel
                 ..fontColor = "#856404";
           }
 
-          // 5. Admin Confirmation Status
-          final confirmedCell = sheet.getRangeByIndex(currentRow, 5);
+          // 6. Admin Confirmation Status
+          final confirmedCell = sheet.getRangeByIndex(currentRow, 6);
           confirmedCell.cellStyle
             ..hAlign = HAlignType.center
             ..vAlign = VAlignType.center;
@@ -159,8 +170,8 @@ class ExportGuestsToExcel
               ..fontColor = "#595959";
           }
 
-          // 6. Dietary Option
-          final dietaryCell = sheet.getRangeByIndex(currentRow, 6);
+          // 7. Dietary Option
+          final dietaryCell = sheet.getRangeByIndex(currentRow, 7);
           dietaryCell.cellStyle
             ..hAlign = HAlignType.center
             ..vAlign = VAlignType.center;
@@ -187,8 +198,8 @@ class ExportGuestsToExcel
                 ..fontColor = "#595959";
           }
 
-          // 7. Dietary Details
-          final detailsCell = sheet.getRangeByIndex(currentRow, 7)
+          // 8. Dietary Details
+          final detailsCell = sheet.getRangeByIndex(currentRow, 8)
             ..setText(
               guest.dietaryDetails != null && guest.dietaryDetails!.isNotEmpty
                   ? guest.dietaryDetails!
@@ -214,7 +225,7 @@ class ExportGuestsToExcel
           .autoFitColumns();
 
       // Ensure minimum readable column widths
-      final defaultWidths = [24.0, 16.0, 18.0, 18.0, 18.0, 20.0, 26.0];
+      final defaultWidths = [22.0, 24.0, 16.0, 18.0, 18.0, 18.0, 20.0, 26.0];
       for (int i = 0; i < defaultWidths.length; i++) {
         final currentWidth = sheet.getRangeByIndex(1, i + 1).columnWidth;
         if (currentWidth < defaultWidths[i]) {

@@ -202,7 +202,7 @@ class _LaceInvitationCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      "Te pedimos que confirmes tu asistencia antes del 15 de septiembre. Así podremos preparar todo con mucho cariño para recibirte.",
+                      "Te pedimos que confirmes tu asistencia antes del 22 de octubre. Así podremos preparar todo con mucho cariño para recibirte.",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontFamily: FontFamily.untoldHistory,
